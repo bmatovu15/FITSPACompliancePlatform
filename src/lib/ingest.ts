@@ -94,6 +94,31 @@ ${excerpt}
   }
 }
 
+// Builds a usable answer straight from the indexed document chunks, with no
+// LLM call at all. Used whenever OpenRouter is unreachable, out of credits,
+// or not configured -- the assistant should still surface real, cited
+// material from whatever has been indexed (currently BOU and MRD/UMRA
+// documents) rather than just apologizing.
+function localSearchAnswer(
+  question: string,
+  chunks: { content: string; doc_title: string; regulator_name: string | null }[],
+  reason: string
+): string {
+  const top = chunks.slice(0, 5);
+  const excerpts = top
+    .map((c, i) => {
+      const label = `Source ${i + 1}: ${c.doc_title}${c.regulator_name ? ` — ${c.regulator_name}` : ""}`;
+      const snippet = c.content.length > 600 ? `${c.content.slice(0, 600)}...` : c.content;
+      return `[${label}]\n${snippet}`;
+    })
+    .join("\n\n---\n\n");
+  return `The AI summarizer is temporarily unavailable (${reason}), so here is a direct search of FITSPA's indexed regulator documents for "${question}" -- these are the closest matching passages, unedited:
+
+${excerpts}
+
+This is raw indexed text rather than a written answer. For a fully synthesized response, try again later or contact FITSPA directly.`;
+}
+
 export async function askAssistant(opts: {
   apiKey: string;
   model: string;
@@ -104,6 +129,13 @@ export async function askAssistant(opts: {
   if (chunks.length === 0) {
     return "I couldn't find anything in the indexed regulator documents that answers this. Please rephrase, or contact FITSPA directly for a tailored answer.";
   }
+
+  // No key configured at all -- go straight to the local index, no point
+  // attempting a call that can't succeed.
+  if (!apiKey) {
+    return localSearchAnswer(question, chunks, "no AI API key configured");
+  }
+
   const context = chunks
     .map((c, i) => `[Source ${i + 1}: ${c.doc_title}${c.regulator_name ? ` — ${c.regulator_name}` : ""}]\n${c.content}`)
     .join("\n\n---\n\n");
@@ -119,15 +151,22 @@ QUESTION: ${question}`;
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.1 }),
     });
+    if (!res.ok) {
+      // Covers the 402 "insufficient credits" case (and any other non-2xx
+      // response) -- fall back to the local index instead of surfacing raw
+      // billing errors to end users.
+      console.error("assistant call failed with status", res.status);
+      return localSearchAnswer(question, chunks, `AI service returned status ${res.status}`);
+    }
     const json = await res.json();
     const content = json?.choices?.[0]?.message?.content;
     if (!content) {
       console.error("assistant call returned no content", res.status, JSON.stringify(json));
-      return `Sorry, I couldn't generate a response just now. (debug: status=${res.status} body=${JSON.stringify(json).slice(0, 500)})`;
+      return localSearchAnswer(question, chunks, "AI service returned an empty response");
     }
     return content;
   } catch (e) {
     console.error("assistant call failed", e);
-    return "Sorry, the AI assistant is temporarily unavailable.";
+    return localSearchAnswer(question, chunks, "AI service is temporarily unreachable");
   }
 }
