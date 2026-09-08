@@ -31,12 +31,25 @@ export async function POST(req: NextRequest) {
   const { data: regulators } = await supabase.from("regulators").select("id,name").in("id", regulatorIds);
   const regMap = new Map((regulators ?? []).map((r) => [r.id, r.name]));
 
-  const { data: obligations } = await supabase
-    .from("obligations")
-    .select("*")
-    .in("licence_id", licenceIds)
-    .is("member_id", null)
-    .eq("status", "Active");
+  // Same fix as the on-screen checklist (wizard-client.tsx): most obligations
+  // are published broadly against a regulator (licence_id null) rather than
+  // one specific licence, so both need to be queried and merged or the PDF
+  // silently comes back empty.
+  const [{ data: obsByLicence }, { data: obsByRegulator }] = await Promise.all([
+    supabase.from("obligations").select("*").in("licence_id", licenceIds).is("member_id", null).eq("status", "Active"),
+    regulatorIds.length
+      ? supabase
+          .from("obligations")
+          .select("*")
+          .is("licence_id", null)
+          .is("member_id", null)
+          .in("regulator_id", regulatorIds)
+          .eq("status", "Active")
+      : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const obligationsById = new Map<string, any>();
+  for (const o of [...(obsByLicence ?? []), ...(obsByRegulator ?? [])]) obligationsById.set(o.id, o);
+  const obligations = Array.from(obligationsById.values());
 
   const { data: docs } = await supabase
     .from("documents")
