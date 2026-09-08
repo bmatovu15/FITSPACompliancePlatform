@@ -21,10 +21,8 @@ export default async function RootLayout({
     <html lang="en" className="h-full">
       <body className="min-h-full flex flex-col">
         <div className="flex flex-1 flex-col">
-          <header
-            className="border-b"
-            style={{ borderColor: "var(--color-border)", background: "var(--color-surface)" }}
-          >
+          <div className="topbar-accent" />
+          <header className="header-shell">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
               <Link href="/" className="flex items-baseline gap-2">
                 <span
@@ -33,26 +31,28 @@ export default async function RootLayout({
                 >
                   FITSPA
                 </span>
-                <span className="hidden text-sm sm:inline" style={{ color: "var(--color-text-muted)" }}>
+                <span
+                  className="hidden text-xs font-semibold uppercase tracking-wide sm:inline"
+                  style={{ color: "var(--color-accent)" }}
+                >
                   Compliance Platform
                 </span>
               </Link>
               <nav className="flex items-center gap-1 text-sm">
-                <Link className="btn btn-ghost" href="/search">Search</Link>
-                <Link className="btn btn-ghost" href="/lookup">Member Lookup</Link>
-                <Link className="btn btn-ghost" href="/wizard">Requirements Wizard</Link>
-                <Link className="btn btn-ghost" href="/assistant">AI Assistant</Link>
-                <span className="mx-1 hidden h-6 w-px sm:block" style={{ background: "var(--color-border)" }} />
+                <Link className="nav-link" href="/lookup">Member Lookup</Link>
+                <Link className="nav-link" href="/wizard">Requirements Wizard</Link>
+                <Link className="nav-link" href="/assistant">AI Assistant</Link>
+                <span className="mx-2 hidden h-6 w-px sm:block" style={{ background: "var(--color-border)" }} />
                 {user ? (
                   <Link className="btn btn-primary" href="/dashboard">My Dashboard</Link>
                 ) : (
                   <>
-                    <Link className="btn btn-ghost" href="/login">Member Login</Link>
+                    <Link className="nav-link" href="/login">Member Login</Link>
                     {/* Same /login form as members -- it checks is_staff() after
                         sign-in and routes FITSPA staff to /admin automatically.
                         Shown separately so admins aren't hunting for the URL. */}
-                    <Link className="btn btn-ghost" href="/login">FITSPA Admin Login</Link>
-                    <Link className="btn btn-primary" href="/signup">Join FITSPA</Link>
+                    <Link className="nav-link" href="/login">FITSPA Admin Login</Link>
+                    <Link className="btn btn-accent" href="/signup">Join FITSPA</Link>
                   </>
                 )}
               </nav>
