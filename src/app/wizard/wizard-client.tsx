@@ -295,20 +295,39 @@ function StepChecklist({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const [{ data: obs }, { data: d }] = await Promise.all([
+      // Obligations are either tied to a specific licence (licence_id set)
+      // or published broadly against a whole regulator (licence_id null,
+      // regulator_id set) -- the latter covers most of what FITSPA has
+      // catalogued so far, and was previously dropped entirely because this
+      // query only checked licence_id. Two queries merged by id, since a
+      // single .in() can't express "licence_id matches OR (licence_id is
+      // null AND regulator_id matches)" without also pulling in unrelated
+      // regulators.
+      const [{ data: obsByLicence }, { data: obsByRegulator }, { data: d }] = await Promise.all([
         supabase
           .from("obligations")
           .select("*, regulators(name)")
           .in("licence_id", licenceIds)
           .is("member_id", null)
           .eq("status", "Active"),
+        regulatorIds.length
+          ? supabase
+              .from("obligations")
+              .select("*, regulators(name)")
+              .is("licence_id", null)
+              .is("member_id", null)
+              .in("regulator_id", regulatorIds)
+              .eq("status", "Active")
+          : Promise.resolve({ data: [] as any[] }),
         supabase
           .from("documents")
           .select("id,regulator_id,title,doc_kind,storage_path,file_name,status")
           .in("regulator_id", regulatorIds)
           .eq("status", "Published"),
       ]);
-      const sorted = (obs ?? []).sort((a: any, b: any) =>
+      const obsById = new Map<string, any>();
+      for (const o of [...(obsByLicence ?? []), ...(obsByRegulator ?? [])]) obsById.set(o.id, o);
+      const sorted = Array.from(obsById.values()).sort((a: any, b: any) =>
         (a.regulators?.name ?? "").localeCompare(b.regulators?.name ?? "") || a.title.localeCompare(b.title)
       );
       setObligations(sorted as any);
