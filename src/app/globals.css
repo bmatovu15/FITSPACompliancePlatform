@@ -90,6 +90,29 @@ table.data th { text-align: left; font-size: 0.72rem; text-transform: uppercase;
 table.data td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
 table.data tr:last-child td { border-bottom: none; }
 
+.topbar-accent {
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+}
+
+.header-shell {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(36, 31, 20, 0.06);
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.nav-link:hover { color: var(--color-primary); background: #f1efe6; }
+
 .stepper { display: flex; align-items: center; gap: 0.5rem; }
 .step-dot { width: 1.75rem; height: 1.75rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; border: 2px solid var(--color-border); color: var(--color-text-muted); }
 .step-dot.active { border-color: var(--color-primary); color: var(--color-primary); background: #e3f0e6; }
