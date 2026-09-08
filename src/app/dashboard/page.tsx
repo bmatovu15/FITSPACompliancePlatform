@@ -13,16 +13,43 @@ export default async function DashboardPage() {
     .eq("member_id", member.id);
 
   const licenceIds = (memberLicences ?? []).map((ml: any) => ml.licence_id);
+  const regulatorIds = Array.from(
+    new Set((memberLicences ?? []).map((ml: any) => ml.licences?.regulator_id).filter(Boolean))
+  ) as string[];
 
-  const { data: allObligations } = await supabase
-    .from("obligations")
-    .select("*, regulators(name)")
-    .or(`member_id.eq.${member.id},member_id.is.null`)
-    .in("licence_id", licenceIds.length ? licenceIds : ["00000000-0000-0000-0000-000000000000"]);
+  // Obligations live at three levels: tied to this member directly
+  // (member_id set), tied to one specific licence (licence_id set,
+  // member_id null -- applies to every holder of that licence), or tied
+  // broadly to a regulator (regulator_id set, licence_id AND member_id both
+  // null -- applies to every member holding ANY licence from that
+  // regulator). Almost every seeded obligation is the third kind. The old
+  // query only matched the first two, so `.in("licence_id", licenceIds)`
+  // silently excluded every regulator-level obligation and every member's
+  // dashboard showed "Nothing here yet" regardless of what FITSPA had
+  // published. Two queries (can't express "licence_id is null AND
+  // regulator_id matches" alongside "licence_id in (...)" in one filter
+  // without pulling in other regulators' obligations too) merged by id.
+  const [{ data: ownAndLicenceObligations }, { data: regulatorObligations }] = await Promise.all([
+    supabase
+      .from("obligations")
+      .select("*, regulators(name)")
+      .or(`member_id.eq.${member.id},member_id.is.null`)
+      .in("licence_id", licenceIds.length ? licenceIds : ["00000000-0000-0000-0000-000000000000"]),
+    regulatorIds.length
+      ? supabase
+          .from("obligations")
+          .select("*, regulators(name)")
+          .is("licence_id", null)
+          .is("member_id", null)
+          .in("regulator_id", regulatorIds)
+      : Promise.resolve({ data: [] as any[] }),
+  ]);
 
-  const obligations = (allObligations ?? []).filter(
-    (o: any) => o.member_id === member.id || licenceIds.includes(o.licence_id)
-  );
+  const obligationsById = new Map<string, any>();
+  for (const o of [...(ownAndLicenceObligations ?? []), ...(regulatorObligations ?? [])]) {
+    obligationsById.set(o.id, o);
+  }
+  const obligations = Array.from(obligationsById.values());
 
   const thisYear = obligations.filter((o: any) => (o.policy_year ?? o.due_date?.slice(0, 4)) === year);
   const counts = {
