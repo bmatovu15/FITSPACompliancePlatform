@@ -1,19 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
-import { requireMember } from "@/lib/current-member";
-import VaultClient from "./vault-client";
+import NpsPathwayClient, { type NpsItem, type NpsFeeTier } from "./nps-pathway-client";
 
-export default async function VaultPage() {
-  const member = await requireMember();
+export const metadata = {
+  title: "NPS Licence Pathway — FITSPA Compliance Platform",
+  description:
+    "Bank of Uganda National Payment Systems Act licence pathway — a phase-by-phase requirements map with fees and minimum capital for your route.",
+};
+
+export default async function NpsPathwayPage() {
   const supabase = await createClient();
-  const { data: files } = await supabase.from("vault_docs").select("*").eq("member_id", member.id).order("uploaded_at", { ascending: false });
+  const [{ data: items }, { data: fees }] = await Promise.all([
+    supabase.from("nps_requirements").select("*").order("seq"),
+    supabase.from("nps_fee_tiers").select("*").order("sort_order"),
+  ]);
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>Document vault</h1>
-      <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-        Store your own compliance evidence and company documents — visible only to you and FITSPA staff.
-      </p>
-      <VaultClient memberId={member.id} initialFiles={files ?? []} />
-    </div>
+    <NpsPathwayClient
+      items={(items ?? []) as NpsItem[]}
+      fees={(fees ?? []) as NpsFeeTier[]}
+    />
   );
 }
