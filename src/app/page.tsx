@@ -23,12 +23,19 @@ export default function Home() {
       </section>
 
       <section className="border-t" style={{ borderColor: "var(--color-border)" }}>
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4 sm:px-6">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-14 sm:grid-cols-2 lg:grid-cols-3 sm:px-6">
           <Link className="card block p-6 transition hover:shadow-sm" href="/wizard">
             <h2 className="text-lg font-semibold">Requirements wizard</h2>
             <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
               Know which licence you need, or not sure yet? Either way, get a downloadable, ordered
               checklist of every requirement and form.
+            </p>
+          </Link>
+          <Link className="card block p-6 transition hover:shadow-sm" href="/nps-pathway">
+            <h2 className="text-lg font-semibold">NPS licence pathway</h2>
+            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
+              A phase-by-phase readiness map for Bank of Uganda National Payment Systems Act
+              licences — every requirement, fee, and minimum capital for your route.
             </p>
           </Link>
           <Link className="card block p-6 transition hover:shadow-sm" href="/search">
