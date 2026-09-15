@@ -38,6 +38,13 @@ export default function Home() {
               licences — every requirement, fee, and minimum capital for your route.
             </p>
           </Link>
+          <Link className="card block p-6 transition hover:shadow-sm" href="/digital-credit-pathway">
+            <h2 className="text-lg font-semibold">Digital credit licence pathway</h2>
+            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
+              A phase-by-phase readiness map for UMRA Tier 4 money lender and NDT microfinance
+              institution digital credit licences — every requirement and fee for your route.
+            </p>
+          </Link>
           <Link className="card block p-6 transition hover:shadow-sm" href="/search">
             <h2 className="text-lg font-semibold">Document &amp; obligation search</h2>
             <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>

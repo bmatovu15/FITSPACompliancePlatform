@@ -42,6 +42,7 @@ export default async function RootLayout({
                 <Link className="nav-link" href="/lookup">Member Lookup</Link>
                 <Link className="nav-link" href="/wizard">Requirements Wizard</Link>
                 <Link className="nav-link" href="/nps-pathway">NPS Licence Pathway</Link>
+                <Link className="nav-link" href="/digital-credit-pathway">Digital Credit Pathway</Link>
                 <Link className="nav-link" href="/assistant">AI Assistant</Link>
                 <span className="mx-2 hidden h-6 w-px sm:block" style={{ background: "var(--color-border)" }} />
                 {user ? (

@@ -9,15 +9,17 @@ export const metadata = {
 
 export default async function NpsPathwayPage() {
   const supabase = await createClient();
-  const [{ data: items }, { data: fees }] = await Promise.all([
+  const [{ data: items }, { data: fees }, { data: { user } }] = await Promise.all([
     supabase.from("nps_requirements").select("*").order("seq"),
     supabase.from("nps_fee_tiers").select("*").order("sort_order"),
+    supabase.auth.getUser(),
   ]);
 
   return (
     <NpsPathwayClient
       items={(items ?? []) as NpsItem[]}
       fees={(fees ?? []) as NpsFeeTier[]}
+      isLoggedIn={!!user}
     />
   );
 }

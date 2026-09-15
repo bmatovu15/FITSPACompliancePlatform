@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import styles from "./nps-pathway.module.css";
+import styles from "./digital-credit-pathway.module.css";
 
 export type YesNoCond = "Yes" | "No" | "Conditional";
 
-export type NpsItem = {
+export type DigitalCreditItem = {
   id: string;
   seq: number;
   phase: string;
   type: string;
   requirement: string;
   meaning: string;
-  pso: YesNoCond;
-  psp_other: YesNoCond;
-  psp_emi: YesNoCond;
-  instrument: YesNoCond | "Information only";
+  money_lender: YesNoCond;
+  ndt_mfi: YesNoCond;
   timing: string | null;
   evidence: string | null;
   level: string | null;
@@ -24,16 +22,16 @@ export type NpsItem = {
   condition: string | null;
 };
 
-export type NpsFeeTier = {
+export type DigitalCreditFee = {
   id: string;
   sort_order: number;
-  category: string;
-  class: string;
-  threshold: string;
-  application_fee: number;
-  licensing_fee: number;
-  annual_fee: number;
-  min_capital: number;
+  route: string;
+  event: string;
+  amount: number;
+  status: string | null;
+  note: string | null;
+  source: string | null;
+  source_link: string | null;
 };
 
 type Screen = "landing" | "wizard" | "app";
@@ -42,12 +40,7 @@ type Filter = "all" | "not_started" | "in_progress" | "done" | "conditional";
 type Tab = "checklist" | "fees" | "notes";
 
 type PathwayState = {
-  routes: { pso: boolean; psp: boolean; instrument: boolean };
-  pso_class: string;
-  pso_band: string;
-  psp_subtype: string;
-  psp_emi_band: string;
-  instrument_class: string;
+  routes: { money_lender: boolean; ndt_mfi: boolean };
   pathwaySet: boolean;
   statuses: Record<string, Status>;
   notes: Record<string, string>;
@@ -56,16 +49,16 @@ type PathwayState = {
   searchTerm: string;
 };
 
-const STORAGE_KEY = "nps_pathway_state_v1";
+const STORAGE_KEY = "dc_pathway_state_v1";
+
+const ROUTE_LABEL: Record<string, string> = {
+  money_lender: "Money lender",
+  ndt_mfi: "NDT microfinance institution",
+};
 
 function defaultState(): PathwayState {
   return {
-    routes: { pso: false, psp: false, instrument: false },
-    pso_class: "",
-    pso_band: "",
-    psp_subtype: "",
-    psp_emi_band: "",
-    instrument_class: "",
+    routes: { money_lender: false, ndt_mfi: false },
     pathwaySet: false,
     statuses: {},
     notes: {},
@@ -99,22 +92,15 @@ function fmtUGX(n: number) {
   return "UGX " + n.toLocaleString("en-US");
 }
 
-const PSO_CLASS_LABEL: Record<string, string> = {
-  funds_transfer: "Funds transfer",
-  clearing: "Clearing/switch",
-  settlement: "Settlement",
-  third_party: "Third-party system",
-};
-
 type Trigger = { label: string; value: string };
 
-export default function NpsPathwayClient({
+export default function DigitalCreditPathwayClient({
   items,
   fees,
   isLoggedIn,
 }: {
-  items: NpsItem[];
-  fees: NpsFeeTier[];
+  items: DigitalCreditItem[];
+  fees: DigitalCreditFee[];
   isLoggedIn?: boolean;
 }) {
   const [screen, setScreen] = useState<Screen>("landing");
@@ -123,10 +109,8 @@ export default function NpsPathwayClient({
   const [activeTab, setActiveTab] = useState<Tab>("checklist");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  // Load persisted progress once, client-side only (same localStorage-only
-  // persistence model as the original prototype -- this is a public,
-  // no-login tool, so there's no member account to attach server-side state
-  // to).
+  // Public, no-login tool -- localStorage-only persistence, same model as
+  // the NPS pathway and the original prototype.
   useEffect(() => {
     setState(loadState());
     setHydrated(true);
@@ -153,18 +137,14 @@ export default function NpsPathwayClient({
     setState((s) => ({ ...s, ...next }));
   }
 
-  function routeColumnsForState(): { key: string; label: string; column: keyof NpsItem }[] {
-    const cols: { key: string; label: string; column: keyof NpsItem }[] = [];
-    if (state.routes.pso) cols.push({ key: "pso", label: "PSO", column: "pso" });
-    if (state.routes.psp) {
-      if (state.psp_subtype === "emi") cols.push({ key: "psp_emi", label: "PSP · EMI", column: "psp_emi" });
-      else cols.push({ key: "psp_other", label: "PSP", column: "psp_other" });
-    }
-    if (state.routes.instrument) cols.push({ key: "instrument", label: "Instrument issuer", column: "instrument" });
+  function routeColumnsForState(): { key: string; label: string; column: keyof DigitalCreditItem }[] {
+    const cols: { key: string; label: string; column: keyof DigitalCreditItem }[] = [];
+    if (state.routes.money_lender) cols.push({ key: "money_lender", label: "Money lender", column: "money_lender" });
+    if (state.routes.ndt_mfi) cols.push({ key: "ndt_mfi", label: "NDT MFI", column: "ndt_mfi" });
     return cols;
   }
 
-  function itemApplicability(item: NpsItem): Trigger[] {
+  function itemApplicability(item: DigitalCreditItem): Trigger[] {
     const cols = routeColumnsForState();
     const triggers: Trigger[] = [];
     cols.forEach((c) => {
@@ -177,7 +157,6 @@ export default function NpsPathwayClient({
   function strongestLevel(triggers: Trigger[]): string | null {
     if (triggers.some((t) => t.value === "Yes")) return "Yes";
     if (triggers.some((t) => t.value === "Conditional")) return "Conditional";
-    if (triggers.some((t) => t.value === "Information only")) return "Information only";
     return null;
   }
 
@@ -189,7 +168,7 @@ export default function NpsPathwayClient({
       })
       .filter((x) => x.level !== null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, state.routes, state.psp_subtype]);
+  }, [items, state.routes]);
 
   function getStatus(id: string): Status {
     return state.statuses[id] || "not_started";
@@ -203,21 +182,13 @@ export default function NpsPathwayClient({
 
   function routeSummaryText() {
     const parts: string[] = [];
-    if (state.routes.pso) parts.push("PSO" + (state.pso_class ? " · " + (PSO_CLASS_LABEL[state.pso_class] || state.pso_class) : ""));
-    if (state.routes.psp) parts.push("PSP" + (state.psp_subtype ? " · " + (state.psp_subtype === "emi" ? "EMI" : "Other") : ""));
-    if (state.routes.instrument) parts.push("Instrument issuer");
-    return parts.join("  ·  ") || "No route selected";
+    if (state.routes.money_lender) parts.push(ROUTE_LABEL.money_lender);
+    if (state.routes.ndt_mfi) parts.push(ROUTE_LABEL.ndt_mfi);
+    return parts.join("  +  ") || "No route selected";
   }
 
   function validateWizard() {
-    const anyRoute = state.routes.pso || state.routes.psp || state.routes.instrument;
-    let ok = anyRoute;
-    if (state.routes.pso && !state.pso_class) ok = false;
-    if (state.routes.pso && state.pso_class === "funds_transfer" && !state.pso_band) ok = false;
-    if (state.routes.psp && !state.psp_subtype) ok = false;
-    if (state.routes.psp && state.psp_subtype === "emi" && !state.psp_emi_band) ok = false;
-    if (state.routes.instrument && !state.instrument_class) ok = false;
-    return ok;
+    return state.routes.money_lender || state.routes.ndt_mfi;
   }
 
   const overallProgress = useMemo(() => {
@@ -309,10 +280,10 @@ function LandingScreen({
     <div>
       <header className={styles.masthead}>
         <div className={styles["masthead-brand"]}>
-          <div className={styles.seal}>BoU</div>
+          <div className={styles.seal}>UMRA</div>
           <div>
-            <span className={styles.brandTitle}>NPS Licence Pathway</span>
-            <span className={styles.brandSubtitle}>Application readiness map · Bank of Uganda</span>
+            <span className={styles.brandTitle}>Digital Credit Licence Pathway</span>
+            <span className={styles.brandSubtitle}>Application readiness map · Tier 4 digital lenders</span>
           </div>
         </div>
         {isLoggedIn && (
@@ -327,13 +298,13 @@ function LandingScreen({
       <div className={styles["landing-wrap"]}>
         <section className={styles["landing-hero"]}>
           <div className={styles["hero-eyebrow"]}>
-            NATIONAL PAYMENT SYSTEMS ACT, 2020<span className={styles.divider}> · </span>PROTOTYPE FOR INTERNAL REVIEW
+            TIER 4 MICROFINANCE INSTITUTIONS AND MONEY LENDERS ACT<span className={styles.divider}> · </span>PROTOTYPE FOR INTERNAL REVIEW
           </div>
-          <h1 className={styles["hero-title"]}>Find out exactly what your licence application needs.</h1>
+          <h1 className={styles["hero-title"]}>Find out exactly what your digital credit licence needs.</h1>
           <p className={styles["hero-dek"]}>
-            Answer a few questions about what your business does, and this tool builds a filtered, phase-by-phase
-            checklist of every document, decision and approval the National Payment Systems framework requires —
-            with the fees and minimum capital that apply to your route.
+            Answer one question about your legal route, and this tool builds a filtered, phase-by-phase checklist of
+            every document, decision and control the Tier 4 framework and the Digital Lending Guidelines require —
+            with the fees that apply to your route.
           </p>
           <div className={styles["cta-row"]}>
             <button className={styles["btn-primary"]} onClick={onStart}>
@@ -347,53 +318,47 @@ function LandingScreen({
           </div>
           <div className={styles["hero-meta"]}>
             <div>
-              <strong>73</strong>requirement items mapped
+              <strong>83</strong>requirement items mapped
             </div>
             <div>
-              <strong>3</strong>licence routes covered
+              <strong>2</strong>licence routes covered
             </div>
             <div>
-              <strong>9</strong>phases, route to launch
+              <strong>10</strong>phases, route to launch
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className={styles["landing-section-title"]}>Three routes into the framework</h2>
+          <h2 className={styles["landing-section-title"]}>Two routes into the framework</h2>
           <p className={styles["landing-section-note"]}>
-            Every applicant falls into one or more of these. The assessment asks which apply to your business, then
-            builds your pack from there.
+            Every digital lender falls into one of these. The assessment asks which applies to your business, then
+            builds your pack from there — and flags the items where facts specific to your model change what&apos;s
+            required.
           </p>
           <div className={styles["route-cards"]}>
             <div className={styles["route-card"]}>
-              <span className={styles["rc-label"]}>FORM A</span>
-              <h3>Payment system operator</h3>
+              <span className={styles["rc-label"]}>FORM 1</span>
+              <h3>Money lender</h3>
               <p>
-                You operate the system or platform through which monetary value moves — funds transfer,
-                clearing/switch, settlement, or a third-party system.
+                A company that lends money digitally without taking deposits, licensed under the Tier 4 Act and
+                Money Lenders Regulations.
               </p>
             </div>
             <div className={styles["route-card"]}>
-              <span className={styles["rc-label"]}>FORM A</span>
-              <h3>Payment service provider</h3>
+              <span className={styles["rc-label"]}>FORM 1A</span>
+              <h3>Non-deposit-taking microfinance institution</h3>
               <p>
-                You directly provide a payment service — as an electronic-money issuer, or another PSP class such as
-                payment services involving tokens.
-              </p>
-            </div>
-            <div className={styles["route-card"]}>
-              <span className={styles["rc-label"]}>FORM C</span>
-              <h3>Payment-instrument issuer</h3>
-              <p>
-                You issue a card, electronic device or paper instrument used to make payments — a narrower route,
-                unless you also provide a service above.
+                A company or registered NGO providing microcredit without accepting deposits, licensed under the NDT
+                MFI Regulations.
               </p>
             </div>
           </div>
           <p className={styles["source-note"]}>
-            Built from the NPS Act (Cap. 59, consolidated 2023), the NPS Regulations (SI 18/2021) and current Bank of
-            Uganda application guidance. This is a working tool to help map application readiness — not a substitute
-            for legal advice or direct confirmation with BoU.
+            Built from the Tier 4 Microfinance Institutions and Money Lenders Act, the Money Lenders Regulations, the
+            NDT MFI Regulations (2018), the Lending Conditions Regulations (2024) and the current Digital Lending
+            Guidelines (2024). This is a working tool to help map application readiness — not a substitute for legal
+            advice or direct confirmation with UMRA.
           </p>
         </section>
       </div>
@@ -422,9 +387,9 @@ function WizardScreen({
     <div>
       <header className={styles.masthead}>
         <div className={styles["masthead-brand"]}>
-          <div className={styles.seal}>BoU</div>
+          <div className={styles.seal}>UMRA</div>
           <div>
-            <span className={styles.brandTitle}>NPS Licence Pathway</span>
+            <span className={styles.brandTitle}>Digital Credit Licence Pathway</span>
             <span className={styles.brandSubtitle}>Step 1 of 2 · Define your application</span>
           </div>
         </div>
@@ -436,121 +401,39 @@ function WizardScreen({
       </header>
 
       <div className={styles["wizard-wrap"]}>
-        <h2 className={styles["wizard-title"]}>What is your business applying to do?</h2>
+        <h2 className={styles["wizard-title"]}>Which route are you applying under?</h2>
         <p className={styles["wizard-note"]}>
-          Select every activity that applies. Many applicants need more than one — for example, an electronic-money
-          issuer that also runs its own switch needs both routes, and pays fees for each.
+          Select the route that matches your applicant entity and business model. If you&apos;re genuinely unsure
+          which fits — for example a technology-only platform where another licensed entity is the lender of record
+          — select both to compare, and confirm the classification with UMRA before you proceed.
         </p>
 
         <div className={styles["wizard-options"]}>
-          <label className={`${styles["wizard-option"]} ${state.routes.pso ? styles.checked : ""}`}>
+          <label className={`${styles["wizard-option"]} ${state.routes.money_lender ? styles.checked : ""}`}>
             <input
               type="checkbox"
-              checked={state.routes.pso}
-              onChange={(e) => patch({ routes: { ...state.routes, pso: e.target.checked } })}
+              checked={state.routes.money_lender}
+              onChange={(e) => patch({ routes: { ...state.routes, money_lender: e.target.checked } })}
             />
             <div>
-              <span className={styles["wo-tag"]}>Form A</span>
-              <h4>Operate a payment system</h4>
-              <p>Funds transfer, clearing/switch, settlement, or a third-party system such as an aggregator or gateway.</p>
+              <span className={styles["wo-tag"]}>Form 1</span>
+              <h4>Money lender</h4>
+              <p>A company that lends money digitally, doesn&apos;t take deposits, and isn&apos;t applying as an NDT MFI.</p>
             </div>
           </label>
-          <label className={`${styles["wizard-option"]} ${state.routes.psp ? styles.checked : ""}`}>
+          <label className={`${styles["wizard-option"]} ${state.routes.ndt_mfi ? styles.checked : ""}`}>
             <input
               type="checkbox"
-              checked={state.routes.psp}
-              onChange={(e) => patch({ routes: { ...state.routes, psp: e.target.checked } })}
+              checked={state.routes.ndt_mfi}
+              onChange={(e) => patch({ routes: { ...state.routes, ndt_mfi: e.target.checked } })}
             />
             <div>
-              <span className={styles["wo-tag"]}>Form A</span>
-              <h4>Provide a payment service</h4>
-              <p>Electronic-money issuance, payment services including tokens, or another payment-service class.</p>
-            </div>
-          </label>
-          <label className={`${styles["wizard-option"]} ${state.routes.instrument ? styles.checked : ""}`}>
-            <input
-              type="checkbox"
-              checked={state.routes.instrument}
-              onChange={(e) => patch({ routes: { ...state.routes, instrument: e.target.checked } })}
-            />
-            <div>
-              <span className={styles["wo-tag"]}>Form C</span>
-              <h4>Issue a payment instrument</h4>
-              <p>A payment card, electronic device, or paper-based instrument used to make payments.</p>
+              <span className={styles["wo-tag"]}>Form 1A</span>
+              <h4>Non-deposit-taking microfinance institution</h4>
+              <p>A company or registered NGO licensed as an NDT MFI, providing microcredit without accepting deposits.</p>
             </div>
           </label>
         </div>
-
-        {state.routes.pso && (
-          <div className={styles["sub-question"]}>
-            <h5>Payment system operator — select your class</h5>
-            <div className={styles["sq-row"]}>
-              <select
-                value={state.pso_class}
-                onChange={(e) => patch({ pso_class: e.target.value, pso_band: "" })}
-              >
-                <option value="">Choose a class…</option>
-                <option value="funds_transfer">Funds transfer system</option>
-                <option value="clearing">Clearing system or switch</option>
-                <option value="settlement">Settlement system</option>
-                <option value="third_party">Third-party system (aggregator, integrator, gateway)</option>
-              </select>
-              {state.pso_class === "funds_transfer" && (
-                <select value={state.pso_band} onChange={(e) => patch({ pso_band: e.target.value })}>
-                  <option value="">Transaction volume band…</option>
-                  <option value="large">Large — monthly value &gt; UGX 100bn</option>
-                  <option value="medium">Medium — &gt; UGX 1bn and ≤ UGX 100bn</option>
-                  <option value="small">Small — ≤ UGX 1bn per month</option>
-                </select>
-              )}
-            </div>
-          </div>
-        )}
-
-        {state.routes.psp && (
-          <div className={styles["sub-question"]}>
-            <h5>Payment service provider — select your subtype</h5>
-            <div className={styles["sq-row"]}>
-              <select
-                value={state.psp_subtype}
-                onChange={(e) => patch({ psp_subtype: e.target.value, psp_emi_band: "" })}
-              >
-                <option value="">Choose a subtype…</option>
-                <option value="emi">Electronic-money issuer</option>
-                <option value="other">Any other PSP (e.g. payment services / tokens)</option>
-              </select>
-              {state.psp_subtype === "emi" && (
-                <select value={state.psp_emi_band} onChange={(e) => patch({ psp_emi_band: e.target.value })}>
-                  <option value="">Trust-account value band…</option>
-                  <option value="large">Large — trust value &gt; UGX 100bn</option>
-                  <option value="medium1">Medium 1 — &gt; UGX 50bn and ≤ UGX 100bn</option>
-                  <option value="medium2">Medium 2 — &gt; UGX 5bn and ≤ UGX 50bn</option>
-                  <option value="medium3">Medium 3 — &gt; UGX 500m and ≤ UGX 5bn</option>
-                  <option value="small1">Small 1 — &gt; UGX 250m and ≤ UGX 500m</option>
-                  <option value="small2">Small 2 — ≤ UGX 250m</option>
-                </select>
-              )}
-            </div>
-          </div>
-        )}
-
-        {state.routes.instrument && (
-          <div className={styles["sub-question"]}>
-            <h5>Payment-instrument issuer — select your class</h5>
-            <div className={styles["sq-row"]}>
-              <select
-                value={state.instrument_class}
-                onChange={(e) => patch({ instrument_class: e.target.value })}
-              >
-                <option value="">Choose a class…</option>
-                <option value="card">Payment card</option>
-                <option value="device">Electronic device</option>
-                <option value="paper">Paper-based instrument</option>
-                <option value="other">Other class determined by BoU</option>
-              </select>
-            </div>
-          </div>
-        )}
 
         <div className={styles["wizard-actions"]}>
           <button className={styles["btn-primary"]} disabled={!canBuild} onClick={onBuild}>
@@ -587,10 +470,10 @@ function AppScreen({
 }: {
   state: PathwayState;
   patch: (n: Partial<PathwayState>) => void;
-  items: NpsItem[];
-  fees: NpsFeeTier[];
+  items: DigitalCreditItem[];
+  fees: DigitalCreditFee[];
   phases: string[];
-  applicableItems: { item: NpsItem; triggers: Trigger[]; level: string | null }[];
+  applicableItems: { item: DigitalCreditItem; triggers: Trigger[]; level: string | null }[];
   overallProgress: number;
   activeTab: Tab;
   setActiveTab: (t: Tab) => void;
@@ -607,9 +490,9 @@ function AppScreen({
     <div>
       <header className={styles.masthead}>
         <div className={styles["masthead-brand"]}>
-          <div className={styles.seal}>BoU</div>
+          <div className={styles.seal}>UMRA</div>
           <div>
-            <span className={styles.brandTitle}>NPS Licence Pathway</span>
+            <span className={styles.brandTitle}>Digital Credit Licence Pathway</span>
             <span className={styles.brandSubtitle}>{routeSummaryText}</span>
           </div>
         </div>
@@ -631,7 +514,7 @@ function AppScreen({
             className={`${styles["app-tab"]} ${activeTab === t ? styles.active : ""}`}
             onClick={() => setActiveTab(t)}
           >
-            {t === "checklist" ? "Checklist" : t === "fees" ? "Fees & capital" : "Open flags"}
+            {t === "checklist" ? "Checklist" : t === "fees" ? "Fees" : "Open flags"}
           </button>
         ))}
       </div>
@@ -671,7 +554,7 @@ function ChecklistTab({
   state: PathwayState;
   patch: (n: Partial<PathwayState>) => void;
   phases: string[];
-  applicableItems: { item: NpsItem; triggers: Trigger[]; level: string | null }[];
+  applicableItems: { item: DigitalCreditItem; triggers: Trigger[]; level: string | null }[];
   expanded: Record<string, boolean>;
   setExpanded: (fn: (e: Record<string, boolean>) => Record<string, boolean>) => void;
   getStatus: (id: string) => Status;
@@ -679,15 +562,19 @@ function ChecklistTab({
   setNote: (id: string, text: string) => void;
   notes: Record<string, string>;
 }) {
-  let visible = state.activePhase ? applicableItems.filter((x) => x.item.phase === state.activePhase) : applicableItems;
+  const phase = state.activePhase;
+  const filter = state.activeFilter;
+  const search = state.searchTerm;
 
-  if (state.activeFilter === "not_started") visible = visible.filter((x) => getStatus(x.item.id) === "not_started");
-  else if (state.activeFilter === "in_progress") visible = visible.filter((x) => getStatus(x.item.id) === "in_progress");
-  else if (state.activeFilter === "done") visible = visible.filter((x) => getStatus(x.item.id) === "done");
-  else if (state.activeFilter === "conditional") visible = visible.filter((x) => x.level === "Conditional");
+  let visible = phase ? applicableItems.filter((x) => x.item.phase === phase) : applicableItems;
 
-  if (state.searchTerm) {
-    const term = state.searchTerm.toLowerCase();
+  if (filter === "not_started") visible = visible.filter((x) => getStatus(x.item.id) === "not_started");
+  else if (filter === "in_progress") visible = visible.filter((x) => getStatus(x.item.id) === "in_progress");
+  else if (filter === "done") visible = visible.filter((x) => getStatus(x.item.id) === "done");
+  else if (filter === "conditional") visible = visible.filter((x) => x.level === "Conditional");
+
+  if (search) {
+    const term = search.toLowerCase();
     visible = visible.filter((x) => (x.item.requirement + " " + x.item.meaning + " " + x.item.id).toLowerCase().includes(term));
   }
 
@@ -701,22 +588,22 @@ function ChecklistTab({
     <div className={`${styles.checklistShell} ${styles.active}`}>
       <nav className={styles["phase-rail"]}>
         <button
-          className={`${styles["phase-link"]} ${state.activePhase === null ? styles.active : ""}`}
+          className={`${styles["phase-link"]} ${phase === null ? styles.active : ""}`}
           onClick={() => patch({ activePhase: null })}
         >
           All phases
         </button>
-        {phases.map((phase) => {
-          const inPhase = applicableItems.filter((x) => x.item.phase === phase);
+        {phases.map((p) => {
+          const inPhase = applicableItems.filter((x) => x.item.phase === p);
           if (inPhase.length === 0) return null;
           const doneCount = inPhase.filter((x) => getStatus(x.item.id) === "done").length;
           return (
             <button
-              key={phase}
-              className={`${styles["phase-link"]} ${state.activePhase === phase ? styles.active : ""}`}
-              onClick={() => patch({ activePhase: phase })}
+              key={p}
+              className={`${styles["phase-link"]} ${phase === p ? styles.active : ""}`}
+              onClick={() => patch({ activePhase: p })}
             >
-              {phase.replace(/^\d+\.\s*/, "")}
+              {p.replace(/^\d+\.\s*/, "")}
               <span className={styles["pl-count"]}>
                 {doneCount}/{inPhase.length}
               </span>
@@ -731,7 +618,7 @@ function ChecklistTab({
             type="search"
             className={styles["search-box"]}
             placeholder="Search requirements…"
-            value={state.searchTerm}
+            value={search}
             onChange={(e) => patch({ searchTerm: e.target.value })}
           />
           <div className={styles["filter-group"]}>
@@ -744,7 +631,7 @@ function ChecklistTab({
             ] as [Filter, string][]).map(([key, label]) => (
               <button
                 key={key}
-                className={`${styles["filter-chip"]} ${state.activeFilter === key ? styles.active : ""}`}
+                className={`${styles["filter-chip"]} ${filter === key ? styles.active : ""}`}
                 onClick={() => patch({ activeFilter: key })}
               >
                 {label}
@@ -756,14 +643,14 @@ function ChecklistTab({
         {visible.length === 0 ? (
           <div className={styles["empty-state"]}>No requirements match this filter.</div>
         ) : (
-          phases.map((phase) => {
-            const group = byPhase[phase];
+          phases.map((p) => {
+            const group = byPhase[p];
             if (!group) return null;
             const doneCount = group.filter((x) => getStatus(x.item.id) === "done").length;
             const pct = Math.round((100 * doneCount) / group.length);
             return (
-              <div key={phase}>
-                <div className={styles["phase-heading"]}>{phase}</div>
+              <div key={p}>
+                <div className={styles["phase-heading"]}>{p}</div>
                 <div className={styles["phase-progress-bar"]}>
                   <div className={styles["phase-progress-fill"]} style={{ width: pct + "%" }} />
                 </div>
@@ -797,7 +684,7 @@ function ReqCard({
   note,
   setNote,
 }: {
-  x: { item: NpsItem; triggers: Trigger[]; level: string | null };
+  x: { item: DigitalCreditItem; triggers: Trigger[]; level: string | null };
   isExpanded: boolean;
   onToggle: () => void;
   status: Status;
@@ -825,7 +712,7 @@ function ReqCard({
             {x.triggers.map((t, i) => (
               <span
                 key={i}
-                className={`${styles.badge} ${t.value === "Yes" ? styles["badge-yes"] : t.value === "Conditional" ? styles["badge-conditional"] : styles["badge-info"]}`}
+                className={`${styles.badge} ${t.value === "Yes" ? styles["badge-yes"] : styles["badge-conditional"]}`}
               >
                 {t.label}
                 {t.value !== "Yes" ? ` · ${t.value}` : ""}
@@ -909,8 +796,12 @@ function ReqCard({
   );
 }
 
-function FeesTab({ state, fees }: { state: PathwayState; fees: NpsFeeTier[] }) {
-  if (!state.routes.pso && !state.routes.psp && !state.routes.instrument) {
+function FeesTab({ state, fees }: { state: PathwayState; fees: DigitalCreditFee[] }) {
+  const selectedRoutes: string[] = [];
+  if (state.routes.money_lender) selectedRoutes.push("money_lender");
+  if (state.routes.ndt_mfi) selectedRoutes.push("ndt_mfi");
+
+  if (selectedRoutes.length === 0) {
     return (
       <div className={styles["fees-wrap"]}>
         <div className={styles["empty-state"]}>No route selected yet.</div>
@@ -918,83 +809,36 @@ function FeesTab({ state, fees }: { state: PathwayState; fees: NpsFeeTier[] }) {
     );
   }
 
-  let relevantRows: NpsFeeTier[] = [];
-  if (state.routes.pso) relevantRows = relevantRows.concat(fees.filter((r) => r.category === "PSO"));
-  if (state.routes.psp) {
-    relevantRows = relevantRows.concat(
-      fees.filter((r) => (state.psp_subtype === "emi" ? r.class === "Electronic-money issuer" : r.class === "Any other PSP"))
-    );
-  }
-  if (state.routes.instrument) relevantRows = relevantRows.concat(fees.filter((r) => r.category === "Payment instrument issuer"));
-
-  function isHighlighted(row: NpsFeeTier): boolean {
-    if (row.category === "PSO") {
-      const classMap: Record<string, string> = {
-        funds_transfer: "Funds transfer system",
-        clearing: "Clearing system or switch",
-        settlement: "Settlement system",
-        third_party: "Third-party system",
-      };
-      if (row.class !== classMap[state.pso_class]) return false;
-      if (state.pso_class === "funds_transfer") {
-        const bandWord: Record<string, string> = { large: "Large", medium: "Medium", small: "Small" };
-        const word = bandWord[state.pso_band];
-        return !!word && row.threshold.indexOf(word) === 0;
-      }
-      return true;
-    }
-    if (row.class === "Electronic-money issuer") {
-      const bandMap: Record<string, string> = {
-        large: "Large",
-        medium1: "Medium 1",
-        medium2: "Medium 2",
-        medium3: "Medium 3",
-        small1: "Small 1",
-        small2: "Small 2",
-      };
-      return !!state.psp_emi_band && row.threshold.indexOf(bandMap[state.psp_emi_band]) === 0;
-    }
-    if (row.class === "Any other PSP") return true;
-    if (row.category === "Payment instrument issuer") return true;
-    return false;
-  }
-
-  let totalApp = 0;
-  let totalLicensing = 0;
+  let totalApplication = 0;
   let totalAnnual = 0;
-  const capitalCandidates: number[] = [];
-  (["PSO", "PSP", "Payment instrument issuer"] as const).forEach((catGroup) => {
-    const rowsForCat = relevantRows.filter((r) => r.category === catGroup);
-    if (rowsForCat.length === 0) return;
-    const hl = rowsForCat.filter(isHighlighted);
-    const pick = hl.length ? hl[0] : rowsForCat[0];
-    totalApp += pick.application_fee;
-    totalLicensing += pick.licensing_fee;
-    totalAnnual += pick.annual_fee;
-    capitalCandidates.push(pick.min_capital);
+  selectedRoutes.forEach((r) => {
+    const label = ROUTE_LABEL[r];
+    const appRow = fees.find((f) => f.route === label && f.event === "Initial application");
+    const annRow = fees.find((f) => f.route === label && f.event === "Annual licence fee");
+    if (appRow) totalApplication += appRow.amount;
+    if (annRow) totalAnnual += annRow.amount;
   });
-  const maxCapital = capitalCandidates.length ? Math.max(...capitalCandidates) : 0;
 
   return (
     <div className={styles["fees-wrap"]}>
       <div className={styles["fees-summary"]}>
-        <FeeStat label="Application fee (est.)" value={fmtUGX(totalApp)} note="Payable per category/class, at submission" />
-        <FeeStat label="Licensing fee (est.)" value={fmtUGX(totalLicensing)} note="Payable once BoU approves" />
-        <FeeStat label="Annual fee (est.)" value={fmtUGX(totalAnnual)} note="Due by 31 January each year" />
-        <FeeStat label="Minimum capital" value={fmtUGX(maxCapital)} note="Highest threshold across your selected categories governs" />
+        <FeeStat label="Application fee (est.)" value={fmtUGX(totalApplication)} note="Payable per route, at submission" />
+        <FeeStat label="Annual licence fee (est.)" value={fmtUGX(totalAnnual)} note="Payable on issue and each renewal" />
+        <FeeStat label="Additional place / branch" value="UGX 300,000" note="Per additional place of business, each route" />
+        <FeeStat
+          label="Routes selected"
+          value={selectedRoutes.map((r) => ROUTE_LABEL[r]).join(" + ")}
+          note="Fees below are itemised per route"
+        />
       </div>
       <p className={styles["combined-note"]}>
-        Combined applications: fees are payable for each licence category or class included, while the minimum
-        capital requirement is the highest threshold among the combined licences. Estimates above assume one class
-        per category — adjust in &quot;Edit pathway&quot; if you are applying for more than one class within the
-        same category.
+        If you are applying under both routes for two separate lending entities, budget the application and annual
+        fee for each route separately — they are not combined into a single fee the way NPS categories can be.
       </p>
 
-      {state.routes.pso && <FeeTable title="Payment system operator — fees by class" rows={fees.filter((r) => r.category === "PSO")} isHighlighted={isHighlighted} />}
-      {state.routes.psp && <FeeTable title="Payment service provider — fees by class" rows={fees.filter((r) => r.category === "PSP")} isHighlighted={isHighlighted} />}
-      {state.routes.instrument && (
-        <FeeTable title="Payment-instrument issuer — fees" rows={fees.filter((r) => r.category === "Payment instrument issuer")} isHighlighted={isHighlighted} />
-      )}
+      {selectedRoutes.map((r) => (
+        <FeeTable key={r} title={`${ROUTE_LABEL[r]} — fee schedule`} rows={fees.filter((f) => f.route === ROUTE_LABEL[r])} />
+      ))}
     </div>
   );
 }
@@ -1009,30 +853,24 @@ function FeeStat({ label, value, note }: { label: string; value: string; note: s
   );
 }
 
-function FeeTable({ title, rows, isHighlighted }: { title: string; rows: NpsFeeTier[]; isHighlighted: (r: NpsFeeTier) => boolean }) {
+function FeeTable({ title, rows }: { title: string; rows: DigitalCreditFee[] }) {
   return (
     <div>
       <h3 className={styles["fee-table-title"]}>{title}</h3>
       <table className={styles["fee-table"]}>
         <thead>
           <tr>
-            <th>Class</th>
-            <th>Threshold / description</th>
-            <th>Application fee</th>
-            <th>Licensing fee</th>
-            <th>Annual fee</th>
-            <th>Minimum capital</th>
+            <th>Fee or event</th>
+            <th>Amount</th>
+            <th>Note</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id} className={isHighlighted(r) ? styles.highlighted : ""}>
-              <td>{r.class}</td>
-              <td>{r.threshold}</td>
-              <td>{fmtUGX(r.application_fee)}</td>
-              <td>{fmtUGX(r.licensing_fee)}</td>
-              <td>{fmtUGX(r.annual_fee)}</td>
-              <td>{fmtUGX(r.min_capital)}</td>
+            <tr key={r.id}>
+              <td>{r.event}</td>
+              <td>{fmtUGX(r.amount)}</td>
+              <td>{r.note || "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -1041,7 +879,7 @@ function FeeTable({ title, rows, isHighlighted }: { title: string; rows: NpsFeeT
   );
 }
 
-function FlagsTab({ applicableItems }: { applicableItems: { item: NpsItem; triggers: Trigger[]; level: string | null }[] }) {
+function FlagsTab({ applicableItems }: { applicableItems: { item: DigitalCreditItem; triggers: Trigger[]; level: string | null }[] }) {
   const flagged = applicableItems.filter((x) => x.item.condition);
   return (
     <div className={styles["flags-wrap"]}>
@@ -1050,8 +888,8 @@ function FlagsTab({ applicableItems }: { applicableItems: { item: NpsItem; trigg
       ) : (
         <>
           <p className={styles["flags-intro"]}>
-            These items carry a caveat in the source map — either the law and BoU guidance diverge, or the
-            requirement depends on facts specific to your business. Confirm each with BoU or counsel before treating
+            These items carry a caveat in the source map — either the law and UMRA guidance diverge, or the
+            requirement depends on facts specific to your business. Confirm each with UMRA or counsel before treating
             it as settled.
           </p>
           {flagged.map((x) => (
