@@ -94,14 +94,28 @@ function fmtUGX(n: number) {
 
 type Trigger = { label: string; value: string };
 
+// Optional copy overrides sourced from the new `pathway_regulators` table
+// (falls back to the values already hardcoded below when a field is null/
+// absent, so nothing breaks if it hasn't been filled in yet).
+export type DigitalCreditPathwayCopy = {
+  heroStats?: { value: string; label: string }[] | null;
+  wizardTitle?: string | null;
+  wizardNote?: string | null;
+  routesHeading?: string | null;
+  routesNote?: string | null;
+  feesNote?: string | null;
+};
+
 export default function DigitalCreditPathwayClient({
   items,
   fees,
   isLoggedIn,
+  copy,
 }: {
   items: DigitalCreditItem[];
   fees: DigitalCreditFee[];
   isLoggedIn?: boolean;
+  copy?: DigitalCreditPathwayCopy;
 }) {
   const [screen, setScreen] = useState<Screen>("landing");
   const [state, setState] = useState<PathwayState>(defaultState);
@@ -220,6 +234,7 @@ export default function DigitalCreditPathwayClient({
           isLoggedIn={!!isLoggedIn}
           onStart={() => setScreen("wizard")}
           onResume={() => setScreen("app")}
+          copy={copy}
         />
       )}
 
@@ -233,6 +248,7 @@ export default function DigitalCreditPathwayClient({
             patch({ pathwaySet: true });
             setScreen("app");
           }}
+          copy={copy}
         />
       )}
 
@@ -255,11 +271,18 @@ export default function DigitalCreditPathwayClient({
           routeSummaryText={routeSummaryText()}
           onEditPathway={() => setScreen("wizard")}
           onRestart={restart}
+          copy={copy}
         />
       )}
     </div>
   );
 }
+
+const DEFAULT_HERO_STATS: { value: string; label: string }[] = [
+  { value: "83", label: "requirement items mapped" },
+  { value: "2", label: "licence routes covered" },
+  { value: "10", label: "phases, route to launch" },
+];
 
 // ---------------------------------------------------------------------------
 // Landing
@@ -270,12 +293,15 @@ function LandingScreen({
   isLoggedIn,
   onStart,
   onResume,
+  copy,
 }: {
   canResume: boolean;
   isLoggedIn: boolean;
   onStart: () => void;
   onResume: () => void;
+  copy?: DigitalCreditPathwayCopy;
 }) {
+  const heroStats = copy?.heroStats && copy.heroStats.length ? copy.heroStats : DEFAULT_HERO_STATS;
   return (
     <div>
       <header className={styles.masthead}>
@@ -317,24 +343,20 @@ function LandingScreen({
             )}
           </div>
           <div className={styles["hero-meta"]}>
-            <div>
-              <strong>83</strong>requirement items mapped
-            </div>
-            <div>
-              <strong>2</strong>licence routes covered
-            </div>
-            <div>
-              <strong>10</strong>phases, route to launch
-            </div>
+            {heroStats.map((s, i) => (
+              <div key={i}>
+                <strong>{s.value}</strong>
+                {s.label}
+              </div>
+            ))}
           </div>
         </section>
 
         <section>
-          <h2 className={styles["landing-section-title"]}>Two routes into the framework</h2>
+          <h2 className={styles["landing-section-title"]}>{copy?.routesHeading || "Two routes into the framework"}</h2>
           <p className={styles["landing-section-note"]}>
-            Every digital lender falls into one of these. The assessment asks which applies to your business, then
-            builds your pack from there — and flags the items where facts specific to your model change what&apos;s
-            required.
+            {copy?.routesNote ||
+              "Every digital lender falls into one of these. The assessment asks which applies to your business, then builds your pack from there — and flags the items where facts specific to your model change what's required."}
           </p>
           <div className={styles["route-cards"]}>
             <div className={styles["route-card"]}>
@@ -376,12 +398,14 @@ function WizardScreen({
   canBuild,
   onBack,
   onBuild,
+  copy,
 }: {
   state: PathwayState;
   patch: (n: Partial<PathwayState>) => void;
   canBuild: boolean;
   onBack: () => void;
   onBuild: () => void;
+  copy?: DigitalCreditPathwayCopy;
 }) {
   return (
     <div>
@@ -401,11 +425,10 @@ function WizardScreen({
       </header>
 
       <div className={styles["wizard-wrap"]}>
-        <h2 className={styles["wizard-title"]}>Which route are you applying under?</h2>
+        <h2 className={styles["wizard-title"]}>{copy?.wizardTitle || "Which route are you applying under?"}</h2>
         <p className={styles["wizard-note"]}>
-          Select the route that matches your applicant entity and business model. If you&apos;re genuinely unsure
-          which fits — for example a technology-only platform where another licensed entity is the lender of record
-          — select both to compare, and confirm the classification with UMRA before you proceed.
+          {copy?.wizardNote ||
+            "Select the route that matches your applicant entity and business model. If you're genuinely unsure which fits — for example a technology-only platform where another licensed entity is the lender of record — select both to compare, and confirm the classification with UMRA before you proceed."}
         </p>
 
         <div className={styles["wizard-options"]}>
@@ -467,6 +490,7 @@ function AppScreen({
   routeSummaryText,
   onEditPathway,
   onRestart,
+  copy,
 }: {
   state: PathwayState;
   patch: (n: Partial<PathwayState>) => void;
@@ -485,6 +509,7 @@ function AppScreen({
   routeSummaryText: string;
   onEditPathway: () => void;
   onRestart: () => void;
+  copy?: DigitalCreditPathwayCopy;
 }) {
   return (
     <div>
@@ -533,7 +558,7 @@ function AppScreen({
           notes={state.notes}
         />
       )}
-      {activeTab === "fees" && <FeesTab state={state} fees={fees} />}
+      {activeTab === "fees" && <FeesTab state={state} fees={fees} copy={copy} />}
       {activeTab === "notes" && <FlagsTab applicableItems={applicableItems} />}
     </div>
   );
@@ -796,7 +821,15 @@ function ReqCard({
   );
 }
 
-function FeesTab({ state, fees }: { state: PathwayState; fees: DigitalCreditFee[] }) {
+function FeesTab({
+  state,
+  fees,
+  copy,
+}: {
+  state: PathwayState;
+  fees: DigitalCreditFee[];
+  copy?: DigitalCreditPathwayCopy;
+}) {
   const selectedRoutes: string[] = [];
   if (state.routes.money_lender) selectedRoutes.push("money_lender");
   if (state.routes.ndt_mfi) selectedRoutes.push("ndt_mfi");
@@ -832,8 +865,8 @@ function FeesTab({ state, fees }: { state: PathwayState; fees: DigitalCreditFee[
         />
       </div>
       <p className={styles["combined-note"]}>
-        If you are applying under both routes for two separate lending entities, budget the application and annual
-        fee for each route separately — they are not combined into a single fee the way NPS categories can be.
+        {copy?.feesNote ||
+          "If you are applying under both routes for two separate lending entities, budget the application and annual fee for each route separately — they are not combined into a single fee the way NPS categories can be."}
       </p>
 
       {selectedRoutes.map((r) => (

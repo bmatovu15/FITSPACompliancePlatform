@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import RequirementsPathwayNav from "@/components/requirements-pathway-nav";
 
 export const metadata: Metadata = {
   title: "FITSPA Compliance Platform",
@@ -16,6 +17,10 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { data: pathwayRegulators } = await supabase
+    .from("pathway_regulators")
+    .select("key,title,status")
+    .order("sort_order");
 
   return (
     <html lang="en" className="h-full">
@@ -41,8 +46,7 @@ export default async function RootLayout({
               <nav className="flex items-center gap-1 text-sm">
                 <Link className="nav-link" href="/lookup">Member Lookup</Link>
                 <Link className="nav-link" href="/wizard">Requirements Wizard</Link>
-                <Link className="nav-link" href="/nps-pathway">NPS Licence Pathway</Link>
-                <Link className="nav-link" href="/digital-credit-pathway">Digital Credit Pathway</Link>
+                <RequirementsPathwayNav regulators={pathwayRegulators ?? []} />
                 <Link className="nav-link" href="/assistant">AI Assistant</Link>
                 <span className="mx-2 hidden h-6 w-px sm:block" style={{ background: "var(--color-border)" }} />
                 {user ? (

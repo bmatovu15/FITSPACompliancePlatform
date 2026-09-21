@@ -6,29 +6,39 @@ import { createClient } from "@/lib/supabase/client";
 import { APPLIES_TO_VALUES, type ComplianceEvent } from "@/lib/types";
 import type { RegulatorOption } from "./compliance-calendar-admin-client";
 
-const emptyEvent = {
-  obligation_external_id: "",
-  regulator_id: "",
-  catalog_key: "payments_compliance_assistant",
-  trigger_name: "",
-  applies_to: "ALL",
-  legal_clock: "",
-  response: "",
-  owner_role: "",
-  escalation: "",
-  evidence: "",
-  source_citation: "",
-  source_link: "",
-  notes: "",
-};
+function makeEmptyEvent(catalogKey: string) {
+  return {
+    obligation_external_id: "",
+    regulator_id: "",
+    catalog_key: catalogKey,
+    trigger_name: "",
+    applies_to: "ALL",
+    legal_clock: "",
+    response: "",
+    owner_role: "",
+    escalation: "",
+    evidence: "",
+    source_citation: "",
+    source_link: "",
+    notes: "",
+  };
+}
 
-export default function EventsTab({ initial, regulators }: { initial: ComplianceEvent[]; regulators: RegulatorOption[] }) {
+export default function EventsTab({
+  initial,
+  regulators,
+  catalogKey,
+}: {
+  initial: ComplianceEvent[];
+  regulators: RegulatorOption[];
+  catalogKey: string;
+}) {
   const supabase = createClient();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState<any>(emptyEvent);
+  const [form, setForm] = useState<any>(() => makeEmptyEvent(catalogKey));
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -44,7 +54,7 @@ export default function EventsTab({ initial, regulators }: { initial: Compliance
   async function addEvent() {
     if (!form.trigger_name) return;
     await supabase.from("compliance_events").insert({ ...form, regulator_id: form.regulator_id || null, obligation_external_id: form.obligation_external_id || null });
-    setForm(emptyEvent);
+    setForm(makeEmptyEvent(catalogKey));
     setAdding(false);
     router.refresh();
   }

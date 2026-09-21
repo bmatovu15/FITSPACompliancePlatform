@@ -6,29 +6,39 @@ import { createClient } from "@/lib/supabase/client";
 import { APPLIES_TO_VALUES, type ComplianceControl } from "@/lib/types";
 import type { RegulatorOption } from "./compliance-calendar-admin-client";
 
-const emptyControl = {
-  regulator_id: "",
-  catalog_key: "payments_compliance_assistant",
-  domain: "",
-  objective: "",
-  operation: "",
-  applies_to: "ALL",
-  cadence: "",
-  owner_role: "",
-  reviewer_role: "",
-  evidence: "",
-  failure_response: "",
-  legal_basis: "",
-  source_link: "",
-};
+function makeEmptyControl(catalogKey: string) {
+  return {
+    regulator_id: "",
+    catalog_key: catalogKey,
+    domain: "",
+    objective: "",
+    operation: "",
+    applies_to: "ALL",
+    cadence: "",
+    owner_role: "",
+    reviewer_role: "",
+    evidence: "",
+    failure_response: "",
+    legal_basis: "",
+    source_link: "",
+  };
+}
 
-export default function ControlsTab({ initial, regulators }: { initial: ComplianceControl[]; regulators: RegulatorOption[] }) {
+export default function ControlsTab({
+  initial,
+  regulators,
+  catalogKey,
+}: {
+  initial: ComplianceControl[];
+  regulators: RegulatorOption[];
+  catalogKey: string;
+}) {
   const supabase = createClient();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState<any>(emptyControl);
+  const [form, setForm] = useState<any>(() => makeEmptyControl(catalogKey));
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -44,7 +54,7 @@ export default function ControlsTab({ initial, regulators }: { initial: Complian
   async function addControl() {
     if (!form.objective) return;
     await supabase.from("compliance_controls").insert({ ...form, regulator_id: form.regulator_id || null });
-    setForm(emptyControl);
+    setForm(makeEmptyControl(catalogKey));
     setAdding(false);
     router.refresh();
   }

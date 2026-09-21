@@ -108,14 +108,28 @@ const PSO_CLASS_LABEL: Record<string, string> = {
 
 type Trigger = { label: string; value: string };
 
+// Optional copy overrides sourced from the new `pathway_regulators` table
+// (falls back to the values already hardcoded below when a field is null/
+// absent, so nothing breaks if it hasn't been filled in yet).
+export type NpsPathwayCopy = {
+  heroStats?: { value: string; label: string }[] | null;
+  wizardTitle?: string | null;
+  wizardNote?: string | null;
+  routesHeading?: string | null;
+  routesNote?: string | null;
+  feesNote?: string | null;
+};
+
 export default function NpsPathwayClient({
   items,
   fees,
   isLoggedIn,
+  copy,
 }: {
   items: NpsItem[];
   fees: NpsFeeTier[];
   isLoggedIn?: boolean;
+  copy?: NpsPathwayCopy;
 }) {
   const [screen, setScreen] = useState<Screen>("landing");
   const [state, setState] = useState<PathwayState>(defaultState);
@@ -249,6 +263,7 @@ export default function NpsPathwayClient({
           isLoggedIn={!!isLoggedIn}
           onStart={() => setScreen("wizard")}
           onResume={() => setScreen("app")}
+          copy={copy}
         />
       )}
 
@@ -262,6 +277,7 @@ export default function NpsPathwayClient({
             patch({ pathwaySet: true });
             setScreen("app");
           }}
+          copy={copy}
         />
       )}
 
@@ -284,11 +300,18 @@ export default function NpsPathwayClient({
           routeSummaryText={routeSummaryText()}
           onEditPathway={() => setScreen("wizard")}
           onRestart={restart}
+          copy={copy}
         />
       )}
     </div>
   );
 }
+
+const DEFAULT_HERO_STATS: { value: string; label: string }[] = [
+  { value: "73", label: "requirement items mapped" },
+  { value: "3", label: "licence routes covered" },
+  { value: "9", label: "phases, route to launch" },
+];
 
 // ---------------------------------------------------------------------------
 // Landing
@@ -299,12 +322,15 @@ function LandingScreen({
   isLoggedIn,
   onStart,
   onResume,
+  copy,
 }: {
   canResume: boolean;
   isLoggedIn: boolean;
   onStart: () => void;
   onResume: () => void;
+  copy?: NpsPathwayCopy;
 }) {
+  const heroStats = copy?.heroStats && copy.heroStats.length ? copy.heroStats : DEFAULT_HERO_STATS;
   return (
     <div>
       <header className={styles.masthead}>
@@ -346,23 +372,20 @@ function LandingScreen({
             )}
           </div>
           <div className={styles["hero-meta"]}>
-            <div>
-              <strong>73</strong>requirement items mapped
-            </div>
-            <div>
-              <strong>3</strong>licence routes covered
-            </div>
-            <div>
-              <strong>9</strong>phases, route to launch
-            </div>
+            {heroStats.map((s, i) => (
+              <div key={i}>
+                <strong>{s.value}</strong>
+                {s.label}
+              </div>
+            ))}
           </div>
         </section>
 
         <section>
-          <h2 className={styles["landing-section-title"]}>Three routes into the framework</h2>
+          <h2 className={styles["landing-section-title"]}>{copy?.routesHeading || "Three routes into the framework"}</h2>
           <p className={styles["landing-section-note"]}>
-            Every applicant falls into one or more of these. The assessment asks which apply to your business, then
-            builds your pack from there.
+            {copy?.routesNote ||
+              "Every applicant falls into one or more of these. The assessment asks which apply to your business, then builds your pack from there."}
           </p>
           <div className={styles["route-cards"]}>
             <div className={styles["route-card"]}>
@@ -411,12 +434,14 @@ function WizardScreen({
   canBuild,
   onBack,
   onBuild,
+  copy,
 }: {
   state: PathwayState;
   patch: (n: Partial<PathwayState>) => void;
   canBuild: boolean;
   onBack: () => void;
   onBuild: () => void;
+  copy?: NpsPathwayCopy;
 }) {
   return (
     <div>
@@ -436,10 +461,10 @@ function WizardScreen({
       </header>
 
       <div className={styles["wizard-wrap"]}>
-        <h2 className={styles["wizard-title"]}>What is your business applying to do?</h2>
+        <h2 className={styles["wizard-title"]}>{copy?.wizardTitle || "What is your business applying to do?"}</h2>
         <p className={styles["wizard-note"]}>
-          Select every activity that applies. Many applicants need more than one — for example, an electronic-money
-          issuer that also runs its own switch needs both routes, and pays fees for each.
+          {copy?.wizardNote ||
+            "Select every activity that applies. Many applicants need more than one — for example, an electronic-money issuer that also runs its own switch needs both routes, and pays fees for each."}
         </p>
 
         <div className={styles["wizard-options"]}>
@@ -584,6 +609,7 @@ function AppScreen({
   routeSummaryText,
   onEditPathway,
   onRestart,
+  copy,
 }: {
   state: PathwayState;
   patch: (n: Partial<PathwayState>) => void;
@@ -602,6 +628,7 @@ function AppScreen({
   routeSummaryText: string;
   onEditPathway: () => void;
   onRestart: () => void;
+  copy?: NpsPathwayCopy;
 }) {
   return (
     <div>
@@ -650,7 +677,7 @@ function AppScreen({
           notes={state.notes}
         />
       )}
-      {activeTab === "fees" && <FeesTab state={state} fees={fees} />}
+      {activeTab === "fees" && <FeesTab state={state} fees={fees} copy={copy} />}
       {activeTab === "notes" && <FlagsTab applicableItems={applicableItems} />}
     </div>
   );
@@ -909,7 +936,7 @@ function ReqCard({
   );
 }
 
-function FeesTab({ state, fees }: { state: PathwayState; fees: NpsFeeTier[] }) {
+function FeesTab({ state, fees, copy }: { state: PathwayState; fees: NpsFeeTier[]; copy?: NpsPathwayCopy }) {
   if (!state.routes.pso && !state.routes.psp && !state.routes.instrument) {
     return (
       <div className={styles["fees-wrap"]}>
@@ -984,10 +1011,8 @@ function FeesTab({ state, fees }: { state: PathwayState; fees: NpsFeeTier[] }) {
         <FeeStat label="Minimum capital" value={fmtUGX(maxCapital)} note="Highest threshold across your selected categories governs" />
       </div>
       <p className={styles["combined-note"]}>
-        Combined applications: fees are payable for each licence category or class included, while the minimum
-        capital requirement is the highest threshold among the combined licences. Estimates above assume one class
-        per category — adjust in &quot;Edit pathway&quot; if you are applying for more than one class within the
-        same category.
+        {copy?.feesNote ||
+          'Combined applications: fees are payable for each licence category or class included, while the minimum capital requirement is the highest threshold among the combined licences. Estimates above assume one class per category — adjust in "Edit pathway" if you are applying for more than one class within the same category.'}
       </p>
 
       {state.routes.pso && <FeeTable title="Payment system operator — fees by class" rows={fees.filter((r) => r.category === "PSO")} isHighlighted={isHighlighted} />}

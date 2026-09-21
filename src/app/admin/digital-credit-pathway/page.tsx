@@ -4,8 +4,8 @@ import DigitalCreditPathwayAdminClient from "./digital-credit-pathway-admin-clie
 export default async function DigitalCreditPathwayAdminPage() {
   const supabase = await createClient();
   const [{ data: requirements }, { data: fees }] = await Promise.all([
-    supabase.from("digital_credit_requirements").select("*").order("seq"),
-    supabase.from("digital_credit_fees").select("*").order("sort_order"),
+    supabase.from("pathway_requirements").select("*").eq("pathway_key", "digital_credit").order("seq"),
+    supabase.from("pathway_fees").select("*").eq("pathway_key", "digital_credit").order("sort_order"),
   ]);
   return (
     <div>

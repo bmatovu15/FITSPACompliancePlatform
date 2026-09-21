@@ -126,6 +126,16 @@
 .tab-wrap { max-width: 1080px; margin: 0 auto; padding: 24px 20px 70px; }
 .tab-wrap-wide { max-width: 1240px; }
 
+/* ---------- Compliance score banner ---------- */
+.score-banner {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  background: var(--card-white); border-bottom: 1px solid var(--rule);
+  padding: 12px 24px; font-size: 13px;
+}
+.score-banner-title { font-family: var(--serif); font-weight: 600; color: var(--ink); }
+.score-banner-value { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--brass-deep); }
+.score-banner-note { color: var(--slate); }
+
 /* ---------- Dashboard ---------- */
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
 .stat-card { background: var(--card-white); border: 1px solid var(--rule); border-radius: 3px; padding: 18px 20px; }

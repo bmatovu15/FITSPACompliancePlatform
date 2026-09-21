@@ -4,8 +4,8 @@ import NpsPathwayAdminClient from "./nps-pathway-admin-client";
 export default async function NpsPathwayAdminPage() {
   const supabase = await createClient();
   const [{ data: requirements }, { data: feeTiers }] = await Promise.all([
-    supabase.from("nps_requirements").select("*").order("seq"),
-    supabase.from("nps_fee_tiers").select("*").order("sort_order"),
+    supabase.from("pathway_requirements").select("*").eq("pathway_key", "nps").order("seq"),
+    supabase.from("pathway_fees").select("*").eq("pathway_key", "nps").order("sort_order"),
   ]);
   return (
     <div>

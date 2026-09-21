@@ -68,6 +68,14 @@ export type Obligation = {
   applies_cards: boolean;
   applies_sfi: boolean;
   applies_participant: boolean;
+  // Digital Lending Compliance Calendar (digital_lending_compliance_assistant)
+  // applicability flags — mirror the payments applies_* columns above.
+  applies_money_lender: boolean;
+  applies_ndt_mfi: boolean;
+  applies_personal_data: boolean;
+  applies_collateral: boolean;
+  applies_recovery_agents: boolean;
+  applies_fitspa_subscriber: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -236,6 +244,14 @@ export type MemberComplianceProfile = {
   agent: string | null;
   sfi: string | null;
   participant: string | null;
+  // Digital Lending Compliance Calendar profile fields (same table, scoped by
+  // catalog_key — primary key is (member_id, catalog_key)).
+  money_lender: string | null;
+  ndt_mfi: string | null;
+  personal_data: string | null;
+  collateral: string | null;
+  recovery_agents: string | null;
+  fitspa_subscriber: string | null;
   profile_set: boolean;
   updated_at: string;
 };
@@ -340,3 +356,171 @@ export const DOC_KINDS = [
 ] as const;
 
 export const CONTACT_ROLES = ["Compliance", "CEO", "Legal", "IT"] as const;
+
+// ---------------------------------------------------------------------------
+// Compliance Calendar — catalogs (multi-regulator support)
+// ---------------------------------------------------------------------------
+
+export type ComplianceCatalog = {
+  catalog_key: string;
+  regulator_id: string | null;
+  title: string;
+  seal_text: string | null;
+  subtitle: string | null;
+  sort_order: number;
+};
+
+export type ComplianceCatalogFee = {
+  id: number;
+  catalog_key: string;
+  route_or_layer: string | null;
+  fee_or_requirement: string;
+  amount: string | null;
+  when_due: string | null;
+  treatment: string | null;
+  source: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SourceRegister = {
+  id: string;
+  scope_type: string;
+  scope_key: string;
+  sort_order: number;
+  file: string | null;
+  document: string | null;
+  source_level: string | null;
+  use_in_map: string | null;
+  relied_on: boolean | null;
+  drive_link: string | null;
+};
+
+// ---------------------------------------------------------------------------
+// Requirements Pathway -- generic, admin-extensible schema for "licence
+// readiness" wizards (one-time, no-login checklist + fee estimate tools).
+// This is the canonical source going forward; `pathway_regulators` carries
+// one row per regulator/pathway (e.g. 'nps', 'digital_credit', and any
+// future regulator added purely through admin data entry), with
+// `pathway_requirements`/`pathway_fees` scoped to it by `pathway_key`. The
+// old bespoke tables (nps_requirements, nps_fee_tiers,
+// digital_credit_requirements, digital_credit_fees) are left in the DB,
+// unused, for reference/diffing.
+// ---------------------------------------------------------------------------
+
+export type PathwayHeroStat = {
+  value: string;
+  label: string;
+};
+
+export type PathwayRouteOption = {
+  value: string;
+  label: string;
+  // Set on the option that determines the effective applicability column
+  // for its route (e.g. PSP's "Electronic-money issuer" option sets
+  // column: "PSP_EMI"). Options that only narrow a fee tier (a volume/value
+  // band) omit this and set bandMatch instead.
+  column?: string;
+  // Set on a class-choosing option to select which `pathway_fees` rows
+  // (tiered shape) apply, matched against `pathway_fees.class`.
+  feeClass?: string;
+  // Set on a band-choosing option (shown via a nested `show_if`) to narrow
+  // which `pathway_fees` row within a class applies, matched as a prefix
+  // against `pathway_fees.threshold`.
+  bandMatch?: string;
+};
+
+export type PathwaySubquestion = {
+  key: string;
+  label: string;
+  // Only rendered/considered once the subquestion with key `show_if.key`
+  // has an answer equal to `show_if.equals` (nested conditional questions).
+  show_if?: { key: string; equals: string };
+  options: PathwayRouteOption[];
+};
+
+export type PathwayRoute = {
+  key: string;
+  tag?: string;
+  label: string;
+  description?: string;
+  // Present when selecting the route alone (no subquestion override) sets
+  // applicability for this column.
+  column?: string;
+  // Tiered fee_shape: which `pathway_fees.category` this route's fees fall
+  // under.
+  feeCategory?: string;
+  // Flat fee_shape: which `pathway_fees.route` label this route's fees are
+  // filed under.
+  feeRouteLabel?: string;
+  subquestions?: PathwaySubquestion[];
+};
+
+export type PathwayRegulator = {
+  key: string;
+  regulator_id: string | null;
+  title: string;
+  seal_text: string | null;
+  eyebrow: string | null;
+  subtitle: string | null;
+  hero_title: string | null;
+  hero_dek: string | null;
+  hero_stats: PathwayHeroStat[];
+  routes: PathwayRoute[];
+  fee_shape: "tiered" | "flat";
+  source_note: string | null;
+  sort_order: number;
+  status: string;
+  created_at: string;
+  wizard_title: string | null;
+  wizard_note: string | null;
+  routes_heading: string | null;
+  routes_note: string | null;
+  fees_note: string | null;
+};
+
+export type PathwayApplicabilityValue = "Yes" | "No" | "Conditional" | "Information only";
+
+export type PathwayRequirement = {
+  id: string;
+  pathway_key: string;
+  external_id: string;
+  seq: number;
+  phase: string;
+  item_type: string | null;
+  requirement: string;
+  meaning: string | null;
+  applicability: Record<string, PathwayApplicabilityValue>;
+  timing: string | null;
+  evidence: string | null;
+  level: string | null;
+  source: string | null;
+  source_link: string | null;
+  condition: string | null;
+};
+
+// Numeric columns come back from Postgres/Supabase as strings (safe-integer
+// avoidance) -- code reading this table converts with Number(...) at the
+// fetch boundary before treating it as this type.
+export type PathwayFee = {
+  id: string;
+  pathway_key: string;
+  sort_order: number;
+  // Tiered shape (fee_shape = 'tiered', e.g. nps)
+  category: string | null;
+  class: string | null;
+  threshold: string | null;
+  application_fee: number | null;
+  licensing_fee: number | null;
+  annual_fee: number | null;
+  min_capital: number | null;
+  // Flat shape (fee_shape = 'flat', e.g. digital_credit)
+  route: string | null;
+  event: string | null;
+  amount: number | null;
+  note: string | null;
+  status: string | null;
+  source: string | null;
+  source_link: string | null;
+};

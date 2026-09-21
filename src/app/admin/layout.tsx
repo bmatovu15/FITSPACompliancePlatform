@@ -19,6 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link className="btn btn-ghost justify-start" href="/admin/verticals">Fintech verticals</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/documents">Documents</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/obligations">Obligations</Link>
+            <Link className="btn btn-ghost justify-start" href="/admin/requirements-pathway">Requirements Pathway</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/nps-pathway">NPS Pathway</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/digital-credit-pathway">Digital Credit Pathway</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/compliance-calendar">Compliance Calendar</Link>

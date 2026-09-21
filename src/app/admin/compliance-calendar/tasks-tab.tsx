@@ -6,31 +6,41 @@ import { createClient } from "@/lib/supabase/client";
 import { APPLIES_TO_VALUES, type ComplianceCalendarTask } from "@/lib/types";
 import type { RegulatorOption } from "./compliance-calendar-admin-client";
 
-const emptyTask = {
-  obligation_external_id: "",
-  regulator_id: "",
-  catalog_key: "payments_compliance_assistant",
-  catalog_year: new Date().getFullYear(),
-  task: "",
-  applies_to: "ALL",
-  period: "",
-  period_end: "",
-  legal_due: "",
-  lead_days: 0,
-  internal_target: "",
-  owner_role: "",
-  reviewer_role: "",
-  notes: "",
-  source_link: "",
-};
+function makeEmptyTask(catalogKey: string) {
+  return {
+    obligation_external_id: "",
+    regulator_id: "",
+    catalog_key: catalogKey,
+    catalog_year: new Date().getFullYear(),
+    task: "",
+    applies_to: "ALL",
+    period: "",
+    period_end: "",
+    legal_due: "",
+    lead_days: 0,
+    internal_target: "",
+    owner_role: "",
+    reviewer_role: "",
+    notes: "",
+    source_link: "",
+  };
+}
 
-export default function TasksTab({ initial, regulators }: { initial: ComplianceCalendarTask[]; regulators: RegulatorOption[] }) {
+export default function TasksTab({
+  initial,
+  regulators,
+  catalogKey,
+}: {
+  initial: ComplianceCalendarTask[];
+  regulators: RegulatorOption[];
+  catalogKey: string;
+}) {
   const supabase = createClient();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState<any>(emptyTask);
+  const [form, setForm] = useState<any>(() => makeEmptyTask(catalogKey));
 
   const regulatorName = (id: string | null) => regulators.find((r) => r.id === id)?.name ?? "—";
 
@@ -60,7 +70,7 @@ export default function TasksTab({ initial, regulators }: { initial: ComplianceC
       period_end: form.period_end || null,
       legal_due: form.legal_due || null,
     });
-    setForm(emptyTask);
+    setForm(makeEmptyTask(catalogKey));
     setAdding(false);
     router.refresh();
   }

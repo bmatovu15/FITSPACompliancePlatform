@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import {
   WORKFLOW_STATES,
   type ComplianceCalendarTask,
+  type ComplianceCatalogFee,
   type ComplianceControl,
   type ComplianceEvent,
   type ComplianceHoliday,
@@ -15,22 +16,37 @@ import {
   type MemberComplianceProfile,
   type MemberControlState,
   type MemberLoggedEvent,
-  type NpsFeeTier,
   type Obligation,
 } from "@/lib/types";
 import styles from "./compliance-calendar.module.css";
 
-const CATALOG_KEY = "payments_compliance_assistant";
+// The catalog key this member last set a profile under drives which
+// question set the wizard shows and which applies_to codes are recognised.
+// Add a new branch here (and in appliesTo/obligationApplies/validateProfile/
+// profileSummaryText below) when a third catalog is introduced.
+const DIGITAL_LENDING_CATALOG_KEY = "digital_lending_compliance_assistant";
 const DAY_MS = 86400000;
 
-const COVERAGE_WARNING =
-  "This is a payments compliance map, not a SACCO or digital-credit sheet. It excludes a complete AML/CFT, tax, company-law and data-protection calendar, since the payments source set does not contain the full current primary instruments and regulator instructions for those regimes.\n\nLicence-specific conditions, BoU letters, circulars, return templates and remediation dates must be added as your business receives them — this calendar cannot pre-populate them.";
+const COVERAGE_WARNINGS: Record<string, string> = {
+  payments_compliance_assistant:
+    "This is a payments compliance map, not a SACCO or digital-credit sheet. It excludes a complete AML/CFT, tax, company-law and data-protection calendar, since the payments source set does not contain the full current primary instruments and regulator instructions for those regimes.\n\nLicence-specific conditions, BoU letters, circulars, return templates and remediation dates must be added as your business receives them — this calendar cannot pre-populate them.",
+  [DIGITAL_LENDING_CATALOG_KEY]:
+    "This is a digital lending compliance map, not a payments or SACCO sheet. It excludes a complete AML/CFT, tax, company-law and consumer-protection calendar beyond the Tier 4 Microfinance Institutions and Money Lenders Act framework, since the digital-lending source set does not contain the full current primary instruments and regulator instructions for those regimes.\n\nLicence-specific conditions, UMRA letters, circulars, return templates and remediation dates must be added as your business receives them — this calendar cannot pre-populate them.",
+};
+
+function coverageWarning(catalogKey: string): string {
+  return (
+    COVERAGE_WARNINGS[catalogKey] ??
+    "This calendar reflects only the regulatory source material seeded for this catalog. Licence-specific conditions, regulator letters, circulars, return templates and remediation dates must be added as your business receives them — this calendar cannot pre-populate them."
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Profile
 // ---------------------------------------------------------------------------
 
 type ProfileFields = {
+  // Payments Compliance Calendar (payments_compliance_assistant)
   primary_category: string;
   pso_class: string;
   pso_band: string;
@@ -40,6 +56,13 @@ type ProfileFields = {
   agent: string;
   sfi: string;
   participant: string;
+  // Digital Lending Compliance Calendar (digital_lending_compliance_assistant)
+  money_lender: string;
+  ndt_mfi: string;
+  personal_data: string;
+  collateral: string;
+  recovery_agents: string;
+  fitspa_subscriber: string;
 };
 
 function emptyProfile(): ProfileFields {
@@ -53,6 +76,12 @@ function emptyProfile(): ProfileFields {
     agent: "",
     sfi: "",
     participant: "",
+    money_lender: "",
+    ndt_mfi: "",
+    personal_data: "",
+    collateral: "",
+    recovery_agents: "",
+    fitspa_subscriber: "",
   };
 }
 
@@ -68,13 +97,37 @@ function profileFromRow(row: MemberComplianceProfile | null): ProfileFields {
     agent: row.agent ?? "",
     sfi: row.sfi ?? "",
     participant: row.participant ?? "",
+    money_lender: row.money_lender ?? "",
+    ndt_mfi: row.ndt_mfi ?? "",
+    personal_data: row.personal_data ?? "",
+    collateral: row.collateral ?? "",
+    recovery_agents: row.recovery_agents ?? "",
+    fitspa_subscriber: row.fitspa_subscriber ?? "",
   };
 }
 
-function appliesTo(category: string, profile: ProfileFields): boolean {
-  switch ((category || "").toUpperCase()) {
-    case "ALL":
-      return true;
+function appliesTo(category: string, profile: ProfileFields, catalogKey: string): boolean {
+  const cat = (category || "").toUpperCase();
+  if (cat === "ALL") return true;
+  if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
+    switch (cat) {
+      case "MONEY":
+        return profile.money_lender === "Yes";
+      case "NDT":
+        return profile.ndt_mfi === "Yes";
+      case "DATA":
+        return profile.personal_data === "Yes";
+      case "COLLATERAL":
+        return profile.collateral === "Yes";
+      case "RECOVERY":
+        return profile.recovery_agents === "Yes";
+      case "FITSPA":
+        return profile.fitspa_subscriber === "Yes";
+      default:
+        return false;
+    }
+  }
+  switch (cat) {
     case "PSO":
       return profile.primary_category === "PSO";
     case "PSP":
@@ -94,8 +147,17 @@ function appliesTo(category: string, profile: ProfileFields): boolean {
   }
 }
 
-function obligationApplies(o: Obligation, profile: ProfileFields): boolean {
+function obligationApplies(o: Obligation, profile: ProfileFields, catalogKey: string): boolean {
   if (o.applies_all) return true;
+  if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
+    if (o.applies_money_lender && profile.money_lender === "Yes") return true;
+    if (o.applies_ndt_mfi && profile.ndt_mfi === "Yes") return true;
+    if (o.applies_personal_data && profile.personal_data === "Yes") return true;
+    if (o.applies_collateral && profile.collateral === "Yes") return true;
+    if (o.applies_recovery_agents && profile.recovery_agents === "Yes") return true;
+    if (o.applies_fitspa_subscriber && profile.fitspa_subscriber === "Yes") return true;
+    return false;
+  }
   if (o.applies_pso && profile.primary_category === "PSO") return true;
   if (o.applies_psp && profile.primary_category === "PSP") return true;
   if (o.applies_emi && profile.emi === "Yes") return true;
@@ -114,7 +176,17 @@ const PSO_CLASS_LABEL: Record<string, string> = {
   third_party: "Third-party system",
 };
 
-function profileSummaryText(p: ProfileFields): string {
+function profileSummaryText(p: ProfileFields, catalogKey: string): string {
+  if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
+    const dlParts: string[] = [];
+    if (p.money_lender === "Yes") dlParts.push("Money lender");
+    if (p.ndt_mfi === "Yes") dlParts.push("NDT/MFI");
+    if (p.personal_data === "Yes") dlParts.push("Handles personal data");
+    if (p.collateral === "Yes") dlParts.push("Takes collateral");
+    if (p.recovery_agents === "Yes") dlParts.push("Uses recovery agents");
+    if (p.fitspa_subscriber === "Yes") dlParts.push("FITSPA subscriber");
+    return dlParts.join("  ·  ") || "No profile set";
+  }
   const parts: string[] = [];
   if (p.primary_category === "PSO") parts.push("PSO" + (p.pso_class ? " · " + (PSO_CLASS_LABEL[p.pso_class] || p.pso_class) : ""));
   else if (p.primary_category === "PSP") parts.push("PSP" + (p.emi === "Yes" ? " · EMI" : ""));
@@ -126,7 +198,17 @@ function profileSummaryText(p: ProfileFields): string {
   return parts.join("  ·  ") || "No profile set";
 }
 
-function validateProfile(p: ProfileFields): boolean {
+function validateProfile(p: ProfileFields, catalogKey: string): boolean {
+  if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
+    return (
+      !!p.money_lender &&
+      !!p.ndt_mfi &&
+      !!p.personal_data &&
+      !!p.collateral &&
+      !!p.recovery_agents &&
+      !!p.fitspa_subscriber
+    );
+  }
   let ok = !!p.primary_category && !!p.emi && !!p.cards && !!p.agent && !!p.sfi && !!p.participant;
   if (p.primary_category === "PSO" && !p.pso_class) ok = false;
   if (p.pso_class === "funds_transfer" && !p.pso_band) ok = false;
@@ -210,6 +292,10 @@ type Tab = "dashboard" | "calendar" | "events" | "controls" | "fees" | "referenc
 
 export default function ComplianceCalendarClient({
   memberId,
+  catalogKey,
+  catalogTitle,
+  catalogSeal,
+  selectedYear,
   initialProfile,
   calendarTasks,
   events,
@@ -218,12 +304,16 @@ export default function ComplianceCalendarClient({
   reminderRules,
   holidays,
   obligations,
-  feeTiers,
+  catalogFees,
   initialTaskStates,
   initialLoggedEvents,
   initialControlStates,
 }: {
   memberId: string;
+  catalogKey: string;
+  catalogTitle: string;
+  catalogSeal: string | null;
+  selectedYear: number | null;
   initialProfile: MemberComplianceProfile | null;
   calendarTasks: ComplianceCalendarTask[];
   events: ComplianceEvent[];
@@ -232,7 +322,7 @@ export default function ComplianceCalendarClient({
   reminderRules: ComplianceReminderRule[];
   holidays: ComplianceHoliday[];
   obligations: Obligation[];
-  feeTiers: NpsFeeTier[];
+  catalogFees: ComplianceCatalogFee[];
   initialTaskStates: MemberCalendarTaskState[];
   initialLoggedEvents: MemberLoggedEvent[];
   initialControlStates: MemberControlState[];
@@ -331,11 +421,11 @@ export default function ComplianceCalendarClient({
     const { error } = await supabase.from("member_compliance_profile").upsert(
       {
         member_id: memberId,
-        catalog_key: CATALOG_KEY,
+        catalog_key: catalogKey,
         ...draftProfile,
         profile_set: true,
       },
-      { onConflict: "member_id" }
+      { onConflict: "member_id,catalog_key" }
     );
     setSavingProfile(false);
     if (error) {
@@ -352,7 +442,7 @@ export default function ComplianceCalendarClient({
 
   const applicableTasks = useMemo(() => {
     const out = calendarTasks
-      .filter((t) => appliesTo(t.applies_to, appliedProfile))
+      .filter((t) => appliesTo(t.applies_to, appliedProfile, catalogKey))
       .map((t) => {
         const due = parseISODate(t.legal_due);
         const remaining = due ? daysBetween(due, todayDate()) : null;
@@ -362,20 +452,27 @@ export default function ComplianceCalendarClient({
       });
     out.sort((a, b) => (a.due ? a.due.getTime() : Infinity) - (b.due ? b.due.getTime() : Infinity));
     return out;
-  }, [calendarTasks, appliedProfile]);
+  }, [calendarTasks, appliedProfile, catalogKey]);
 
   const applicableEvents = useMemo(
-    () => events.filter((e) => appliesTo(e.applies_to, appliedProfile)),
-    [events, appliedProfile]
+    () => events.filter((e) => appliesTo(e.applies_to, appliedProfile, catalogKey)),
+    [events, appliedProfile, catalogKey]
   );
   const applicableControls = useMemo(
-    () => controls.filter((c) => appliesTo(c.applies_to, appliedProfile)),
-    [controls, appliedProfile]
+    () => controls.filter((c) => appliesTo(c.applies_to, appliedProfile, catalogKey)),
+    [controls, appliedProfile, catalogKey]
   );
   const applicableObligations = useMemo(
-    () => obligations.filter((o) => obligationApplies(o, appliedProfile)),
-    [obligations, appliedProfile]
+    () => obligations.filter((o) => obligationApplies(o, appliedProfile, catalogKey)),
+    [obligations, appliedProfile, catalogKey]
   );
+
+  const closedTaskCount = useMemo(
+    () => applicableTasks.filter((x) => getTaskState(x.t.id).workflow === "Closed").length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [applicableTasks, taskStates]
+  );
+  const complianceScorePct = applicableTasks.length > 0 ? Math.round((closedTaskCount / applicableTasks.length) * 100) : 0;
 
   const eventsById = useMemo(() => indexById(events, "id"), [events]);
 
@@ -399,9 +496,12 @@ export default function ComplianceCalendarClient({
     return (
       <div className={styles.ccRoot}>
         <WizardScreen
+          catalogKey={catalogKey}
+          catalogTitle={catalogTitle}
+          catalogSeal={catalogSeal}
           profile={draftProfile}
           setProfile={setDraftProfile}
-          canBuild={validateProfile(draftProfile)}
+          canBuild={validateProfile(draftProfile, catalogKey)}
           saving={savingProfile}
           onSave={saveProfile}
           onCancel={profileSet ? () => setScreen("app") : undefined}
@@ -414,10 +514,10 @@ export default function ComplianceCalendarClient({
     <div className={styles.ccRoot}>
       <header className={styles.masthead}>
         <div className={styles["masthead-brand"]}>
-          <div className={styles.seal}>BoU</div>
+          <div className={styles.seal}>{catalogSeal || "—"}</div>
           <div>
-            <span className={styles.brandTitle}>Compliance calendar</span>
-            <span className={styles.brandSubtitle}>{profileSummaryText(appliedProfile)}</span>
+            <span className={styles.brandTitle}>{catalogTitle}</span>
+            <span className={styles.brandSubtitle}>{profileSummaryText(appliedProfile, catalogKey)}</span>
           </div>
         </div>
         <div className={styles["masthead-right"]}>
@@ -435,6 +535,15 @@ export default function ComplianceCalendarClient({
           </button>
         </div>
       </header>
+
+      <div className={styles["score-banner"]}>
+        <span className={styles["score-banner-title"]}>{catalogTitle} compliance score</span>
+        <span className={styles["score-banner-value"]}>{complianceScorePct}% complete</span>
+        <span className={styles["score-banner-note"]}>
+          {closedTaskCount} of {applicableTasks.length} task{applicableTasks.length === 1 ? "" : "s"} closed for{" "}
+          {selectedYear ?? "all years"}
+        </span>
+      </div>
 
       <div className={styles["app-tabs"]}>
         {(
@@ -465,6 +574,7 @@ export default function ComplianceCalendarClient({
           applicableControlsCount={applicableControls.length}
           applicableEventsCount={applicableEvents.length}
           onJump={jumpToCalendar}
+          coverageWarning={coverageWarning(catalogKey)}
         />
       )}
       {activeTab === "calendar" && (
@@ -494,7 +604,7 @@ export default function ComplianceCalendarClient({
       {activeTab === "controls" && (
         <ControlsTab controls={applicableControls} getControlState={getControlState} updateControlState={updateControlState} />
       )}
-      {activeTab === "fees" && <FeesTab feeTiers={feeTiers} />}
+      {activeTab === "fees" && <FeesTab fees={catalogFees} />}
       {activeTab === "reference" && (
         <ReferenceTab
           obligations={applicableObligations}
@@ -543,6 +653,9 @@ function OptionGroup({
 }
 
 function WizardScreen({
+  catalogKey,
+  catalogTitle,
+  catalogSeal,
   profile,
   setProfile,
   canBuild,
@@ -550,6 +663,9 @@ function WizardScreen({
   onSave,
   onCancel,
 }: {
+  catalogKey: string;
+  catalogTitle: string;
+  catalogSeal: string | null;
   profile: ProfileFields;
   setProfile: (updater: (p: ProfileFields) => ProfileFields) => void;
   canBuild: boolean;
@@ -564,9 +680,9 @@ function WizardScreen({
     <div>
       <header className={styles.masthead}>
         <div className={styles["masthead-brand"]}>
-          <div className={styles.seal}>BoU</div>
+          <div className={styles.seal}>{catalogSeal || "—"}</div>
           <div>
-            <span className={styles.brandTitle}>Compliance calendar</span>
+            <span className={styles.brandTitle}>{catalogTitle}</span>
             <span className={styles.brandSubtitle}>Set your licence profile</span>
           </div>
         </div>
@@ -587,123 +703,205 @@ function WizardScreen({
           can edit it any time from inside the calendar.
         </p>
 
-        <div className={styles["q-block"]}>
-          <p className={styles["q-label"]}>Primary licence category</p>
-          <p className={styles["q-help"]}>The category your licence is issued under.</p>
-          <OptionGroup
-            value={profile.primary_category}
-            onSelect={(val) =>
-              patch({
-                primary_category: val,
-                ...(val !== "PSO" ? { pso_class: "", pso_band: "" } : {}),
-              })
-            }
-            options={[
-              { val: "PSO", label: "Payment system operator" },
-              { val: "PSP", label: "Payment service provider" },
-              { val: "Instrument", label: "Payment-instrument issuer" },
-            ]}
-          />
-          {profile.primary_category === "PSO" && (
-            <div className={`${styles["q-sub"]} ${styles.visible}`}>
-              <select value={profile.pso_class} onChange={(e) => patch({ pso_class: e.target.value, pso_band: "" })}>
-                <option value="">PSO class…</option>
-                <option value="funds_transfer">Funds transfer system</option>
-                <option value="clearing">Clearing system or switch</option>
-                <option value="settlement">Settlement system</option>
-                <option value="third_party">Third-party system</option>
-              </select>
-              {profile.pso_class === "funds_transfer" && (
-                <select
-                  style={{ marginLeft: 10 }}
-                  value={profile.pso_band}
-                  onChange={(e) => patch({ pso_band: e.target.value })}
-                >
-                  <option value="">Volume band…</option>
-                  <option value="large">Large — &gt; UGX 100bn/month</option>
-                  <option value="medium">Medium — &gt; UGX 1bn to 100bn/month</option>
-                  <option value="small">Small — ≤ UGX 1bn/month</option>
-                </select>
+        {catalogKey === DIGITAL_LENDING_CATALOG_KEY ? (
+          <>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Licensed money lender?</p>
+              <p className={styles["q-help"]}>You are licensed under the Money Lenders Act / Regulations.</p>
+              <OptionGroup
+                value={profile.money_lender}
+                onSelect={(val) => patch({ money_lender: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Non-deposit-taking microfinance institution (NDT/MFI)?</p>
+              <p className={styles["q-help"]}>Licensed as a Tier 4 NDT MFI under the relevant UMRA regulations.</p>
+              <OptionGroup
+                value={profile.ndt_mfi}
+                onSelect={(val) => patch({ ndt_mfi: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Collects or processes borrowers&apos; personal data?</p>
+              <p className={styles["q-help"]}>Includes ID, credit-reference or app/device data used to score or recover loans.</p>
+              <OptionGroup
+                value={profile.personal_data}
+                onSelect={(val) => patch({ personal_data: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Takes collateral against loans?</p>
+              <OptionGroup
+                value={profile.collateral}
+                onSelect={(val) => patch({ collateral: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Uses third-party recovery or collection agents?</p>
+              <OptionGroup
+                value={profile.recovery_agents}
+                onSelect={(val) => patch({ recovery_agents: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>FITSPA subscriber/member?</p>
+              <p className={styles["q-help"]}>Triggers the FITSPA-specific reporting and subscriber obligations.</p>
+              <OptionGroup
+                value={profile.fitspa_subscriber}
+                onSelect={(val) => patch({ fitspa_subscriber: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Primary licence category</p>
+              <p className={styles["q-help"]}>The category your licence is issued under.</p>
+              <OptionGroup
+                value={profile.primary_category}
+                onSelect={(val) =>
+                  patch({
+                    primary_category: val,
+                    ...(val !== "PSO" ? { pso_class: "", pso_band: "" } : {}),
+                  })
+                }
+                options={[
+                  { val: "PSO", label: "Payment system operator" },
+                  { val: "PSP", label: "Payment service provider" },
+                  { val: "Instrument", label: "Payment-instrument issuer" },
+                ]}
+              />
+              {profile.primary_category === "PSO" && (
+                <div className={`${styles["q-sub"]} ${styles.visible}`}>
+                  <select value={profile.pso_class} onChange={(e) => patch({ pso_class: e.target.value, pso_band: "" })}>
+                    <option value="">PSO class…</option>
+                    <option value="funds_transfer">Funds transfer system</option>
+                    <option value="clearing">Clearing system or switch</option>
+                    <option value="settlement">Settlement system</option>
+                    <option value="third_party">Third-party system</option>
+                  </select>
+                  {profile.pso_class === "funds_transfer" && (
+                    <select
+                      style={{ marginLeft: 10 }}
+                      value={profile.pso_band}
+                      onChange={(e) => patch({ pso_band: e.target.value })}
+                    >
+                      <option value="">Volume band…</option>
+                      <option value="large">Large — &gt; UGX 100bn/month</option>
+                      <option value="medium">Medium — &gt; UGX 1bn to 100bn/month</option>
+                      <option value="small">Small — ≤ UGX 1bn/month</option>
+                    </select>
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
 
-        <div className={styles["q-block"]}>
-          <p className={styles["q-label"]}>Electronic-money issuer?</p>
-          <p className={styles["q-help"]}>A PSP subtype with extra trust-account, liquidity and reporting duties.</p>
-          <OptionGroup
-            value={profile.emi}
-            onSelect={(val) => patch({ emi: val, ...(val !== "Yes" ? { emi_band: "" } : {}) })}
-            options={[
-              { val: "Yes", label: "Yes" },
-              { val: "No", label: "No" },
-            ]}
-          />
-          {profile.emi === "Yes" && (
-            <div className={`${styles["q-sub"]} ${styles.visible}`}>
-              <select value={profile.emi_band} onChange={(e) => patch({ emi_band: e.target.value })}>
-                <option value="">Trust-account value band…</option>
-                <option value="large">Large — &gt; UGX 100bn</option>
-                <option value="medium1">Medium 1 — &gt; UGX 50bn to 100bn</option>
-                <option value="medium2">Medium 2 — &gt; UGX 5bn to 50bn</option>
-                <option value="medium3">Medium 3 — &gt; UGX 500m to 5bn</option>
-                <option value="small1">Small 1 — &gt; UGX 250m to 500m</option>
-                <option value="small2">Small 2 — ≤ UGX 250m</option>
-              </select>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Electronic-money issuer?</p>
+              <p className={styles["q-help"]}>A PSP subtype with extra trust-account, liquidity and reporting duties.</p>
+              <OptionGroup
+                value={profile.emi}
+                onSelect={(val) => patch({ emi: val, ...(val !== "Yes" ? { emi_band: "" } : {}) })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+              {profile.emi === "Yes" && (
+                <div className={`${styles["q-sub"]} ${styles.visible}`}>
+                  <select value={profile.emi_band} onChange={(e) => patch({ emi_band: e.target.value })}>
+                    <option value="">Trust-account value band…</option>
+                    <option value="large">Large — &gt; UGX 100bn</option>
+                    <option value="medium1">Medium 1 — &gt; UGX 50bn to 100bn</option>
+                    <option value="medium2">Medium 2 — &gt; UGX 5bn to 50bn</option>
+                    <option value="medium3">Medium 3 — &gt; UGX 500m to 5bn</option>
+                    <option value="small1">Small 1 — &gt; UGX 250m to 500m</option>
+                    <option value="small2">Small 2 — ≤ UGX 250m</option>
+                  </select>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <div className={styles["q-block"]}>
-          <p className={styles["q-label"]}>Issues stored-value or prepaid cards?</p>
-          <OptionGroup
-            value={profile.cards}
-            onSelect={(val) => patch({ cards: val })}
-            options={[
-              { val: "Yes", label: "Yes" },
-              { val: "No", label: "No" },
-            ]}
-          />
-        </div>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Issues stored-value or prepaid cards?</p>
+              <OptionGroup
+                value={profile.cards}
+                onSelect={(val) => patch({ cards: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
 
-        <div className={styles["q-block"]}>
-          <p className={styles["q-label"]}>Uses agents?</p>
-          <OptionGroup
-            value={profile.agent}
-            onSelect={(val) => patch({ agent: val })}
-            options={[
-              { val: "Yes", label: "Yes" },
-              { val: "No", label: "No" },
-            ]}
-          />
-        </div>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Uses agents?</p>
+              <OptionGroup
+                value={profile.agent}
+                onSelect={(val) => patch({ agent: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
 
-        <div className={styles["q-block"]}>
-          <p className={styles["q-label"]}>Also a financial institution or MDI?</p>
-          <p className={styles["q-help"]}>Triggers the SFI cyber and technology overlay on top of the NPS framework.</p>
-          <OptionGroup
-            value={profile.sfi}
-            onSelect={(val) => patch({ sfi: val })}
-            options={[
-              { val: "Yes", label: "Yes" },
-              { val: "No", label: "No" },
-            ]}
-          />
-        </div>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Also a financial institution or MDI?</p>
+              <p className={styles["q-help"]}>Triggers the SFI cyber and technology overlay on top of the NPS framework.</p>
+              <OptionGroup
+                value={profile.sfi}
+                onSelect={(val) => patch({ sfi: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
 
-        <div className={styles["q-block"]}>
-          <p className={styles["q-label"]}>Payment-system participant?</p>
-          <p className={styles["q-help"]}>You settle through, or participate in, another operator&apos;s payment system.</p>
-          <OptionGroup
-            value={profile.participant}
-            onSelect={(val) => patch({ participant: val })}
-            options={[
-              { val: "Yes", label: "Yes" },
-              { val: "No", label: "No" },
-            ]}
-          />
-        </div>
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Payment-system participant?</p>
+              <p className={styles["q-help"]}>You settle through, or participate in, another operator&apos;s payment system.</p>
+              <OptionGroup
+                value={profile.participant}
+                onSelect={(val) => patch({ participant: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+          </>
+        )}
 
         <div className={styles["wizard-actions"]}>
           <button className={styles["btn-primary"]} disabled={!canBuild || saving} onClick={onSave}>
@@ -765,6 +963,7 @@ function DashboardTab({
   applicableControlsCount,
   applicableEventsCount,
   onJump,
+  coverageWarning,
 }: {
   applicableTasks: TaskRow[];
   overdueTasks: TaskRow[];
@@ -772,6 +971,7 @@ function DashboardTab({
   applicableControlsCount: number;
   applicableEventsCount: number;
   onJump: (search: string) => void;
+  coverageWarning: string;
 }) {
   return (
     <div className={styles["tab-wrap"]}>
@@ -796,7 +996,7 @@ function DashboardTab({
           note={`${applicableEventsCount} event-triggered clocks also apply`}
         />
       </div>
-      <div className={styles["warn-box"]}>{COVERAGE_WARNING}</div>
+      <div className={styles["warn-box"]}>{coverageWarning}</div>
       <h3 className={styles["dash-section-title"]}>Overdue right now</h3>
       <p className={styles["dash-section-note"]}>Ranked by how long past the legal due date.</p>
       <MiniList items={overdueTasks} isOverdue onJump={onJump} />
@@ -1277,57 +1477,55 @@ function ControlCard({
 // Fees
 // ---------------------------------------------------------------------------
 
-function fmtUGX(n: number): string {
-  if (n === 0) return "Nil";
-  return "UGX " + n.toLocaleString("en-US");
-}
-
-function FeesTab({ feeTiers }: { feeTiers: NpsFeeTier[] }) {
-  const byCategory: Record<string, NpsFeeTier[]> = {};
-  const order: string[] = [];
-  feeTiers.forEach((f) => {
-    if (!byCategory[f.category]) {
-      byCategory[f.category] = [];
-      order.push(f.category);
-    }
-    byCategory[f.category].push(f);
-  });
-
+function FeesTab({ fees }: { fees: ComplianceCatalogFee[] }) {
+  if (fees.length === 0) {
+    return (
+      <div className={styles["tab-wrap"]}>
+        <div className={styles["empty-state"]}>No fee schedule published for this catalog yet.</div>
+      </div>
+    );
+  }
   return (
     <div className={styles["tab-wrap"]}>
       <p className={styles["dash-section-note"]}>
-        Application, licensing and annual fees and minimum capital by licence category and class under the National
-        Payment Systems Act fee schedule.
+        Fees, thresholds and other financial requirements published under this catalog&apos;s regulatory framework.
       </p>
-      {order.map((cat) => (
-        <div key={cat}>
-          <h3 className={styles["fee-table-title"]}>{cat}</h3>
-          <table className={styles["fee-table"]}>
-            <thead>
-              <tr>
-                <th>Class</th>
-                <th>Threshold</th>
-                <th>Application fee</th>
-                <th>Licensing fee</th>
-                <th>Annual fee</th>
-                <th>Minimum capital</th>
-              </tr>
-            </thead>
-            <tbody>
-              {byCategory[cat].map((f) => (
-                <tr key={f.id}>
-                  <td>{f.class}</td>
-                  <td>{f.threshold}</td>
-                  <td>{fmtUGX(f.application_fee)}</td>
-                  <td>{fmtUGX(f.licensing_fee)}</td>
-                  <td>{fmtUGX(f.annual_fee)}</td>
-                  <td>{fmtUGX(f.min_capital)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
+      <table className={styles["fee-table"]}>
+        <thead>
+          <tr>
+            <th>Route / layer</th>
+            <th>Fee / requirement</th>
+            <th>Amount</th>
+            <th>When due</th>
+            <th>Treatment</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {fees.map((f) => (
+            <tr key={f.id}>
+              <td>{f.route_or_layer || "—"}</td>
+              <td>{f.fee_or_requirement}</td>
+              <td>{f.amount || "—"}</td>
+              <td>{f.when_due || "—"}</td>
+              <td>{f.treatment || "—"}</td>
+              <td>
+                {f.source ? (
+                  /^https?:\/\//.test(f.source) ? (
+                    <a href={f.source} target="_blank" rel="noopener noreferrer">
+                      view source ↗
+                    </a>
+                  ) : (
+                    f.source
+                  )
+                ) : (
+                  "—"
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
