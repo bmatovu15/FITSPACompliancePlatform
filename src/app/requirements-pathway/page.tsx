@@ -4,7 +4,7 @@ import type { PathwayRegulator } from "@/lib/types";
 import styles from "./requirements-pathway.module.css";
 
 export const metadata = {
-  title: "Requirements Pathway — FITSPA Compliance Platform",
+  title: "Requirements Pathway Wizard — FITSPA Compliance Platform",
   description:
     "Answer a few questions about your business and get a tailored, phase-by-phase licence-readiness checklist with fees for your regulator — no login required.",
 };
@@ -33,19 +33,15 @@ export default async function RequirementsPathwayHubPage() {
 
   return (
     <div className={styles.pathwayRoot}>
-      <header className={styles.masthead}>
-        <div className={styles["masthead-brand"]}>
-          <div className={styles.seal}>FITSPA</div>
-          <div>
-            <span className={styles.brandTitle}>Requirements Pathway</span>
-            <span className={styles.brandSubtitle}>Licence readiness, by regulator</span>
-          </div>
-        </div>
-      </header>
-
+      {/* No separate sticky masthead here -- the site's own header above
+          already carries the FITSPA brand and nav, so a second bar just
+          duplicated it (and was the source of a stacking-order bug where
+          the nav dropdown got painted underneath it). The wizard/app
+          screens further down the flow keep their masthead since it
+          carries live route/progress controls, not just branding. */}
       <div className={styles["hub-wrap"]}>
         <section className={styles["hub-hero"]}>
-          <div className={styles["hub-eyebrow"]}>NO LOGIN REQUIRED · PROTOTYPE FOR INTERNAL REVIEW</div>
+          <div className={styles["hub-eyebrow"]}>FITSPA REQUIREMENTS PATHWAY WIZARD · NO LOGIN REQUIRED</div>
           <h1 className={styles["hub-title"]}>Find out exactly what your licence application needs.</h1>
           <p className={styles["hub-dek"]}>
             Pick your regulator below. Answer a few questions about your planned activity, and each tool builds a

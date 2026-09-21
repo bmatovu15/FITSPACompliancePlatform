@@ -46,7 +46,7 @@ export default function RequirementsPathwayNav({ regulators }: { regulators: Pat
         onClick={() => setOpen((v) => !v)}
         style={{ background: "none", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
       >
-        Requirements Pathway
+        Requirements Pathway Wizard
         <span aria-hidden="true" style={{ fontSize: "0.7em" }}>{open ? "▲" : "▼"}</span>
       </button>
       {open && (
@@ -63,7 +63,7 @@ export default function RequirementsPathwayNav({ regulators }: { regulators: Pat
             borderRadius: "0.5rem",
             boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
             padding: "0.35rem",
-            zIndex: 50,
+            zIndex: 200,
           }}
         >
           {published.map((r) => (

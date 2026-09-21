@@ -99,6 +99,12 @@ table.data tr:last-child td { border-bottom: none; }
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   box-shadow: 0 1px 3px rgba(36, 31, 20, 0.06);
+  /* Establish a stacking context above any page's own sticky masthead
+     (e.g. the Requirements Pathway tools' .masthead, z-index:50) so nav
+     dropdowns always render on top instead of getting painted over once
+     the page scrolls/loads. */
+  position: relative;
+  z-index: 100;
 }
 
 .nav-link {
