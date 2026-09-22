@@ -314,8 +314,8 @@ function LandingScreen({
         </div>
         {isLoggedIn && (
           <div className={styles["masthead-right"]}>
-            <a className={styles["link-btn"]} href="/dashboard/compliance-calendar">
-              Already licensed? Go to your Compliance Calendar →
+            <a className={styles["link-btn"]} href="/dashboard/compliance-pathway">
+              Already licensed? Go to your Compliance Pathway Wizard →
             </a>
           </div>
         )}
