@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/current-member";
+import { getMemberCatalogAccess } from "@/lib/member-catalog-access";
 import type {
   ComplianceCalendarTask,
   ComplianceCatalog,
@@ -49,7 +50,8 @@ export default async function DashboardPage() {
   const supabase = await createClient();
 
   const { data: catalogRows } = await supabase.from("compliance_catalogs").select("*").order("sort_order");
-  const catalogs = (catalogRows ?? []) as ComplianceCatalog[];
+  const allCatalogs = (catalogRows ?? []) as ComplianceCatalog[];
+  const { allowed: catalogs, fellBackToAll } = await getMemberCatalogAccess(supabase, member.id, allCatalogs);
 
   const { data: profileRows } = await supabase
     .from("member_compliance_profile")
@@ -144,6 +146,16 @@ export default async function DashboardPage() {
             Start the Compliance Pathway Wizard →
           </Link>
         </div>
+      )}
+
+      {fellBackToAll && (
+        <p
+          className="mt-4 rounded-lg border px-3 py-2 text-xs"
+          style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}
+        >
+          No licence is on file for your account yet, so every compliance assistant is shown below. Once FITSPA
+          records your licence, this page will only show the assistant(s) that match your regulator.
+        </p>
       )}
 
       <div className="mt-6 space-y-6">

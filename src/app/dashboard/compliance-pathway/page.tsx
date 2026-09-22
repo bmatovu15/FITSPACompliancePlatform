@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/current-member";
+import { getMemberCatalogAccess } from "@/lib/member-catalog-access";
 import CompliancePathwayClient from "./compliance-pathway-client";
 import type {
   ComplianceCalendarTask,
@@ -45,7 +46,8 @@ export default async function CompliancePathwayPage({
     .from("compliance_catalogs")
     .select("*")
     .order("sort_order");
-  const catalogs = (catalogRows ?? []) as ComplianceCatalog[];
+  const allCatalogs = (catalogRows ?? []) as ComplianceCatalog[];
+  const { allowed: catalogs, fellBackToAll } = await getMemberCatalogAccess(supabase, member.id, allCatalogs);
   const selectedCatalog = catalogs.find((c) => c.catalog_key === catalogParam) ?? catalogs[0] ?? null;
   const CATALOG_KEY = selectedCatalog?.catalog_key ?? "payments_compliance_assistant";
 
@@ -112,6 +114,16 @@ export default async function CompliancePathwayPage({
         through a short profile wizard, then builds your applicable obligations, calendar, event triggers and
         continuous controls from that answer.
       </p>
+
+      {fellBackToAll && (
+        <p
+          className="mt-3 rounded-lg border px-3 py-2 text-xs"
+          style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}
+        >
+          No licence is on file for your account yet, so every compliance assistant is shown below. Once FITSPA
+          records your licence, this page will only show the assistant(s) that match your regulator.
+        </p>
+      )}
 
       {catalogs.length > 1 && (
         <div className="mt-5 mb-3 flex flex-wrap items-center gap-2">
