@@ -194,11 +194,20 @@ export default function CompliancePathwayClient({
 
   async function saveProfile() {
     setSavingProfile(true);
+    // issue_date/fye_date/pdpo_expiry are `date` columns; ProfileFields keeps
+    // them as "" until the wizard grows date inputs for them (Beacon Phase 2
+    // added the columns/type ahead of that UI). Postgres rejects "" for a
+    // date column, so coerce blanks to null rather than leaving these as
+    // dead-on-arrival fields that break every Digital Lending profile save.
+    const { issue_date, fye_date, pdpo_expiry, ...restDraft } = draftProfile;
     const { error } = await supabase.from("member_compliance_profile").upsert(
       {
         member_id: memberId,
         catalog_key: catalogKey,
-        ...draftProfile,
+        ...restDraft,
+        issue_date: issue_date || null,
+        fye_date: fye_date || null,
+        pdpo_expiry: pdpo_expiry || null,
         profile_set: true,
       },
       { onConflict: "member_id,catalog_key" }
@@ -556,27 +565,72 @@ function WizardScreen({
                 ]}
               />
             </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Holds customer funds or assets in custody?</p>
+              <p className={styles["q-help"]}>Includes collateral or security held on the lender&apos;s behalf.</p>
+              <OptionGroup
+                value={profile.custody}
+                onSelect={(val) => patch({ custody: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Any cross-border funding, ownership or operations?</p>
+              <p className={styles["q-help"]}>Foreign funding sources, foreign beneficial owners, or transfers with a source/destination outside Uganda.</p>
+              <OptionGroup
+                value={profile.crossborder}
+                onSelect={(val) => patch({ crossborder: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
+
+            <div className={styles["q-block"]}>
+              <p className={styles["q-label"]}>Gives customers personal advice or recommendations?</p>
+              <p className={styles["q-help"]}>Beyond standard product information — a tailored recommendation about a specific loan or course of action.</p>
+              <OptionGroup
+                value={profile.advice}
+                onSelect={(val) => patch({ advice: val })}
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+            </div>
           </>
         ) : (
           <>
             <div className={styles["q-block"]}>
-              <p className={styles["q-label"]}>Primary licence category</p>
-              <p className={styles["q-help"]}>The category your licence is issued under.</p>
+              <p className={styles["q-label"]}>Licence categories</p>
+              <p className={styles["q-help"]}>
+                Select every category your licence is issued under — a licensee can hold more than one at once (for
+                example PSO and PSP together).
+              </p>
+              <p className={styles["q-label"]} style={{ fontWeight: 400, fontSize: 13, marginTop: 14 }}>
+                Payment system operator (PSO)?
+              </p>
               <OptionGroup
-                value={profile.primary_category}
+                value={profile.is_pso}
                 onSelect={(val) =>
                   patch({
-                    primary_category: val,
-                    ...(val !== "PSO" ? { pso_class: "", pso_band: "" } : {}),
+                    is_pso: val,
+                    primary_category: val === "Yes" ? "PSO" : profile.primary_category,
+                    ...(val !== "Yes" ? { pso_class: "", pso_band: "" } : {}),
                   })
                 }
                 options={[
-                  { val: "PSO", label: "Payment system operator" },
-                  { val: "PSP", label: "Payment service provider" },
-                  { val: "Instrument", label: "Payment-instrument issuer" },
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
                 ]}
               />
-              {profile.primary_category === "PSO" && (
+              {profile.is_pso === "Yes" && (
                 <div className={`${styles["q-sub"]} ${styles.visible}`}>
                   <select value={profile.pso_class} onChange={(e) => patch({ pso_class: e.target.value, pso_band: "" })}>
                     <option value="">PSO class…</option>
@@ -599,6 +653,32 @@ function WizardScreen({
                   )}
                 </div>
               )}
+              <p className={styles["q-label"]} style={{ fontWeight: 400, fontSize: 13, marginTop: 14 }}>
+                Payment service provider (PSP)?
+              </p>
+              <OptionGroup
+                value={profile.is_psp}
+                onSelect={(val) =>
+                  patch({ is_psp: val, primary_category: val === "Yes" ? "PSP" : profile.primary_category })
+                }
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
+              <p className={styles["q-label"]} style={{ fontWeight: 400, fontSize: 13, marginTop: 14 }}>
+                Payment-instrument issuer?
+              </p>
+              <OptionGroup
+                value={profile.is_instrument}
+                onSelect={(val) =>
+                  patch({ is_instrument: val, primary_category: val === "Yes" ? "Instrument" : profile.primary_category })
+                }
+                options={[
+                  { val: "Yes", label: "Yes" },
+                  { val: "No", label: "No" },
+                ]}
+              />
             </div>
 
             <div className={styles["q-block"]}>

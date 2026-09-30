@@ -276,9 +276,9 @@ function RegulatorDetail({
           <h2 className="font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
             {regulator.title} <span className="text-xs font-normal font-mono" style={{ color: "var(--color-text-muted)" }}>({regulator.key})</span>
           </h2>
-          <Link href={`/requirements-pathway/${regulator.key}`} className="btn btn-ghost btn-sm" target="_blank">
-            View public page ↗
-          </Link>
+          <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+            Public page retired (replaced by Beacon Apply/Comply)
+          </span>
         </div>
 
         <div className="grid gap-2 sm:grid-cols-2">

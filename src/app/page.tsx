@@ -1,73 +1,111 @@
 import Link from "next/link";
+import styles from "./home.module.css";
 
+// The Beacon platform landing screen (`screen-platform` in the uploaded
+// template), ported markup-for-markup per the Phase 1 plan in
+// strategy/beacon-template-redesign-plan.md §3 (option B: same classes, same
+// structure, only the interaction wiring is adapted -- imperative
+// switchScreen() calls become Next.js <Link> navigation to /apply and
+// /comply). This page owns its own masthead; see src/components/site-chrome.tsx
+// for why the legacy FITSPA header/footer are suppressed on this route.
 export default function Home() {
   return (
-    <>
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--color-accent)" }}>
-          Uganda fintech regulatory compliance
-        </p>
-        <h1 className="max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl" style={{ fontFamily: "var(--font-serif)" }}>
-          One home for every regulator, licence, and obligation your fintech is bound to.
-        </h1>
-        <p className="mt-5 max-w-2xl text-lg" style={{ color: "var(--color-text-muted)" }}>
-          FITSPA members track compliance obligations across the Bank of Uganda, the Microfinance
-          Regulatory Department, and other regulators in one place — with a public wizard that tells
-          anyone, member or not, exactly what a licence requires.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link className="btn btn-primary text-base" href="/requirements-pathway">Requirements Pathway Wizard</Link>
-          <Link className="btn btn-accent text-base" href="/signup">Join as a member</Link>
-          <Link className="btn btn-ghost text-base" href="/login">Member sign in</Link>
+    <div className={styles.bpRoot}>
+      <header className={styles["bp-nav"]}>
+        <div className={styles["bp-brand"]}>
+          <span className={styles["bp-brand-mark"]} aria-hidden="true"></span>Beacon
+        </div>
+        <nav className={styles["bp-nav-links"]} aria-label="Primary">
+          <button className={`${styles["bp-nav-link"]} ${styles["bp-inactive"]}`} type="button" aria-disabled="true">
+            Explore
+          </button>
+          <Link className={styles["bp-nav-link"]} href="/apply">Apply</Link>
+          <Link className={styles["bp-nav-link"]} href="/comply">Comply</Link>
+        </nav>
+        <div className={styles["bp-nav-spacer"]} aria-hidden="true"></div>
+      </header>
+
+      <section className={styles["bp-hero"]}>
+        <div className={styles["bp-copy"]}>
+          <h1 className={styles["bp-title"]}>Understand.<br />Apply.<br />Stay compliant.</h1>
+          <p className={styles["bp-sub"]}>
+            Know your compliance requirements, prepare your application, and stay compliant.
+          </p>
+          <Link className={styles["bp-primary"]} href="/apply">Start an application →</Link>
+        </div>
+
+        <div className={styles["bp-visual"]} aria-label="Beacon application illustration">
+          <svg className={styles["bp-map"]} viewBox="0 0 500 560" role="img" aria-label="Uganda">
+            <path d="M250 20 L304 43 L337 81 L377 90 L409 126 L433 165 L426 206 L454 245 L438 284 L453 322 L431 356 L420 401 L385 421 L375 465 L331 486 L294 516 L251 502 L213 522 L177 492 L136 480 L114 439 L81 421 L77 381 L45 347 L64 308 L46 270 L70 235 L67 193 L103 163 L112 121 L151 101 L177 62 L218 62 Z" />
+            <text className={styles.country} x="267" y="180">UGANDA</text>
+            <circle cx="286" cy="383" r="4" />
+            <text className={styles.city} x="299" y="388">Kampala</text>
+          </svg>
+
+          <div className={styles["bp-reg-card"]} aria-hidden="true">
+            <div className={styles["bp-mini-title"]}>Regulations</div>
+            <div className={styles["bp-mini-lines"]}><span></span><span></span></div>
+          </div>
+
+          <div className={styles["bp-compliance-mini"]} aria-hidden="true">
+            <div className={styles["bp-mini-title"]}>Ongoing compliance</div>
+            <div className={styles["bp-mini-bars"]}><i></i><i></i><i></i><i></i></div>
+          </div>
+
+          <div className={styles["bp-app-window"]}>
+            <div className={styles["bp-window-top"]}><span></span><span></span><span></span></div>
+            <div className={styles["bp-window-body"]}>
+              <div className={styles["bp-window-main"]}>
+                <h3>Your application</h3>
+                <div className={styles["bp-check"]}><i>✓</i><span>Prepare documents</span></div>
+                <div className={styles["bp-check"]}><i>✓</i><span>Track progress</span></div>
+                <div className={`${styles["bp-check"]} ${styles["bp-muted"]}`}><i>−</i><span>Get expert review</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles["bp-ecosystem-note"]}>A stronger fintech ecosystem for a more inclusive Uganda</div>
         </div>
       </section>
 
-      <section className="border-t" style={{ borderColor: "var(--color-border)" }}>
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-14 sm:grid-cols-2 lg:grid-cols-3 sm:px-6">
-          <Link className="card block p-6 transition hover:shadow-sm" href="/requirements-pathway">
-            <h2 className="text-lg font-semibold">Requirements Pathway Wizard</h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-              Pick your regulator and get a filtered, phase-by-phase checklist of every requirement,
-              document and fee for your route.
-            </p>
-          </Link>
-          <Link className="card block p-6 transition hover:shadow-sm" href="/nps-pathway">
-            <h2 className="text-lg font-semibold">NPS licence pathway</h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-              A phase-by-phase readiness map for Bank of Uganda National Payment Systems Act
-              licences — every requirement, fee, and minimum capital for your route.
-            </p>
-          </Link>
-          <Link className="card block p-6 transition hover:shadow-sm" href="/digital-credit-pathway">
-            <h2 className="text-lg font-semibold">Digital credit licence pathway</h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-              A phase-by-phase readiness map for UMRA Tier 4 money lender and NDT microfinance
-              institution digital credit licences — every requirement and fee for your route.
-            </p>
-          </Link>
-          <Link className="card block p-6 transition hover:shadow-sm" href="/search">
-            <h2 className="text-lg font-semibold">Document &amp; obligation search</h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-              Search the regulator document library — Acts, regulations, guidelines, and forms — and
-              every published compliance obligation.
-            </p>
-          </Link>
-          <Link className="card block p-6 transition hover:shadow-sm" href="/lookup">
-            <h2 className="text-lg font-semibold">FITSPA member lookup</h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-              Confirm whether a company is a FITSPA member in good standing, and which regulator
-              licences it holds.
-            </p>
-          </Link>
-          <Link className="card block p-6 transition hover:shadow-sm" href="/assistant">
-            <h2 className="text-lg font-semibold">Ask the AI assistant</h2>
-            <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-              Ask a regulatory question in plain language and get an answer grounded in — and cited
-              to — the indexed regulator documents.
-            </p>
-          </Link>
+      <section className={styles["bp-pathways"]} id="bp-pathways">
+        <div className={styles["bp-pathway-inner"]}>
+          <h2 className={styles["bp-pathway-title"]}>Choose your pathway</h2>
+          <div className={styles["bp-cards"]}>
+            <article className={styles["bp-card"]}>
+              <div>
+                <div className={styles["bp-kicker"]}>EXPLORE</div>
+                <h3>Understand Fintech Compliance</h3>
+                <p>Explore regulatory requirements, laws and guidance.</p>
+              </div>
+              <div className={styles["bp-coming-soon"]} aria-label="Explore coming soon">Coming soon</div>
+            </article>
+
+            <article className={`${styles["bp-card"]} ${styles["bp-live"]}`}>
+              <div>
+                <div className={styles["bp-kicker"]}>APPLY</div>
+                <h3>Licence Application Manager</h3>
+                <p>Prepare and manage your Payments or Digital Lending licence application.</p>
+              </div>
+              <Link className={styles["bp-card-action"]} href="/apply">Choose application →</Link>
+            </article>
+
+            <article className={styles["bp-card"]}>
+              <div>
+                <div className={styles["bp-kicker"]}>COMPLY</div>
+                <h3>Compliance Assistant</h3>
+                <p>Track and manage your ongoing Payments or Digital Lending compliance obligations.</p>
+              </div>
+              <Link className={styles["bp-card-action"]} href="/comply">Choose compliance →</Link>
+            </article>
+          </div>
         </div>
       </section>
-    </>
+
+      <footer className={styles["bp-footer"]}>
+        <strong>Beacon</strong>
+        <span>Fintech compliance, in one place.</span>
+      </footer>
+    </div>
   );
 }

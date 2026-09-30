@@ -1,0 +1,67 @@
+/* No template screen defines a "flow not built yet" state -- this is new,
+   minimal UI for the interim window Phase 1 explicitly accepts (see
+   strategy/beacon-template-redesign-plan.md §7, step 1). It borrows the
+   Beacon shell's own visual language (Montserrat, restrained black/white,
+   3px/4px corners) rather than inventing a new look. */
+.stubRoot {
+  font-family: "Montserrat", sans-serif;
+  background: #fff;
+  color: #111111;
+  min-height: 100vh;
+}
+.stubRoot * {
+  box-sizing: border-box;
+}
+.stubMain {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 90px 42px 120px;
+}
+.stubEyebrow {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #7b8087;
+  margin-bottom: 15px;
+}
+.stubTitle {
+  margin: 0 0 16px;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+.stubDek {
+  margin: 0 0 30px;
+  color: #6f737a;
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 560px;
+}
+.stubCard {
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  padding: 22px 24px;
+  margin-bottom: 30px;
+  background: #fafafa;
+}
+.stubCard p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4d4d4d;
+}
+.stubBack {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+@media (max-width: 760px) {
+  .stubMain {
+    padding: 56px 20px 90px;
+  }
+  .stubTitle {
+    font-size: 30px;
+  }
+}

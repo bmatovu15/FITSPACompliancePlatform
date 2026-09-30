@@ -13,7 +13,13 @@ export const DAY_MS = 86400000;
 
 export type ProfileFields = {
   // Payments Compliance Assistant (payments_compliance_assistant)
+  // primary_category is kept for backward-compatible display/storage only;
+  // is_pso/is_psp/is_instrument are the independent flags that applicability
+  // logic uses, so a member can hold combined licences (e.g. PSO + PSP).
   primary_category: string;
+  is_pso: string;
+  is_psp: string;
+  is_instrument: string;
   pso_class: string;
   pso_band: string;
   emi: string;
@@ -29,11 +35,23 @@ export type ProfileFields = {
   collateral: string;
   recovery_agents: string;
   fitspa_subscriber: string;
+  // Beacon Phase 2 additions (Digital Lending Compliance audit, plan §9.3).
+  route: string;
+  issue_date: string;
+  fye_date: string;
+  pdpo_status: string;
+  pdpo_expiry: string;
+  custody: string;
+  crossborder: string;
+  advice: string;
 };
 
 export function emptyProfile(): ProfileFields {
   return {
     primary_category: "",
+    is_pso: "",
+    is_psp: "",
+    is_instrument: "",
     pso_class: "",
     pso_band: "",
     emi: "",
@@ -48,6 +66,14 @@ export function emptyProfile(): ProfileFields {
     collateral: "",
     recovery_agents: "",
     fitspa_subscriber: "",
+    route: "",
+    issue_date: "",
+    fye_date: "",
+    pdpo_status: "",
+    pdpo_expiry: "",
+    custody: "",
+    crossborder: "",
+    advice: "",
   };
 }
 
@@ -55,6 +81,12 @@ export function profileFromRow(row: MemberComplianceProfile | null): ProfileFiel
   if (!row) return emptyProfile();
   return {
     primary_category: row.primary_category ?? "",
+    // Fall back to deriving from primary_category for rows saved before the
+    // is_pso/is_psp/is_instrument columns existed (defensive; the migration
+    // backfills these, but a stale client cache could still hand us nulls).
+    is_pso: row.is_pso ?? (row.primary_category === "PSO" ? "Yes" : "No"),
+    is_psp: row.is_psp ?? (row.primary_category === "PSP" ? "Yes" : "No"),
+    is_instrument: row.is_instrument ?? (row.primary_category === "Instrument" ? "Yes" : "No"),
     pso_class: row.pso_class ?? "",
     pso_band: row.pso_band ?? "",
     emi: row.emi ?? "",
@@ -69,6 +101,14 @@ export function profileFromRow(row: MemberComplianceProfile | null): ProfileFiel
     collateral: row.collateral ?? "",
     recovery_agents: row.recovery_agents ?? "",
     fitspa_subscriber: row.fitspa_subscriber ?? "",
+    route: row.route ?? "",
+    issue_date: row.issue_date ?? "",
+    fye_date: row.fye_date ?? "",
+    pdpo_status: row.pdpo_status ?? "",
+    pdpo_expiry: row.pdpo_expiry ?? "",
+    custody: row.custody ?? "",
+    crossborder: row.crossborder ?? "",
+    advice: row.advice ?? "",
   };
 }
 
@@ -89,15 +129,23 @@ export function appliesTo(category: string, profile: ProfileFields, catalogKey: 
         return profile.recovery_agents === "Yes";
       case "FITSPA":
         return profile.fitspa_subscriber === "Yes";
+      case "CUSTODY":
+        return profile.custody === "Yes";
+      case "CROSSBORDER":
+        return profile.crossborder === "Yes";
+      case "ADVICE":
+        return profile.advice === "Yes";
       default:
         return false;
     }
   }
   switch (cat) {
     case "PSO":
-      return profile.primary_category === "PSO";
+      return profile.is_pso === "Yes";
     case "PSP":
-      return profile.primary_category === "PSP";
+      return profile.is_psp === "Yes";
+    case "INSTRUMENT":
+      return profile.is_instrument === "Yes";
     case "EMI":
       return profile.emi === "Yes";
     case "AGENTS":
@@ -122,12 +170,18 @@ export function obligationApplies(o: Obligation, profile: ProfileFields, catalog
     if (o.applies_collateral && profile.collateral === "Yes") return true;
     if (o.applies_recovery_agents && profile.recovery_agents === "Yes") return true;
     if (o.applies_fitspa_subscriber && profile.fitspa_subscriber === "Yes") return true;
+    if (o.applies_custody && profile.custody === "Yes") return true;
+    if (o.applies_crossborder && profile.crossborder === "Yes") return true;
+    if (o.applies_advice && profile.advice === "Yes") return true;
     return false;
   }
-  if (o.applies_pso && profile.primary_category === "PSO") return true;
-  if (o.applies_psp && profile.primary_category === "PSP") return true;
+  // Beacon Phase 2: independent flags so combined licences (e.g. PSO + PSP)
+  // both fire, instead of the old single primary_category equality check
+  // which could only ever match one category at a time.
+  if (o.applies_pso && profile.is_pso === "Yes") return true;
+  if (o.applies_psp && profile.is_psp === "Yes") return true;
   if (o.applies_emi && profile.emi === "Yes") return true;
-  if (o.applies_instrument && profile.primary_category === "Instrument") return true;
+  if (o.applies_instrument && profile.is_instrument === "Yes") return true;
   if (o.applies_agent && profile.agent === "Yes") return true;
   if (o.applies_cards && profile.cards === "Yes") return true;
   if (o.applies_sfi && profile.sfi === "Yes") return true;
@@ -154,9 +208,11 @@ export function profileSummaryText(p: ProfileFields, catalogKey: string): string
     return dlParts.join("  ·  ") || "No profile set";
   }
   const parts: string[] = [];
-  if (p.primary_category === "PSO") parts.push("PSO" + (p.pso_class ? " · " + (PSO_CLASS_LABEL[p.pso_class] || p.pso_class) : ""));
-  else if (p.primary_category === "PSP") parts.push("PSP" + (p.emi === "Yes" ? " · EMI" : ""));
-  else if (p.primary_category === "Instrument") parts.push("Instrument issuer");
+  // Beacon Phase 2: a member can hold combined licences, so all three flags
+  // are checked independently rather than a single primary_category branch.
+  if (p.is_pso === "Yes") parts.push("PSO" + (p.pso_class ? " · " + (PSO_CLASS_LABEL[p.pso_class] || p.pso_class) : ""));
+  if (p.is_psp === "Yes") parts.push("PSP" + (p.emi === "Yes" ? " · EMI" : ""));
+  if (p.is_instrument === "Yes") parts.push("Instrument issuer");
   if (p.cards === "Yes") parts.push("Cards");
   if (p.agent === "Yes") parts.push("Agents");
   if (p.sfi === "Yes") parts.push("FI/MDI overlay");
@@ -175,8 +231,20 @@ export function validateProfile(p: ProfileFields, catalogKey: string): boolean {
       !!p.fitspa_subscriber
     );
   }
-  let ok = !!p.primary_category && !!p.emi && !!p.cards && !!p.agent && !!p.sfi && !!p.participant;
-  if (p.primary_category === "PSO" && !p.pso_class) ok = false;
+  // Beacon Phase 2: at least one of PSO/PSP/Instrument must be answered Yes —
+  // combined licences are allowed, but the member must hold at least one.
+  const anyCategory = p.is_pso === "Yes" || p.is_psp === "Yes" || p.is_instrument === "Yes";
+  let ok =
+    !!p.is_pso &&
+    !!p.is_psp &&
+    !!p.is_instrument &&
+    anyCategory &&
+    !!p.emi &&
+    !!p.cards &&
+    !!p.agent &&
+    !!p.sfi &&
+    !!p.participant;
+  if (p.is_pso === "Yes" && !p.pso_class) ok = false;
   if (p.pso_class === "funds_transfer" && !p.pso_band) ok = false;
   if (p.emi === "Yes" && !p.emi_band) ok = false;
   return ok;

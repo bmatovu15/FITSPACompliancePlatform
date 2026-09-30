@@ -76,6 +76,12 @@ export type Obligation = {
   applies_collateral: boolean;
   applies_recovery_agents: boolean;
   applies_fitspa_subscriber: boolean;
+  // Beacon Phase 2 additions (Digital Lending Compliance audit, plan §9.3):
+  // custody/crossborder/advice are independent facts from the DL prototype
+  // that don't map onto any existing applies_* column.
+  applies_custody: boolean;
+  applies_crossborder: boolean;
+  applies_advice: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -236,6 +242,13 @@ export type MemberComplianceProfile = {
   member_id: string;
   catalog_key: string;
   primary_category: string | null;
+  // Beacon Phase 2: independent Payments classification flags, replacing the
+  // single-select primary_category equality check so a member can hold
+  // combined licences (e.g. PSO + PSP at once). primary_category is kept
+  // for backward compatibility/display and is derived from these on save.
+  is_pso: string | null;
+  is_psp: string | null;
+  is_instrument: string | null;
   pso_class: string | null;
   pso_band: string | null;
   emi: string | null;
@@ -252,6 +265,15 @@ export type MemberComplianceProfile = {
   collateral: string | null;
   recovery_agents: string | null;
   fitspa_subscriber: string | null;
+  // Beacon Phase 2 additions (Digital Lending Compliance audit, plan §9.3).
+  route: string | null;
+  issue_date: string | null;
+  fye_date: string | null;
+  pdpo_status: string | null;
+  pdpo_expiry: string | null;
+  custody: string | null;
+  crossborder: string | null;
+  advice: string | null;
   profile_set: boolean;
   updated_at: string;
 };
@@ -523,4 +545,136 @@ export type PathwayFee = {
   status: string | null;
   source: string | null;
   source_link: string | null;
+};
+
+// ---------------------------------------------------------------------------
+// Licence Application Manager -- the public/no-login "Apply" wizard (Beacon
+// Phase 4). One admin-authored template catalog per application_key (e.g.
+// 'digital_lending') drives a per-applicant checklist; the applicant's own
+// progress is tracked anonymously (member_id nullable) against a
+// browser-persisted application id, then optionally linked to a member once
+// they sign in. See strategy/beacon-template-redesign-plan.md §9.1 for the
+// audited Digital Lending 21-item schema this was seeded from.
+// ---------------------------------------------------------------------------
+
+export type LicenceApplicationDrawerType =
+  | "company_registration"
+  | "premises"
+  | "org_structure"
+  | "capital"
+  | "people"
+  | "declarations"
+  | "product_desc"
+  | "source_funds"
+  | "lending_agreement"
+  | "it_controls"
+  | "generic_upload"
+  | "data_protection"
+  | "governance"
+  | "official_form"
+  // Payments (payments_nps) -- added for the Phase 3 Apply wizard. See
+  // strategy/beacon-template-redesign-plan.md §9.5 for the per-item drawer
+  // classification rationale.
+  | "ownership"
+  | "emi_structure"
+  | "credit"
+  | "tin_tax"
+  | "financials"
+  | "pentest"
+  | "repeat_arrangement"
+  | "docpack"
+  | "customer_terms"
+  | "pricing"
+  | "multi_upload"
+  | "fee_proof"
+  | "data_centre";
+
+export type LicenceApplicationTemplate = {
+  id: string;
+  application_key: string;
+  regulator_id: string | null;
+  licence_id: string | null;
+  external_id: string;
+  // null on a route-agnostic item (applies to every wizard class of this
+  // application_key); otherwise scopes the item to one wizard class's route
+  // (e.g. 'ml' or 'ndt' for digital_lending).
+  route_key: string | null;
+  phase: string;
+  seq: number;
+  title: string;
+  copy: string | null;
+  cta_label: string | null;
+  drawer_type: LicenceApplicationDrawerType;
+  source_label: string | null;
+  source_url: string | null;
+  guide_what: string | null;
+  guide_do: string | null;
+  guide_evidence: string | null;
+  applicability: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LicenceApplicationWizardClass = {
+  id: string;
+  application_key: string;
+  class_key: string;
+  label: string;
+  description: string | null;
+  sort_order: number;
+  fee_class_label: string | null;
+  min_capital: number | null;
+  leads_to: Record<string, unknown>;
+  created_at: string;
+};
+
+export type LicenceApplicationFeeTier = {
+  id: string;
+  application_key: string;
+  class_key: string;
+  fee_type: "application" | "licensing" | "annual";
+  amount: number;
+  note: string | null;
+  source_label: string | null;
+  source_url: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+export type MemberLicenceApplication = {
+  id: string;
+  // null for an anonymous applicant -- RLS scopes access to the row's own id
+  // (held client-side, e.g. in localStorage) rather than to a signed-in
+  // member for as long as this stays null.
+  member_id: string | null;
+  application_key: string;
+  class_key: string | null;
+  facts: Record<string, unknown>;
+  status: "draft" | "submitted" | "withdrawn";
+  started_at: string;
+  submitted_at: string | null;
+  updated_at: string;
+};
+
+export type MemberLicenceApplicationItemState = {
+  id: string;
+  application_id: string;
+  external_id: string;
+  status: "not_started" | "in_progress" | "ready";
+  answers: Record<string, unknown>;
+  updated_at: string;
+};
+
+export type MemberLicenceApplicationFile = {
+  id: string;
+  application_id: string;
+  external_id: string;
+  // Named slot within an item (e.g. "certificate", "id-doc-1") -- a new
+  // upload to the same slot inserts a new, higher-`version` row rather than
+  // overwriting the existing one.
+  slot: string;
+  file_name: string;
+  storage_path: string;
+  version: number;
+  uploaded_at: string;
 };
