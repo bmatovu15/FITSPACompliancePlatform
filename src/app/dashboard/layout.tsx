@@ -18,7 +18,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <nav className="mt-4 flex flex-col gap-1 text-sm">
             <Link className="btn btn-ghost justify-start" href="/dashboard">Overview</Link>
             <Link className="btn btn-ghost justify-start" href="/dashboard/vault">Document vault</Link>
-            <Link className="btn btn-ghost justify-start" href="/dashboard/compliance-pathway">Compliance Pathway Wizard</Link>
+            <Link className="btn btn-ghost justify-start" href="/comply">Compliance Pathway Wizard</Link>
             <Link className="btn btn-ghost justify-start" href="/assistant">AI assistant</Link>
             <form action="/api/auth/signout" method="post">
               <button className="btn btn-ghost justify-start w-full text-left" type="submit">Sign out</button>

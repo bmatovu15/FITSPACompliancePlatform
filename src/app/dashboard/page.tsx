@@ -18,7 +18,20 @@ import {
   fmtDateShort,
   profileFromRow,
   profileSummaryText,
+  PAYMENTS_CATALOG_KEY,
+  DIGITAL_LENDING_CATALOG_KEY,
 } from "@/lib/compliance-engine";
+
+// The Beacon-styled Comply routes are per-catalog (/comply/payments,
+// /comply/digital-lending) rather than one shared page keyed by a
+// `?catalog=` query param -- this maps a catalog_key to its route so the
+// dashboard's own links land on the right one. Falls back to the Comply hub
+// for any future catalog that doesn't have a dedicated route yet.
+function catalogHref(catalogKey: string): string {
+  if (catalogKey === PAYMENTS_CATALOG_KEY) return "/comply/payments";
+  if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) return "/comply/digital-lending";
+  return "/comply";
+}
 
 type TaskRow = {
   t: ComplianceCalendarTask;
@@ -142,7 +155,7 @@ export default async function DashboardPage() {
             You haven&apos;t set up a compliance assistant yet. Answer a short profile wizard for the route that
             applies to you, and this page will show your filing calendar, overdue items and continuous controls.
           </p>
-          <Link className="btn btn-primary mt-3" href="/dashboard/compliance-pathway">
+          <Link className="btn btn-primary mt-3" href="/comply">
             Start the Compliance Pathway Wizard →
           </Link>
         </div>
@@ -175,7 +188,7 @@ export default async function DashboardPage() {
               </div>
               <Link
                 className="btn btn-ghost btn-sm"
-                href={`/dashboard/compliance-pathway?catalog=${catalog.catalog_key}`}
+                href={catalogHref(catalog.catalog_key)}
               >
                 {profileSet ? "Open assistant →" : "Set up →"}
               </Link>
@@ -266,7 +279,7 @@ function MiniList({
           return (
             <Link
               key={x.t.id}
-              href={`/dashboard/compliance-pathway?catalog=${catalogKey}`}
+              href={catalogHref(catalogKey)}
               className="flex items-center gap-3 rounded-lg border px-3 py-2 text-sm hover:opacity-80"
               style={{ borderColor: "var(--color-border)" }}
             >
@@ -290,7 +303,7 @@ function MiniList({
         })}
         {items.length > 5 && (
           <Link
-            href={`/dashboard/compliance-pathway?catalog=${catalogKey}`}
+            href={catalogHref(catalogKey)}
             className="block text-xs"
             style={{ color: "var(--color-accent)" }}
           >

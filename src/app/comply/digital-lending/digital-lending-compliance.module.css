@@ -1,0 +1,298 @@
+/* Beacon — Digital Lending Compliance
+   Ported from /tmp/beacon-digital-compliance-src.html (the uploaded Beacon
+   prototype) into a root-scoped CSS Module, merged with the site's Beacon
+   nav header conventions (see apply-hub.module.css / comply-hub.module.css).
+   The prototype's three cascading <style> blocks (base + unified-module-
+   design overrides + type-scale overrides) are pre-merged here into their
+   final effective values instead of re-creating the !important cascade. */
+
+.dcRoot {
+  --ink: #111111;
+  --ink-soft: #333333;
+  --slate: #4a4a4a;
+  --muted: #6f737a;
+  --faint: #92959a;
+  --paper: #ffffff;
+  --soft: #fafafa;
+  --soft2: #f5f5f5;
+  --rule: #e5e5e5;
+  --rule2: #d0d0d0;
+  --success: #2e7d4f;
+  --success-bg: #e9f5ee;
+  --warn: #946200;
+  --warn-bg: #fff6e5;
+  --danger: #b3261e;
+  --danger-bg: #fceae9;
+  --sans: "Montserrat", Arial, sans-serif;
+  font-family: var(--sans);
+  background: #fff;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.dcRoot * { box-sizing: border-box; }
+.dcRoot button, .dcRoot input, .dcRoot select, .dcRoot textarea { font: inherit; }
+.dcRoot button { cursor: pointer; }
+.dcRoot a { color: inherit; }
+
+/* ---------------------------------------------------------------------
+   Beacon site nav header (matches apply-hub / comply-hub conventions)
+--------------------------------------------------------------------- */
+.dcRoot .dc-nav{height:74px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 56px;border-bottom:1px solid var(--rule);background:#fff;position:sticky;top:0;z-index:80}
+.dcRoot .dc-brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:700;border:0;background:none;padding:0;cursor:pointer;justify-self:start;text-decoration:none;color:var(--ink)}
+.dcRoot .dc-brand-mark{width:27px;height:27px;border:1.7px solid #111;border-radius:50%;position:relative;display:inline-block;flex:none}
+.dcRoot .dc-brand-mark:before{content:"";position:absolute;width:1.6px;height:8px;background:#111;left:12px;top:4px;border-radius:2px}
+.dcRoot .dc-brand-mark:after{content:"";position:absolute;width:7px;height:1.6px;background:#111;left:12px;top:12px;transform:rotate(31deg);transform-origin:left center;border-radius:2px}
+.dcRoot .dc-nav-links{display:flex;align-items:center;gap:42px;font-size:14px;font-weight:500}
+.dcRoot .dc-nav-link{border:0;background:none;color:#111;padding:25px 0 20px;font:inherit;text-decoration:none}
+.dcRoot .dc-nav-link.active{font-weight:600;border-bottom:2px solid #111}
+.dcRoot .dc-nav-link.muted{color:#777}
+.dcRoot .dc-nav-actions{justify-self:end;display:flex;align-items:center;gap:18px}
+.dcRoot .dc-nav-search{border:0;background:none;font-size:13px;font-weight:600;color:#555;padding:8px 0;white-space:nowrap;text-decoration:none}
+.dcRoot .dc-nav-search:hover{color:#111}
+.dcRoot .dc-nav-register{border:1px solid #111;background:#111;color:#fff;border-radius:3px;padding:8px 14px;font-size:13px;font-weight:600;white-space:nowrap;text-decoration:none}
+.dcRoot .dc-nav-register:hover{background:#2B2B2B}
+.dcRoot .dc-nav-back{border:0;background:none;font-size:13px;font-weight:600;color:#555;padding:8px 0;white-space:nowrap;text-decoration:none}
+@media(max-width:900px){.dcRoot .dc-brand{font-size:16px}.dcRoot .dc-nav-actions{gap:10px}.dcRoot .dc-nav-search{display:none}}
+@media(max-width:760px){.dcRoot .dc-nav{padding:0 18px;grid-template-columns:auto 1fr auto}.dcRoot .dc-nav-links{gap:16px;justify-content:center;font-size:12px}}
+
+/* ---------------------------------------------------------------------
+   Shared shape language
+--------------------------------------------------------------------- */
+.dcRoot .btn,.dcRoot .ghost,.dcRoot .link,.dcRoot .row-action,.dcRoot .rail-btn,.dcRoot .choice,.dcRoot .filter,
+.dcRoot .field input,.dcRoot .field select,.dcRoot .field textarea,.dcRoot input,.dcRoot select,.dcRoot textarea{border-radius:3px}
+.dcRoot .rail-card,.dcRoot .metric,.dcRoot .control-card,.dcRoot .big-control,.dcRoot .meta-box,.dcRoot .optional,
+.dcRoot .fee-box,.dcRoot .upload,.dcRoot .generated,.dcRoot .exception,.dcRoot .cost-row,.dcRoot .req-card,.dcRoot .work-card{border-radius:4px}
+.dcRoot .info{
+  width:22px;height:22px;min-width:22px;min-height:22px;border:1px solid #D0D0D0;border-radius:50%;background:#fff;color:#333;
+  font-family:var(--sans);font-size:12px;font-weight:700;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;
+  vertical-align:middle;box-shadow:none;text-decoration:none;flex:0 0 22px;
+}
+.dcRoot .info:hover{border-color:#111;color:#111;background:#FAFAFA}
+.dcRoot .btn,.dcRoot .ghost,.dcRoot .link{border:1px solid var(--rule2);background:#fff;color:#111;padding:10px 14px;font-size:11px;font-weight:600}
+.dcRoot .btn.primary,.dcRoot .ghost.primary{background:#111;color:#fff;border-color:#111}
+.dcRoot .link{border:0;background:transparent;padding:8px}
+.dcRoot .btn:hover,.dcRoot .ghost:hover{background:#f7f7f7}
+.dcRoot .btn.primary:hover,.dcRoot .ghost.primary:hover{background:#292929}
+.dcRoot .btn:disabled{opacity:.5;cursor:not-allowed}
+.dcRoot .textlink{border:0;background:transparent;padding:0;font-size:11px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------------------------------------------------------------------
+   Profile wizard
+--------------------------------------------------------------------- */
+.dcRoot .profile-wrap{max-width:920px;margin:0 auto;padding:54px 30px 90px}
+.dcRoot .profile-top h2{font-size:30px;letter-spacing:-.035em;margin:0 0 9px}
+.dcRoot .profile-top p{margin:0;color:var(--muted);font-size:13px;line-height:1.65;max-width:700px}
+.dcRoot .eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#6F737A;margin-bottom:16px}
+.dcRoot .profile-section{border-top:1px solid var(--rule);padding-top:22px;margin-top:30px}
+.dcRoot .profile-section h3{font-size:14px;margin:0 0 13px}
+.dcRoot .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.dcRoot .field{margin-bottom:13px}
+.dcRoot .field label{display:block;font-size:11.5px;font-weight:700;margin-bottom:6px}
+.dcRoot .field small{display:block;font-size:10.5px;line-height:1.5;color:#888;margin-top:5px}
+.dcRoot .field input,.dcRoot .field select,.dcRoot .field textarea{width:100%;border:1px solid var(--rule2);padding:10px 11px;background:#fff;font-size:12.5px;outline:none}
+.dcRoot .field textarea{min-height:86px;resize:vertical}
+.dcRoot .choice-row{display:flex;gap:7px;flex-wrap:wrap}
+.dcRoot .choice{border:1px solid var(--rule2);background:#fff;padding:9px 11px;font-size:11.5px;font-weight:600}
+.dcRoot .choice.selected{background:#111;color:#fff;border-color:#111}
+.dcRoot .optional{border:1px solid var(--rule);padding:13px 14px;margin-top:12px}
+.dcRoot .optional summary{font-size:11.5px;font-weight:700;cursor:pointer}
+.dcRoot .profile-actions{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule);margin-top:28px;padding-top:18px}
+.dcRoot .profile-error{font-size:11.5px;color:var(--danger);margin-top:14px}
+
+/* ---------------------------------------------------------------------
+   Workspace shell
+--------------------------------------------------------------------- */
+.dcRoot .workspace-head{min-height:75px;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 28px;position:sticky;top:0;background:#fff;z-index:55}
+.dcRoot .workspace-left{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.dcRoot .route-pill{font-size:9px;border:1px solid var(--rule2);border-radius:999px;padding:5px 8px;color:#555;font-weight:700}
+.dcRoot .workspace-title{font-size:14px;font-weight:700}
+.dcRoot .workspace-actions{display:flex;gap:8px;flex-wrap:wrap}
+.dcRoot .workspace-tabs{min-height:49px;border-bottom:1px solid var(--rule);display:flex;padding:0 29px;gap:26px;align-items:end;flex-wrap:wrap;position:sticky;top:75px;background:#fff;z-index:50}
+.dcRoot .tab{height:49px;border:0;background:transparent;padding:0 2px;font-size:13px;color:#777;font-weight:600;position:relative}
+.dcRoot .tab.active{color:#111}
+.dcRoot .tab.active:after{content:"";height:2px;position:absolute;bottom:0;left:0;right:0;background:#111}
+.dcRoot .app-shell{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 250px;min-height:calc(100vh - 124px)}
+.dcRoot .main{padding:34px 34px 100px;min-width:0}
+.dcRoot .right{border-left:1px solid var(--rule);padding:31px 24px 70px 20px;position:sticky;top:124px;height:calc(100vh - 124px);overflow:auto}
+.dcRoot .page-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:25px;flex-wrap:wrap}
+.dcRoot .page-head h1{font-size:28px;font-weight:700;letter-spacing:-.035em;margin:0 0 7px}
+.dcRoot .page-head p{font-size:13px;color:var(--muted);line-height:1.6;margin:0;max-width:740px}
+
+/* ---------------------------------------------------------------------
+   Dashboard
+--------------------------------------------------------------------- */
+.dcRoot .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}
+.dcRoot .metric{border:1px solid var(--rule);padding:15px 16px}
+.dcRoot .metric-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#888;font-weight:700}
+.dcRoot .metric-value{font-size:28px;font-weight:700;letter-spacing:-.035em;margin-top:7px}
+.dcRoot .metric-value.danger{color:var(--danger)}
+.dcRoot .metric-value.warn{color:var(--warn)}
+.dcRoot .metric-note{font-size:11px;color:#888;margin-top:4px}
+.dcRoot .section{margin-top:28px}
+.dcRoot .section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.dcRoot .section-head h2{font-size:17px;margin:0}
+.dcRoot .section-head p{font-size:12px;color:#888;margin:0}
+.dcRoot .work-list{border-top:1px solid var(--rule)}
+.dcRoot .work-row{display:grid;grid-template-columns:minmax(0,1fr) 112px 105px 126px;gap:12px;align-items:center;border-bottom:1px solid var(--rule);padding:13px 0}
+.dcRoot .work-title-line{display:flex;align-items:center;gap:6px}
+.dcRoot .work-title{font-size:13px;font-weight:600;line-height:1.35;background:none;border:0;padding:0;text-align:left;color:var(--ink);cursor:pointer}
+.dcRoot .work-title:hover{text-decoration:underline}
+.dcRoot .work-sub{font-size:11.5px;line-height:1.5;color:#777;margin-top:5px}
+.dcRoot .badge{display:inline-flex;width:max-content;border:1px solid var(--rule2);border-radius:999px;padding:5px 8px;font-size:10px;font-weight:700;white-space:nowrap}
+.dcRoot .badge.action{background:var(--warn-bg);color:#775800;border-color:#e4d29f}
+.dcRoot .badge.overdue{background:var(--danger-bg);color:#9b271e;border-color:#e6b7b3}
+.dcRoot .badge.upcoming{background:#f4f4f4;color:#555}
+.dcRoot .badge.closed{background:var(--success-bg);color:#276941;border-color:#bfdcc9}
+.dcRoot .badge.notreviewed{background:#f4f4f4;color:#666;border-color:#d9d9d9}
+.dcRoot .row-date{font-size:11px;color:#555;line-height:1.45}
+.dcRoot .row-owner{font-size:11px;color:#777}
+.dcRoot .row-action{border:1px solid var(--rule2);background:#fff;padding:8px 11px;font-size:11.5px;font-weight:700}
+.dcRoot .row-action:hover{background:#f7f7f7}
+.dcRoot .empty{border:1px dashed #d2d2d2;border-radius:9px;padding:20px;color:#777;font-size:11.5px;line-height:1.55}
+.dcRoot .note{border-left:3px solid #999;background:#fafafa;padding:12px 13px;font-size:11.5px;line-height:1.55;color:#666;margin:12px 0}
+.dcRoot .note.warn{border-color:#9c7800;background:var(--warn-bg)}
+.dcRoot .control-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dcRoot .control-card{border:1px solid var(--rule);padding:14px;min-height:132px;display:flex;flex-direction:column}
+.dcRoot .control-card h3{font-size:13px;margin:0 0 6px;display:flex;align-items:center;gap:5px}
+.dcRoot .control-card p{font-size:11.5px;color:#777;line-height:1.55;margin:0}
+.dcRoot .control-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:11px}
+.dcRoot .control-card button{border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;font-size:11.5px;font-weight:700;padding:0}
+.dcRoot .activity{border-top:1px solid var(--rule)}
+.dcRoot .activity-row{padding:10px 0;border-bottom:1px solid var(--rule);font-size:11.5px}
+.dcRoot .activity-row span{display:block;color:#888;font-size:10px;margin-top:3px}
+
+/* ---------------------------------------------------------------------
+   Rail
+--------------------------------------------------------------------- */
+.dcRoot .rail-card{border-bottom:1px solid var(--rule);padding-bottom:21px;margin-bottom:21px}
+.dcRoot .rail-card:last-child{border:0}
+.dcRoot .rail-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#888;font-weight:700;margin-bottom:9px}
+.dcRoot .rail-next{font-size:11.5px;line-height:1.5;margin-bottom:10px}
+.dcRoot .rail-btn{width:100%;border:1px solid var(--rule2);background:#fff;padding:9px;font-size:11.5px;font-weight:700;margin-top:6px}
+.dcRoot .rail-btn.primary{background:#111;color:#fff;border-color:#111}
+.dcRoot .rail-profile{font-size:11.5px;color:#777;line-height:1.55}
+.dcRoot .rail-profile strong{color:#111}
+.dcRoot .rail-link{border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;padding:0;font-size:11.5px;font-weight:600}
+
+/* ---------------------------------------------------------------------
+   Calendar
+--------------------------------------------------------------------- */
+.dcRoot .toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.dcRoot .search-box{border:1px solid var(--rule2);padding:9px 11px;font-size:12px;min-width:220px;flex:1}
+.dcRoot .filters{display:flex;gap:7px;flex-wrap:wrap}
+.dcRoot .filter{border:1px solid var(--rule2);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:600}
+.dcRoot .filter.active{background:#111;color:#fff;border-color:#111}
+.dcRoot .cal-list{border-top:1px solid var(--rule)}
+.dcRoot .cal-month{font-size:12px;font-weight:700;margin:22px 0 8px}
+.dcRoot .cal-row{display:grid;grid-template-columns:84px minmax(0,1fr) 120px 115px;gap:14px;align-items:center;border-bottom:1px solid var(--rule);padding:12px 0}
+.dcRoot .cal-date{font-size:11.5px;font-weight:700}
+.dcRoot .cal-date span{display:block;color:#888;font-size:10.5px;font-weight:500;margin-top:3px}
+.dcRoot .internal{font-size:10.5px;color:#888;margin-top:3px}
+
+/* ---------------------------------------------------------------------
+   Obligations / Reference library
+--------------------------------------------------------------------- */
+.dcRoot .lib-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 170px 170px;gap:9px;margin-bottom:15px}
+.dcRoot .lib-toolbar input,.dcRoot .lib-toolbar select{border:1px solid var(--rule2);padding:9px 10px;font-size:12px}
+.dcRoot .ob-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 150px 88px;gap:12px;align-items:center;border-bottom:1px solid var(--rule);padding:12px 0}
+.dcRoot .ob-id{font-size:10px;color:#999;font-weight:700;margin-right:6px}
+.dcRoot .ob-clock{font-size:11px;color:#666;line-height:1.45}
+.dcRoot .behaviour{font-size:11px;color:#666}
+
+/* ---------------------------------------------------------------------
+   Continuous controls
+--------------------------------------------------------------------- */
+.dcRoot .controls-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.dcRoot .big-control{border:1px solid var(--rule);padding:16px}
+.dcRoot .big-control h3{font-size:13px;margin:0;display:flex;align-items:center;gap:6px}
+.dcRoot .big-control p{font-size:11.5px;color:#777;line-height:1.55;margin:7px 0 12px}
+.dcRoot .control-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px;color:#777}
+.dcRoot .control-actions{display:flex;justify-content:space-between;align-items:center;margin-top:13px;padding-top:11px;border-top:1px solid var(--rule)}
+
+/* ---------------------------------------------------------------------
+   Fees
+--------------------------------------------------------------------- */
+.dcRoot .fee-box{border:1px solid var(--rule);background:#fafafa;padding:11px 12px;margin:10px 0}
+.dcRoot .fee-box strong{font-size:12px}
+.dcRoot .fee-line{font-size:11px;color:#555;margin-top:4px}
+.dcRoot .cost-list{border-top:1px solid var(--rule)}
+.dcRoot .cost-row{padding:9px 0;border-bottom:1px solid var(--rule);font-size:11.5px;display:flex;justify-content:space-between;gap:12px}
+.dcRoot .cost-row span{color:#666}
+
+/* ---------------------------------------------------------------------
+   Event cards
+--------------------------------------------------------------------- */
+.dcRoot .event-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dcRoot .event-card{border:1px solid var(--rule2);background:#fff;padding:14px;text-align:left}
+.dcRoot .event-card h4{margin:0 0 6px;font-size:13px}
+.dcRoot .event-meta{font-size:11px;color:#777;line-height:1.5;margin:6px 0}
+.dcRoot .event-actions{display:grid;gap:10px;margin-top:12px;border-top:1px solid var(--rule);padding-top:12px}
+.dcRoot .event-field label{display:block;font-size:11px;font-weight:700;margin-bottom:5px}
+.dcRoot .event-field input{width:100%;border:1px solid var(--rule2);padding:9px 10px;font-size:12px}
+.dcRoot .logged-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);font-size:11.5px}
+.dcRoot .lp-deadline{color:#555;font-weight:600}
+
+/* ---------------------------------------------------------------------
+   Drawer
+--------------------------------------------------------------------- */
+.dcRoot .overlay{position:fixed;inset:0;background:rgba(0,0,0,.22);z-index:90;display:none}
+.dcRoot .overlay.open{display:block}
+.dcRoot .drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,96vw);background:#fff;z-index:100;box-shadow:-18px 0 44px rgba(0,0,0,.11);transform:translateX(102%);transition:transform .18s ease;display:flex;flex-direction:column}
+.dcRoot .drawer.open{transform:translateX(0)}
+.dcRoot .drawer-head{padding:22px 26px 18px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.dcRoot .drawer-eyebrow{font-size:8.5px;text-transform:uppercase;letter-spacing:.11em;color:#888;font-weight:700;margin-bottom:6px}
+.dcRoot .drawer-head h2{font-size:19px;line-height:1.3;letter-spacing:-.02em;margin:0}
+.dcRoot .drawer-close{border:0;background:#fff;font-size:20px;padding:2px}
+.dcRoot .drawer-body{padding:23px 26px 30px;overflow:auto;flex:1}
+.dcRoot .drawer-footer{border-top:1px solid var(--rule);background:#fff;padding:12px 26px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dcRoot .drawer-section{margin-bottom:23px}
+.dcRoot .drawer-section h3{font-size:11px;margin:0 0 9px}
+.dcRoot .drawer-section p{font-size:10.4px;line-height:1.6;color:#666;margin:0}
+.dcRoot .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:15px}
+.dcRoot .meta-box{border:1px solid var(--rule);padding:11px}
+.dcRoot .meta-box label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#888;font-weight:700;margin-bottom:5px}
+.dcRoot .meta-box div{font-size:10.5px;line-height:1.45}
+.dcRoot .source-link{font-size:10px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.dcRoot .drawer-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.dcRoot .save{border:1px solid #111;background:#111;color:#fff;padding:9px 12px;font-size:11.5px;font-weight:700}
+.dcRoot .subtle{border:1px solid var(--rule2);background:#fff;color:#111;padding:9px 12px;font-size:11.5px;font-weight:700}
+.dcRoot .generated{border:1px solid var(--rule);padding:12px;margin-top:9px}
+.dcRoot .generated strong{font-size:10px}
+.dcRoot .generated p{font-size:11.5px;line-height:1.5;color:#666;margin:5px 0 0}
+
+/* ---------------------------------------------------------------------
+   Reference tables (rules/workflow states/holidays)
+--------------------------------------------------------------------- */
+.dcRoot .ref-table{width:100%;border-collapse:collapse;margin-top:8px}
+.dcRoot .ref-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#888;font-weight:700;border-bottom:1px solid var(--rule);padding:8px 10px 8px 0}
+.dcRoot .ref-table td{font-size:11.5px;color:#444;border-bottom:1px solid var(--rule);padding:10px 10px 10px 0;vertical-align:top}
+.dcRoot .holiday-list{font-size:11.5px;color:#555;line-height:1.9}
+
+/* ---------------------------------------------------------------------
+   Landing / loading
+--------------------------------------------------------------------- */
+.dcRoot .landing{max-width:1020px;margin:0 auto;padding:60px 36px 90px}
+.dcRoot .landing h1{font-size:42px;line-height:1.08;letter-spacing:-.04em;margin:0;max-width:800px}
+.dcRoot .landing .dek{font-size:14px;line-height:1.75;color:#575b61;max-width:700px;margin:18px 0 26px}
+.dcRoot .hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dcRoot .hero-actions .btn{padding:12px 17px}
+
+/* ---------------------------------------------------------------------
+   Responsive
+--------------------------------------------------------------------- */
+@media(max-width:1050px){.dcRoot .app-shell{grid-template-columns:1fr}.dcRoot .right{display:none}.dcRoot .metric-grid{grid-template-columns:repeat(2,1fr)}.dcRoot .control-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){
+  .dcRoot .workspace-head,.dcRoot .workspace-tabs{padding-left:16px;padding-right:16px}
+  .dcRoot .profile-wrap{padding:42px 18px}
+  .dcRoot .field-grid,.dcRoot .meta-grid,.dcRoot .event-grid{grid-template-columns:1fr}
+  .dcRoot .workspace-tabs{overflow:auto}
+  .dcRoot .main{padding:24px 18px 70px}
+  .dcRoot .metric-grid,.dcRoot .control-strip,.dcRoot .controls-grid{grid-template-columns:1fr}
+  .dcRoot .work-row{grid-template-columns:minmax(0,1fr) 110px}
+  .dcRoot .work-row .row-date,.dcRoot .work-row .row-owner{display:none}
+  .dcRoot .cal-row{grid-template-columns:72px minmax(0,1fr) 95px}
+  .dcRoot .cal-row .row-owner{display:none}
+  .dcRoot .ob-row{grid-template-columns:minmax(0,1fr) 100px}
+  .dcRoot .ob-row .ob-clock,.dcRoot .ob-row .behaviour{display:none}
+  .dcRoot .lib-toolbar{grid-template-columns:1fr}
+}

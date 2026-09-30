@@ -8,11 +8,12 @@ export const metadata = {
 };
 
 // Ports `screen-comply-hub` from the uploaded Beacon template 1:1 (§9, Phase
-// 1 of strategy/beacon-template-redesign-plan.md). The Beacon-styled Comply
-// modules themselves are Phase 2 work (merging the audited new fields into
-// the live compliance engine, §9.2/§9.3 of the plan) -- until then these two
-// cards route straight into the existing, already-database-backed, member-
-// gated Compliance Pathway Wizard so nothing regresses in the meantime.
+// 1 of strategy/beacon-template-redesign-plan.md). The two cards now route
+// into the real Beacon-styled Comply modules at /comply/payments and
+// /comply/digital-lending (§5 of the plan) -- the same database-backed,
+// member-gated compliance engine as before, restyled to match the uploaded
+// template. The old /dashboard/compliance-pathway page these used to point
+// at has been retired.
 export default function ComplyHubPage() {
   return (
     <div className={styles.chRoot}>
@@ -46,7 +47,7 @@ export default function ComplyHubPage() {
               Track ongoing obligations under your payments licence, including recurring filings, regulatory events
               and continuous controls.
             </p>
-            <Link className={styles["ch-card-action"]} href="/dashboard/compliance-pathway?catalog=payments_compliance_assistant">
+            <Link className={styles["ch-card-action"]} href="/comply/payments">
               Manage Payments compliance →
             </Link>
           </article>
@@ -54,7 +55,7 @@ export default function ComplyHubPage() {
             <div className={styles["ch-card-kicker"]}>MRD-MoFPED</div>
             <h2>Digital Lending</h2>
             <p>Track ongoing obligations for a Money Lender or NDTMFI providing credit through digital channels.</p>
-            <Link className={styles["ch-card-action"]} href="/dashboard/compliance-pathway?catalog=digital_lending_compliance_assistant">
+            <Link className={styles["ch-card-action"]} href="/comply/digital-lending">
               Manage Digital Lending compliance →
             </Link>
           </article>
