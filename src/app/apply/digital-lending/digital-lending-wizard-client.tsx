@@ -1410,7 +1410,7 @@ function OfficialFormDrawer({ itemFiles, onUpload, onViewFile, template }: Drawe
       <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
         {template.source_url ? (
           <>
-            This is the regulator&apos;s official form and must be completed and signed outside Beacon.{" "}
+            This is the regulator&apos;s official form and must be completed and signed outside FITSPA Compliance Platform.{" "}
             <a
               href={template.source_url}
               target="_blank"
@@ -1423,7 +1423,7 @@ function OfficialFormDrawer({ itemFiles, onUpload, onViewFile, template }: Drawe
             , complete and sign it, then upload the final signed copy below.
           </>
         ) : (
-          "This is the regulator's official form and must be completed and signed outside Beacon. Upload the final signed copy below."
+          "This is the regulator's official form and must be completed and signed outside FITSPA Compliance Platform. Upload the final signed copy below."
         )}
       </p>
       <FileSlotRow

@@ -3,7 +3,7 @@ import styles from "./apply-hub.module.css";
 import ApplyExpertPanel from "./apply-expert-panel";
 
 export const metadata = {
-  title: "Apply — Beacon | FITSPA Compliance Platform",
+  title: "Apply | FITSPA Compliance Platform",
   description: "Prepare and manage your Payments or Digital Lending licence application.",
 };
 
@@ -16,8 +16,8 @@ export default function ApplyHubPage() {
   return (
     <div className={styles.ahRoot}>
       <header className={styles["ah-nav"]}>
-        <Link className={styles["ah-brand"]} id="ah-brand-home" href="/" aria-label="Beacon home">
-          <span className={styles["ah-brand-mark"]} aria-hidden="true"></span>Beacon
+        <Link className={styles["ah-brand"]} id="ah-brand-home" href="/" aria-label="FITSPA Compliance Platform home">
+          <span className={styles["ah-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
         </Link>
         <nav className={styles["ah-nav-links"]} aria-label="Primary">
           <button className={`${styles["ah-nav-link"]} ${styles.muted}`} type="button" disabled>
@@ -25,26 +25,31 @@ export default function ApplyHubPage() {
           </button>
           <span className={`${styles["ah-nav-link"]} ${styles.active}`}>Apply</span>
           <Link className={styles["ah-nav-link"]} href="/comply">Comply</Link>
+          <Link className={styles["ah-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <Link className={styles["ah-home"]} href="/">← Beacon home</Link>
+        <div className={styles["ah-nav-actions"]}>
+          <Link className={styles["ah-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["ah-nav-register"]} href="/signup">Register</Link>
+          <Link className={styles["ah-nav-back"]} href="/">← Home</Link>
+        </div>
       </header>
       <main className={styles["ah-main"]}>
         <div className={styles["ah-eyebrow"]}>Licence Application Manager</div>
         <h1 className={styles["ah-title"]}>What are you applying for?</h1>
-        <p className={styles["ah-dek"]}>Choose the licence application you want Beacon to help you prepare.</p>
+        <p className={styles["ah-dek"]}>Choose the licence application you want FITSPA Compliance Platform to help you prepare.</p>
 
         <div className={styles["ah-grid"]}>
           <article className={styles["ah-card"]}>
             <div className={styles["ah-card-kicker"]}>Bank of Uganda</div>
             <h2>Payments</h2>
             <p>Prepare a Bank of Uganda payment licence application.</p>
-            <Link href="/apply/payments">Start Payments application →</Link>
+            <Link className={styles["ah-card-action"]} href="/apply/payments">Start Payments application →</Link>
           </article>
           <article className={styles["ah-card"]}>
             <div className={styles["ah-card-kicker"]}>MRD-MoFPED</div>
             <h2>Digital Lending</h2>
             <p>Prepare a Money Lender or NDTMFI application for digital lending.</p>
-            <Link href="/apply/digital-lending">Start Digital Lending application →</Link>
+            <Link className={styles["ah-card-action"]} href="/apply/digital-lending">Start Digital Lending application →</Link>
           </article>
         </div>
 

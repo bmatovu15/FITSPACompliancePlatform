@@ -10,6 +10,12 @@
 .chRoot .ch-nav-link.active{font-weight:600;border-bottom:2px solid #111}
 .chRoot .ch-nav-link.muted{color:#777}
 .chRoot .ch-home{justify-self:end;border:0;background:none;font-size:13px;font-weight:600;color:#555;padding:8px 0}
+.chRoot .ch-nav-actions{justify-self:end;display:flex;align-items:center;gap:18px}
+.chRoot .ch-nav-search{border:0;background:none;font-size:13px;font-weight:600;color:#555;padding:8px 0;white-space:nowrap}
+.chRoot .ch-nav-search:hover{color:#111}
+.chRoot .ch-nav-register{border:1px solid #111;background:#111;color:#fff;border-radius:3px;padding:8px 14px;font-size:13px;font-weight:600;white-space:nowrap}
+.chRoot .ch-nav-register:hover{background:#2B2B2B}
+.chRoot .ch-nav-back{border:0;background:none;font-size:13px;font-weight:600;color:#555;padding:8px 0;white-space:nowrap}
 .chRoot .ch-main{max-width:1100px;margin:0 auto;padding:74px 42px 100px}
 .chRoot .ch-eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:#7B8087;margin-bottom:15px}
 .chRoot .ch-title{margin:0;font-size:46px;line-height:1.08;letter-spacing:-.04em;font-weight:700}
@@ -20,8 +26,8 @@
 .chRoot .ch-card-kicker{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:#7B8087;margin-bottom:18px}
 .chRoot .ch-card h2{font-size:24px;line-height:1.2;letter-spacing:-.025em;margin:0 0 12px}
 .chRoot .ch-card p{font-size:14px;line-height:1.6;color:#6F737A;margin:0;max-width:43ch}
-.chRoot .ch-card button{margin-top:auto;border:1px solid #111;border-radius:3px;background:#111;color:#fff;padding:13px 16px;font-size:13px;font-weight:600;text-align:center}
-.chRoot .ch-card button:hover{background:#2B2B2B}
+.chRoot .ch-card button,.chRoot .ch-card .ch-card-action{margin-top:auto;border:1px solid #111;border-radius:3px;background:#111;color:#fff;padding:13px 16px;font-size:13px;font-weight:600;text-align:center;display:inline-block}
+.chRoot .ch-card button:hover,.chRoot .ch-card .ch-card-action:hover{background:#2B2B2B;color:#fff}
 .chRoot .ch-help{margin-top:24px;border-top:1px solid var(--ch-line);padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:18px}
 .chRoot .ch-help strong{font-size:13px}.chRoot .ch-help p{font-size:12px;color:var(--ch-muted);margin:4px 0 0;line-height:1.5}
 .chRoot .ch-help button{border:1px solid #CFCFCF;border-radius:3px;background:#fff;padding:10px 14px;font-size:12px;font-weight:600}
@@ -32,4 +38,5 @@
 .chRoot .ch-support-panel textarea{min-height:90px;resize:vertical}.chRoot .ch-support-actions{display:flex;gap:8px;margin-top:12px}
 .chRoot .ch-support-actions button{border:1px solid #111;border-radius:3px;padding:10px 13px;font-size:12px;font-weight:600;background:#111;color:#fff}.chRoot .ch-support-actions button.secondary{background:#fff;color:#111;border-color:#CFCFCF}
 .chRoot .ch-support-success{font-size:12px;font-weight:600;color:#2E7D4F;margin-top:12px}
+@media(max-width:900px){.chRoot .ch-brand{font-size:16px}.chRoot .ch-nav-actions{gap:10px}.chRoot .ch-nav-search{display:none}}
 @media(max-width:760px){.chRoot .ch-nav{padding:0 18px;grid-template-columns:auto 1fr auto}.chRoot .ch-nav-links{gap:16px;justify-content:center;font-size:12px}.chRoot .ch-main{padding:52px 20px 80px}.chRoot .ch-title{font-size:38px}.chRoot .ch-grid{grid-template-columns:1fr}.chRoot .ch-help{align-items:flex-start;flex-direction:column}.chRoot .ch-support-fields{grid-template-columns:1fr}}
