@@ -1,0 +1,793 @@
+/* Payments application workspace -- ported from the Beacon prototype's
+   #screen-app shell (masthead/app-tabs/phase-rail/checklist-main/
+   application-rail/workspace-drawer). Scoped under .pwRoot, which MUST be
+   applied to the wrapping <div> of the wizard screen's return JSX -- an
+   unapplied root class here silently drops every rule below. */
+
+.pwRoot {
+  --pw-ink: #111111;
+  --pw-ink-soft: #333333;
+  --pw-slate: #4a4a4a;
+  --pw-slate-light: #767676;
+  --pw-card: #ffffff;
+  --pw-rule: #e5e5e5;
+  --pw-rule-strong: #d0d0d0;
+  --pw-success: #2e7d4f;
+  --pw-warn: #946200;
+  --pw-paper-deep: #fafafa;
+  /* The site's persistent Beacon nav (.ahRoot .ah-nav, from apply-hub.module.css)
+     is itself `position: sticky; top: 0; height: 74px; z-index: 80` above this
+     component. Every sticky element below must offset by this height, or it
+     collides with -- and renders hidden underneath -- that nav bar as the page
+     scrolls. --pw-tabs-h approximates .appTabs' own rendered height so the
+     phase rail / application rail stick just below the tabs bar, not under it. */
+  --pw-ah-nav-h: 74px;
+  --pw-tabs-h: 48px;
+  font-family: "Montserrat", Arial, sans-serif;
+  color: var(--pw-ink);
+}
+.pwRoot * {
+  box-sizing: border-box;
+}
+
+/* ---------- sub-header ---------- */
+.pwSubhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid var(--pw-rule);
+  background: var(--pw-card);
+}
+.pwTitle {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.pwSubtitle {
+  font-size: 13px;
+  color: var(--pw-slate);
+  margin-top: 4px;
+}
+.pwSubheadRight {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-top: 4px;
+}
+.linkBtn {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--pw-ink);
+  padding: 6px 0;
+}
+.linkBtn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.errorBanner {
+  margin: 14px 28px 0;
+  padding: 10px 14px;
+  border-radius: 3px;
+  background: #fff0ee;
+  color: #8a2d26;
+  font-size: 13px;
+}
+
+/* ---------- tabs ---------- */
+.appTabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 28px;
+  background: var(--pw-card);
+  border-bottom: 1px solid var(--pw-rule);
+  position: sticky;
+  top: var(--pw-ah-nav-h);
+  z-index: 35;
+}
+.appTab {
+  background: none;
+  border: none;
+  padding: 14px 5px;
+  margin-right: 24px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pw-slate);
+  border-bottom: 2px solid transparent;
+}
+.appTab.active {
+  color: var(--pw-ink);
+  border-bottom-color: var(--pw-ink);
+}
+
+/* ---------- app body / checklist layout ---------- */
+.tabChecklist {
+  display: flex;
+  align-items: flex-start;
+}
+.workspaceWide {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 30px 28px 100px;
+}
+.workspaceWide h2 {
+  font-size: 24px;
+  margin: 0 0 6px;
+}
+.workspaceIntro {
+  font-size: 14px;
+  color: var(--pw-slate);
+  margin: 0 0 24px;
+  max-width: 52em;
+}
+
+.phaseRail {
+  width: 250px;
+  flex-shrink: 0;
+  padding: 22px 14px 40px 28px;
+  position: sticky;
+  top: calc(var(--pw-ah-nav-h) + var(--pw-tabs-h));
+  max-height: calc(100vh - var(--pw-ah-nav-h) - var(--pw-tabs-h));
+  overflow-y: auto;
+}
+.phaseLink {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 9px 10px;
+  margin-bottom: 2px;
+  border-radius: 3px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--pw-slate);
+  font-weight: 500;
+  border-left: 3px solid transparent;
+}
+.plCount {
+  float: right;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 10.5px;
+  color: var(--pw-slate-light);
+}
+.phaseLink.active {
+  background: var(--pw-paper-deep);
+  color: var(--pw-ink);
+  border-left-color: var(--pw-ink);
+  font-weight: 600;
+}
+.phaseLink:hover {
+  background: var(--pw-paper-deep);
+}
+.railFees {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--pw-rule);
+}
+.railFeesLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--pw-slate);
+  text-transform: uppercase;
+  margin: 0 10px 10px;
+}
+
+.checklistMain {
+  flex: 1;
+  min-width: 0;
+  padding: 22px 28px 100px 22px;
+}
+.checklistToolbar {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--pw-rule);
+}
+.searchBox {
+  font: inherit;
+  font-size: 14px;
+  padding: 9px 13px;
+  border: 1px solid var(--pw-rule-strong);
+  border-radius: 2px;
+  background: var(--pw-card);
+  min-width: 230px;
+  flex-shrink: 0;
+  color: var(--pw-ink);
+}
+.filterGroup {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.filterChip {
+  background: var(--pw-paper-deep);
+  border: 1px solid var(--pw-rule);
+  border-radius: 20px;
+  padding: 6px 13px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--pw-slate);
+}
+.filterChip.active {
+  background: var(--pw-ink);
+  color: #fff;
+  border-color: var(--pw-ink);
+}
+
+.phaseHeadingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin: 28px 0 9px;
+}
+.phaseHeadingRow:first-child {
+  margin-top: 0;
+}
+.phaseHeadingRow h3 {
+  margin: 0;
+  font-size: 19px;
+}
+.phaseHeadingRow p {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--pw-slate-light);
+}
+.phaseProgressBar {
+  height: 4px;
+  background: var(--pw-rule);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 13px;
+}
+.phaseProgressFill {
+  height: 100%;
+  background: var(--pw-success);
+}
+
+.emptyState {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--pw-slate-light);
+  font-size: 14px;
+}
+
+/* ---------- work card ---------- */
+.workCard {
+  border: 1px solid var(--pw-rule);
+  border-left: 3px solid var(--pw-rule-strong);
+  background: var(--pw-card);
+  border-radius: 3px;
+  margin-bottom: 9px;
+  padding: 14px 15px;
+}
+.workCard.isReady {
+  border-left-color: var(--pw-success);
+}
+.workCard.isProgress {
+  border-left-color: #8a6a00;
+}
+.workCardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.workCardHeading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+.workCardTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.workInfoBtn {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--pw-rule-strong);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--pw-ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.workInfoBtn:hover {
+  border-color: var(--pw-ink);
+}
+.workStatus {
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.workStatus.ready {
+  color: var(--pw-success);
+}
+.workStatus.progress {
+  color: #7b5b00;
+}
+.workStatus.notStarted {
+  color: var(--pw-slate-light);
+}
+.workCardNote {
+  font-size: 13px;
+  color: var(--pw-slate);
+  margin: 6px 0 11px;
+  max-width: 62em;
+}
+.workCardActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.workBtn {
+  border: 1px solid var(--pw-ink);
+  background: #fff;
+  color: var(--pw-ink);
+  padding: 7px 12px;
+  border-radius: 2px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.workBtn.primary {
+  background: var(--pw-ink);
+  color: #fff;
+}
+.workBtn.subtle {
+  border-color: var(--pw-rule-strong);
+  color: var(--pw-slate);
+}
+.workBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.workSummary {
+  font-size: 11.5px;
+  color: var(--pw-slate-light);
+}
+
+/* ---------- application rail ---------- */
+.applicationRail {
+  width: 252px;
+  flex: 0 0 252px;
+  padding: 22px 28px 90px 12px;
+  position: sticky;
+  top: calc(var(--pw-ah-nav-h) + var(--pw-tabs-h));
+  max-height: calc(100vh - var(--pw-ah-nav-h) - var(--pw-tabs-h));
+  overflow-y: auto;
+}
+.railCard {
+  background: #fff;
+  border: 1px solid var(--pw-rule);
+  border-radius: 3px;
+  padding: 16px 18px;
+  margin-bottom: 13px;
+}
+.railLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--pw-ink-soft);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.railNumber {
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+.railProgress {
+  height: 5px;
+  background: #e7e7e7;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0 0 8px;
+}
+.railProgress > span {
+  display: block;
+  height: 100%;
+  background: var(--pw-success);
+}
+.railStat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--pw-rule);
+  font-size: 13px;
+}
+.railStat:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.railStat strong {
+  font-size: 13px;
+  color: var(--pw-ink);
+}
+.railFileCount {
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 700;
+  margin: 0 0 7px;
+}
+.railCopy {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--pw-ink-soft);
+  margin: 0 0 12px;
+}
+.railNextTitle {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--pw-ink-soft);
+  margin: 0 0 12px;
+}
+.railBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--pw-rule-strong);
+  background: #fff;
+  color: var(--pw-ink);
+  padding: 9px 13px;
+  border-radius: 2px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.railBtn.primary {
+  background: var(--pw-ink);
+  border-color: var(--pw-ink);
+  color: #fff;
+}
+.railBtn:hover {
+  border-color: var(--pw-ink);
+}
+.railReviewState {
+  font-size: 12px;
+  color: var(--pw-success);
+  font-weight: 600;
+  margin: -3px 0 10px;
+}
+
+/* ---------- workspace drawer + overlay ---------- */
+.workspaceOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.26);
+  z-index: 120;
+}
+.workspaceDrawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: min(620px, 92vw);
+  background: #fff;
+  z-index: 121;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+.drawerHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--pw-rule);
+}
+.drawerHead h2 {
+  font-size: 21px;
+  line-height: 1.25;
+  margin: 2px 0 0;
+}
+.drawerEyebrow {
+  font-size: 11px;
+  color: var(--pw-slate-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.drawerClose {
+  border: 0;
+  background: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--pw-slate);
+  padding: 0 2px;
+}
+.drawerBody {
+  padding: 20px 24px 50px;
+  overflow-y: auto;
+}
+.drawerEmpty {
+  padding: 18px 0;
+  color: var(--pw-slate);
+}
+
+/* ---------- guidance content ---------- */
+.sourceLine {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pw-ink);
+  margin: 0 0 5px;
+  line-height: 1.45;
+}
+.sourceLine a {
+  color: var(--pw-ink);
+}
+.guidanceCopy {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--pw-ink-soft);
+  margin: 14px 0;
+}
+.guidanceDeliverable {
+  border-top: 1px solid var(--pw-rule);
+  padding-top: 13px;
+  margin-top: 14px;
+}
+.guidanceDeliverable strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.guidanceDeliverable p {
+  font-size: 13.5px;
+  margin: 0;
+  color: var(--pw-ink-soft);
+}
+
+/* ---------- expert support ---------- */
+.supportOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.supportOption {
+  border: 1px solid var(--pw-rule);
+  border-radius: 3px;
+  padding: 16px;
+}
+.supportOption h3 {
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+.supportOption p {
+  font-size: 13px;
+  color: var(--pw-slate);
+  margin: 0 0 12px;
+}
+.supportFieldLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pw-ink-soft);
+  margin-bottom: 8px;
+}
+.supportTextarea {
+  width: 100%;
+  font: inherit;
+  font-size: 13.5px;
+  border: 1px solid var(--pw-rule-strong);
+  border-radius: 2px;
+  padding: 10px 12px;
+  min-height: 120px;
+  resize: vertical;
+  background: #fff;
+  color: var(--pw-ink);
+}
+.supportConfirmation {
+  padding: 10px 0;
+  font-size: 13.5px;
+  color: var(--pw-ink-soft);
+}
+.supportConfirmation strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--pw-ink);
+}
+
+/* ---------- documents tab ---------- */
+.docsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 34px;
+  font-size: 13.5px;
+}
+.docsTable th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--pw-slate-light);
+  border-bottom: 1.5px solid var(--pw-ink);
+  padding: 8px 10px;
+}
+.docsTable td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--pw-rule);
+  color: var(--pw-ink-soft);
+  vertical-align: top;
+}
+.docName {
+  font-weight: 600;
+  color: var(--pw-ink);
+}
+.docSub {
+  font-size: 11.5px;
+  color: var(--pw-slate-light);
+  margin-top: 2px;
+}
+.railLink {
+  border: 0;
+  background: none;
+  color: var(--pw-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+  text-align: left;
+}
+
+/* ---------- review tab ---------- */
+.reviewOverview {
+  border: 1px solid var(--pw-rule);
+  border-left: 3px solid var(--pw-ink);
+  padding: 18px;
+  margin: 0 0 18px;
+  background: #fff;
+}
+.reviewOverviewTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.reviewOverview h3 {
+  font-size: 16px;
+  margin: 0 0 5px;
+}
+.reviewState {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--pw-rule-strong);
+  border-radius: 14px;
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+.reviewState.requested {
+  background: #f4f4f4;
+}
+.reviewSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.reviewSummaryBox {
+  border: 1px solid var(--pw-rule);
+  padding: 12px;
+}
+.reviewSummaryBox strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+.reviewSummaryBox span {
+  font-size: 11.5px;
+  color: var(--pw-slate);
+}
+.reviewNoteBlock {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--pw-ink-soft);
+  margin: 16px 0;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .phaseRail {
+    width: 220px;
+    padding-left: 18px;
+  }
+  .applicationRail {
+    width: 225px;
+    flex-basis: 225px;
+    padding-right: 18px;
+  }
+  .checklistMain {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+@media (max-width: 900px) {
+  .tabChecklist {
+    flex-direction: column;
+  }
+  .phaseRail {
+    order: 1;
+    width: 100%;
+    position: static;
+    max-height: none;
+    padding: 14px 18px 0;
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+  }
+  .railFees {
+    display: none;
+  }
+  .phaseLink {
+    white-space: nowrap;
+  }
+  .applicationRail {
+    order: 2;
+    width: 100%;
+    flex-basis: auto;
+    position: static;
+    max-height: none;
+    padding: 14px 18px 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .railCard {
+    margin-bottom: 0;
+  }
+  .checklistMain {
+    order: 3;
+    width: 100%;
+    padding: 18px;
+  }
+}
+@media (max-width: 700px) {
+  .pwSubhead {
+    padding: 18px 18px 14px;
+  }
+  .appTabs {
+    padding: 0 18px;
+  }
+  .applicationRail {
+    grid-template-columns: 1fr;
+  }
+  .reviewSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+  .workspaceDrawer {
+    width: 100vw;
+  }
+}

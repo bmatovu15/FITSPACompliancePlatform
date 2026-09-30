@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
+import styles from "./digital-lending-workspace.module.css";
 import type {
   LicenceApplicationDrawerType,
   LicenceApplicationFeeTier,
@@ -19,33 +20,49 @@ import type {
 // which application is theirs, via STORAGE_KEY. See
 // strategy/beacon-template-redesign-plan.md §9.1 for the audited 21-item
 // Digital Lending schema this reads.
+//
+// The wizard screen's presentation is ported 1:1 from the Beacon prototype
+// at /tmp/beacon-digital-src.html's #screen-app workspace (masthead +
+// tabs + phase-nav + req-cards + right rail + slide-in drawer) -- see
+// digital-lending-workspace.module.css for the ported CSS. Every Supabase
+// query, upload handler and status computation below is unchanged from the
+// previous generic-shell version; only how it's rendered changed.
 
 const STORAGE_KEY = "beaconDigitalLendingApplicationId";
 const BUCKET = "licence-application-files";
 
 const PHASE_ORDER = ["business", "people", "products", "technology", "policies", "finalise"] as const;
 type Phase = (typeof PHASE_ORDER)[number];
+// Exact prototype phase labels (see PHASES in the source HTML) -- PHASE_ORDER
+// maps 1:1 in order to the prototype's own PHASES array.
 const PHASE_LABELS: Record<Phase, string> = {
-  business: "Business",
-  people: "People",
-  products: "Products",
-  technology: "Technology",
-  policies: "Policies",
-  finalise: "Finalise",
-};
-const PHASE_NOTES: Record<Phase, string> = {
-  business: "Who the applicant is, and where the business is based.",
-  people: "The directors, board members and senior managers behind the application.",
-  products: "The loan products on offer, how they are funded, and the customer agreement.",
-  technology: "The systems and channels used to deliver digital credit.",
-  policies: "The policies and frameworks that govern how the business is run.",
-  finalise: "The application fee and the official, signed form.",
+  business: "Business & licence details",
+  people: "People & governance",
+  products: "Loan products & funding",
+  technology: "Technology & third parties",
+  policies: "Policies & controls",
+  finalise: "Finalise application",
 };
 
 type ItemStatus = "not_started" | "in_progress" | "ready";
 type Screen = "loading" | "route" | "wizard" | "submitted";
 
 type PersonRow = { rowId: string; name: string; role: string; nationalId: string; address: string };
+
+type ApplicationReview = {
+  status: string;
+  type: "interim" | "final";
+  requestedAt: string;
+  requestedProgress: number;
+};
+
+// A drawer can host a requirement's own editing form ("item"), its
+// guidance ("guide", the info-button popover -- built as a drawer rather
+// than a floating popover, since this codebase already has a drawer/overlay
+// mechanism and every other Beacon workspace on this site uses it the same
+// way), or the Expert Support panel ("expert", optionally scoped to a
+// requirement when opened via a requirement's own "Ask an expert" link).
+type DrawerState = { kind: "item" | "guide"; externalId: string } | { kind: "expert"; externalId?: string } | null;
 
 function isFilled(v: unknown): boolean {
   if (typeof v === "string") return v.trim().length > 0;
@@ -127,6 +144,35 @@ function computeReady(
   }
 }
 
+// A short "N added" caption under a requirement's title on the req-card,
+// mirroring the prototype's own progressText() function. Repeatable-row
+// drawer types get a count; everything else falls back to a file count.
+function progressTextFor(
+  template: LicenceApplicationTemplate,
+  answers: Record<string, unknown>,
+  itemFiles: MemberLicenceApplicationFile[]
+): string {
+  if (template.drawer_type === "people") {
+    const people = Array.isArray(answers.people) ? (answers.people as PersonRow[]) : [];
+    return people.length ? `${people.length} ${people.length === 1 ? "person" : "people"} added` : "";
+  }
+  const slots = new Set(itemFiles.map((f) => f.slot)).size;
+  return slots ? `${slots} file${slots === 1 ? "" : "s"} added` : "";
+}
+
+function readApplicationReview(facts: Record<string, unknown> | undefined): ApplicationReview | null {
+  const v = facts?.applicationReview;
+  if (!v || typeof v !== "object") return null;
+  const r = v as Record<string, unknown>;
+  if (r.status !== "requested") return null;
+  return {
+    status: "requested",
+    type: r.type === "final" ? "final" : "interim",
+    requestedAt: typeof r.requestedAt === "string" ? r.requestedAt : "",
+    requestedProgress: typeof r.requestedProgress === "number" ? r.requestedProgress : 0,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Root component
 // ---------------------------------------------------------------------------
@@ -149,8 +195,8 @@ export default function DigitalLendingWizardClient({
   const [itemStates, setItemStates] = useState<Record<string, MemberLicenceApplicationItemState>>({});
   const [files, setFiles] = useState<Record<string, MemberLicenceApplicationFile[]>>({});
   const [activePhase, setActivePhase] = useState<Phase>("business");
-  const [reviewMode, setReviewMode] = useState(false);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [activeTab, setActiveTab] = useState<"application" | "documents" | "review">("application");
+  const [drawer, setDrawer] = useState<DrawerState>(null);
   const [creatingRoute, setCreatingRoute] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -239,8 +285,8 @@ export default function DigitalLendingWizardClient({
     setApplication(null);
     setItemStates({});
     setFiles({});
-    setReviewMode(false);
-    setExpanded({});
+    setActiveTab("application");
+    setDrawer(null);
     setActivePhase("business");
     setScreen("route");
   }
@@ -326,28 +372,6 @@ export default function DigitalLendingWizardClient({
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 
-  function toggleExpanded(externalId: string) {
-    setExpanded((e) => ({ ...e, [externalId]: !e[externalId] }));
-  }
-
-  async function submitApplication() {
-    if (!application) return;
-    setSubmitting(true);
-    const submittedAt = new Date().toISOString();
-    const { error } = await supabase
-      .from("member_licence_applications")
-      .update({ status: "submitted", submitted_at: submittedAt })
-      .eq("id", application.id);
-    setSubmitting(false);
-    if (error) {
-      console.error("Failed to submit application", error);
-      setErrorMsg("We couldn't submit your application. Please try again.");
-      return;
-    }
-    setApplication((a) => (a ? { ...a, status: "submitted", submitted_at: submittedAt } : a));
-    setScreen("submitted");
-  }
-
   const chosenRoute = application?.class_key ?? null;
   const routeClass = useMemo(
     () => wizardClasses.find((c) => c.class_key === chosenRoute) ?? null,
@@ -386,7 +410,101 @@ export default function DigitalLendingWizardClient({
   }
 
   const readyCount = routeTemplates.filter((t) => statusFor(t.external_id) === "ready").length;
-  const allReady = routeTemplates.length > 0 && readyCount === routeTemplates.length;
+  const inProgressCount = routeTemplates.filter((t) => statusFor(t.external_id) === "in_progress").length;
+  const total = routeTemplates.length;
+  const remainingCount = total - readyCount - inProgressCount;
+  const progressPct = total ? Math.round((readyCount / total) * 100) : 0;
+  const allReady = total > 0 && readyCount === total;
+
+  const nextTemplate = useMemo(
+    () => routeTemplates.find((t) => statusFor(t.external_id) !== "ready") ?? null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [routeTemplates, itemStates]
+  );
+  const feeItemTemplate = useMemo(() => routeTemplates.find((t) => t.title === "Application fee") ?? null, [routeTemplates]);
+  const officialFormTemplate = useMemo(
+    () => routeTemplates.find((t) => t.drawer_type === "official_form") ?? null,
+    [routeTemplates]
+  );
+  const feeReady = feeItemTemplate ? statusFor(feeItemTemplate.external_id) === "ready" : false;
+  const formReady = officialFormTemplate ? statusFor(officialFormTemplate.external_id) === "ready" : false;
+
+  const documentRows = useMemo(() => {
+    const rows: { file: MemberLicenceApplicationFile; title: string; externalId: string }[] = [];
+    Object.entries(files).forEach(([externalId, list]) => {
+      const t = routeTemplates.find((tt) => tt.external_id === externalId);
+      (list ?? []).forEach((f) => rows.push({ file: f, title: t?.title ?? externalId, externalId }));
+    });
+    rows.sort((a, b) => (b.file.uploaded_at ?? "").localeCompare(a.file.uploaded_at ?? ""));
+    return rows;
+  }, [files, routeTemplates]);
+
+  const reviewRequest = useMemo(() => readApplicationReview(application?.facts), [application]);
+  const hasReview = !!reviewRequest;
+
+  const drawerTemplate = useMemo(
+    () => (drawer && drawer.externalId ? routeTemplates.find((t) => t.external_id === drawer.externalId) ?? null : null),
+    [drawer, routeTemplates]
+  );
+
+  // Lightweight facts-merge persist helper, matching the pattern already
+  // used by the Payments sibling wizard (persistFacts in
+  // payments-wizard-client.tsx) -- application.facts is jsonb, so recording
+  // a review request needs no schema change.
+  async function persistFacts(patch: Record<string, unknown>) {
+    if (!application) return;
+    const nextFacts = { ...application.facts, ...patch };
+    setApplication((a) => (a ? { ...a, facts: nextFacts } : a));
+    const { error } = await supabase.from("member_licence_applications").update({ facts: nextFacts }).eq("id", application.id);
+    if (error) {
+      console.error("Failed to save your review request", error);
+      setErrorMsg("We couldn't save that. Please try again.");
+    }
+  }
+
+  function requestReview(type: "interim" | "final") {
+    const pct = total ? Math.round((readyCount / total) * 100) : 0;
+    persistFacts({
+      applicationReview: {
+        status: "requested",
+        type,
+        requestedAt: new Date().toISOString(),
+        requestedProgress: pct,
+      },
+    });
+    setDrawer(null);
+    setActiveTab("review");
+  }
+
+  function cancelReview() {
+    persistFacts({ applicationReview: null });
+    setActiveTab("application");
+  }
+
+  function jumpToPhase(p: Phase) {
+    setActivePhase(p);
+    if (typeof document !== "undefined") {
+      document.getElementById(`phase-${p}`)?.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
+  async function submitApplication() {
+    if (!application) return;
+    setSubmitting(true);
+    const submittedAt = new Date().toISOString();
+    const { error } = await supabase
+      .from("member_licence_applications")
+      .update({ status: "submitted", submitted_at: submittedAt })
+      .eq("id", application.id);
+    setSubmitting(false);
+    if (error) {
+      console.error("Failed to submit application", error);
+      setErrorMsg("We couldn't submit your application. Please try again.");
+      return;
+    }
+    setApplication((a) => (a ? { ...a, status: "submitted", submitted_at: submittedAt } : a));
+    setScreen("submitted");
+  }
 
   // ---- Screens ----
 
@@ -424,84 +542,329 @@ export default function DigitalLendingWizardClient({
 
   if (!application) return null;
 
+  // ---- Drawer content dispatch ----
+
+  let drawerEyebrow = "";
+  let drawerTitle = "";
+  let drawerBody: ReactNode = null;
+  const drawerHasRequirementContext = (drawer?.kind === "item" || drawer?.kind === "guide") && !!drawerTemplate;
+
+  if (drawer?.kind === "item" && drawerTemplate) {
+    drawerEyebrow = PHASE_LABELS[drawerTemplate.phase as Phase] ?? "Requirement";
+    drawerTitle = drawerTemplate.title;
+    drawerBody = (
+      <DrawerInput
+        template={drawerTemplate}
+        answers={itemStates[drawerTemplate.external_id]?.answers ?? {}}
+        itemFiles={files[drawerTemplate.external_id] ?? []}
+        onSaveAnswers={(a) => commitAnswers(drawerTemplate, a)}
+        onUpload={(slot, f) => handleUpload(drawerTemplate, slot, f)}
+        onViewFile={viewFile}
+        feeAmount={drawerTemplate.title === "Application fee" ? feeAmount : null}
+      />
+    );
+  } else if (drawer?.kind === "guide" && drawerTemplate) {
+    drawerEyebrow = "Requirement guidance";
+    drawerTitle = drawerTemplate.title;
+    drawerBody = <GuidanceDrawerBody template={drawerTemplate} />;
+  } else if (drawer?.kind === "expert") {
+    drawerEyebrow = "Support";
+    drawerTitle = "Expert Support";
+    const contextLabel = drawerTemplate ? drawerTemplate.title : `${routeClass?.label ?? "Digital Lending"} application`;
+    drawerBody = <ExpertSupportBody contextLabel={contextLabel} onRequestReview={() => requestReview("interim")} />;
+  }
+
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
-      <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
-            Digital Lending application
-          </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-            {routeClass?.label ?? "Route"} · saved automatically in this browser · reference {application.id.slice(0, 8)}
-          </p>
+    <div className={styles.dwRoot}>
+      <header className={styles["workspace-head"]}>
+        <div className={styles["workspace-head-left"]}>
+          <button type="button" className={styles["back-btn"]} onClick={startOver}>
+            ← Licence route
+          </button>
+          <span className={styles["workspace-title"]}>Digital Lending Licence Application</span>
+          <span className={styles["route-badge"]}>{routeClass?.label ?? "—"}</span>
         </div>
-        <button className="btn btn-ghost btn-sm" onClick={startOver} type="button">
-          Start a different application
+      </header>
+
+      <nav className={styles["workspace-tabs"]}>
+        <button
+          type="button"
+          className={`${styles["app-tab"]} ${activeTab === "application" ? styles.active : ""}`}
+          onClick={() => setActiveTab("application")}
+        >
+          Application
         </button>
-      </div>
+        <button
+          type="button"
+          className={`${styles["app-tab"]} ${activeTab === "documents" ? styles.active : ""}`}
+          onClick={() => setActiveTab("documents")}
+        >
+          Documents
+        </button>
+        {hasReview && (
+          <button
+            type="button"
+            className={`${styles["app-tab"]} ${activeTab === "review" ? styles.active : ""}`}
+            onClick={() => setActiveTab("review")}
+          >
+            Review
+          </button>
+        )}
+      </nav>
 
-      {errorMsg && (
-        <div className="badge badge-red mb-4" style={{ display: "block", padding: "0.5rem 0.75rem", borderRadius: "0.5rem" }}>
-          {errorMsg}
-        </div>
-      )}
+      {errorMsg && <div className={styles["error-banner"]}>{errorMsg}</div>}
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <PhaseRail
-          phaseGroups={phaseGroups}
-          itemStates={itemStates}
-          activePhase={activePhase}
-          reviewMode={reviewMode}
-          onSelectPhase={(p) => {
-            setReviewMode(false);
-            setActivePhase(p);
-          }}
-          onSelectReview={() => setReviewMode(true)}
-          routeLabel={routeClass?.label ?? "—"}
-          feeAmount={feeAmount}
-          readyCount={readyCount}
-          total={routeTemplates.length}
-        />
+      <div className={styles["workspace-grid"]}>
+        <aside className={styles["phase-nav"]}>
+          <div className={styles["phase-label"]}>Application</div>
+          {PHASE_ORDER.map((p) => (
+            <button
+              key={p}
+              type="button"
+              className={`${styles["phase-btn"]} ${activePhase === p ? styles.active : ""}`}
+              onClick={() => jumpToPhase(p)}
+            >
+              {PHASE_LABELS[p]}
+            </button>
+          ))}
+        </aside>
 
-        <main className="flex-1 min-w-0">
-          {reviewMode ? (
-            <ReviewPanel
-              phaseGroups={phaseGroups}
-              itemStates={itemStates}
-              allReady={allReady}
-              submitting={submitting}
-              onSubmit={submitApplication}
-              onJump={(t) => {
-                setReviewMode(false);
-                setActivePhase(t.phase as Phase);
-                setExpanded((e) => ({ ...e, [t.external_id]: true }));
-              }}
-            />
-          ) : (
-            <>
-              <h2 className="text-lg font-semibold">{PHASE_LABELS[activePhase]}</h2>
-              <p className="text-sm mt-1 mb-4" style={{ color: "var(--color-text-muted)" }}>
-                {PHASE_NOTES[activePhase]}
-              </p>
-              {(phaseGroups[activePhase] ?? []).map((t) => (
-                <ChecklistItem
-                  key={t.external_id}
-                  template={t}
-                  status={statusFor(t.external_id)}
-                  answers={itemStates[t.external_id]?.answers ?? {}}
-                  itemFiles={files[t.external_id] ?? []}
-                  expanded={!!expanded[t.external_id]}
-                  onToggle={() => toggleExpanded(t.external_id)}
-                  onSaveAnswers={(a) => commitAnswers(t, a)}
-                  onUpload={(slot, f) => handleUpload(t, slot, f)}
-                  onViewFile={viewFile}
-                  feeAmount={t.title === "Application fee" ? feeAmount : null}
-                />
-              ))}
-            </>
-          )}
+        <main className={styles["app-main"]}>
+          <section style={{ display: activeTab === "application" ? "block" : "none" }}>
+            <h1>Your application</h1>
+            <p className={styles["workspace-intro"]}>
+              Prepare the {routeClass?.label ?? "Digital Lending"} application requirement by requirement. FITSPA
+              Compliance Platform only shows work that belongs in this route.
+            </p>
+            {PHASE_ORDER.map((p) => {
+              const items = phaseGroups[p] ?? [];
+              if (items.length === 0) return null;
+              return (
+                <section key={p} id={`phase-${p}`} className={styles["phase-section"]}>
+                  <h2>{PHASE_LABELS[p]}</h2>
+                  <div className={styles["req-list"]}>
+                    {items.map((t) => (
+                      <RequirementCard
+                        key={t.external_id}
+                        template={t}
+                        status={statusFor(t.external_id)}
+                        progressText={progressTextFor(t, itemStates[t.external_id]?.answers ?? {}, files[t.external_id] ?? [])}
+                        onOpenGuide={() => setDrawer({ kind: "guide", externalId: t.external_id })}
+                        onOpenItem={() => setDrawer({ kind: "item", externalId: t.external_id })}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+
+            <div className={styles["readiness-card"]}>
+              <h3>Application readiness</h3>
+              <p>Use this summary when you are ready to review the complete application before submission.</p>
+              <div className={styles["readiness-row"]}>
+                <span>All application requirements</span>
+                <span className={allReady ? styles.ok : styles.notok}>
+                  {allReady ? "Complete" : `${readyCount}/${total} ready`}
+                </span>
+              </div>
+              {officialFormTemplate && (
+                <div className={styles["readiness-row"]}>
+                  <span>Prescribed form signed</span>
+                  <span className={formReady ? styles.ok : styles.notok}>{formReady ? "Ready" : "Not ready"}</span>
+                </div>
+              )}
+              {feeItemTemplate && (
+                <div className={styles["readiness-row"]}>
+                  <span>Application fee evidence</span>
+                  <span className={feeReady ? styles.ok : styles.notok}>{feeReady ? "Ready" : "Not ready"}</span>
+                </div>
+              )}
+              <div className={styles["drawer-actions"]}>
+                <button
+                  type="button"
+                  className={styles["save-btn"]}
+                  disabled={!allReady}
+                  onClick={() => requestReview("final")}
+                >
+                  Request final review
+                </button>
+                {allReady && (
+                  <button type="button" className={styles["subtle-btn"]} disabled={submitting} onClick={submitApplication}>
+                    {submitting ? "Submitting…" : "Submit application"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section style={{ display: activeTab === "documents" ? "block" : "none" }}>
+            <div className={styles["docs-head"]}>
+              <h2>Documents</h2>
+              <p className={styles["workspace-intro"]}>Files added while preparing the application appear here automatically.</p>
+            </div>
+            {documentRows.length === 0 ? (
+              <div className={styles.empty}>No documents have been added yet.</div>
+            ) : (
+              <table className={styles["docs-table"]}>
+                <thead>
+                  <tr>
+                    <th>Document</th>
+                    <th>Requirement</th>
+                    <th>Version</th>
+                    <th>Added</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {documentRows.map((r) => (
+                    <tr key={r.file.id}>
+                      <td>
+                        <div className={styles["docs-name"]}>{r.file.file_name}</div>
+                        <div className={styles["docs-sub"]}>{r.file.slot}</div>
+                      </td>
+                      <td>{r.title}</td>
+                      <td>v{r.file.version}</td>
+                      <td>{(r.file.uploaded_at ?? "").slice(0, 10)}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className={styles["open-req"]}
+                          onClick={() => {
+                            setActiveTab("application");
+                            setDrawer({ kind: "item", externalId: r.externalId });
+                          }}
+                        >
+                          Open requirement
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </section>
+
+          <section style={{ display: activeTab === "review" ? "block" : "none" }}>
+            <div className={styles["review-head"]}>
+              <h2>Expert review</h2>
+              <p className={styles["workspace-intro"]}>Review requests and requirement-level issues appear here.</p>
+            </div>
+            {reviewRequest ? (
+              <>
+                <div className={styles["review-card"]}>
+                  <div className={styles["review-top"]}>
+                    <div>
+                      <h3>{reviewRequest.type === "final" ? "Final application review" : "Application review"}</h3>
+                      <p>
+                        Requested {reviewRequest.requestedAt ? new Date(reviewRequest.requestedAt).toLocaleDateString() : "—"}{" "}
+                        at {reviewRequest.requestedProgress}% complete · {readyCount} of {total} requirements ready ·{" "}
+                        {documentRows.length} file{documentRows.length === 1 ? "" : "s"} attached.
+                      </p>
+                    </div>
+                    <span className={styles["review-state"]}>Requested</span>
+                  </div>
+                </div>
+                <div className={styles["drawer-actions"]}>
+                  <button type="button" className={styles["subtle-btn"]} onClick={cancelReview}>
+                    Cancel review request
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className={styles.empty}>No review has been requested.</div>
+            )}
+          </section>
         </main>
+
+        <aside className={styles["right-rail"]}>
+          <section className={styles["rail-card"]}>
+            <div className={styles["rail-label"]}>Progress</div>
+            <div className={styles["rail-number"]}>{progressPct}%</div>
+            <div className={styles["rail-progress"]}>
+              <span style={{ width: `${progressPct}%` }} />
+            </div>
+            <div className={styles["rail-stat"]}>
+              <span>Ready</span>
+              <strong>{readyCount}</strong>
+            </div>
+            <div className={styles["rail-stat"]}>
+              <span>In progress</span>
+              <strong>{inProgressCount}</strong>
+            </div>
+            <div className={styles["rail-stat"]}>
+              <span>Remaining</span>
+              <strong>{remainingCount}</strong>
+            </div>
+          </section>
+
+          <section className={styles["rail-card"]}>
+            <div className={styles["rail-label"]}>Next</div>
+            <div className={styles["rail-next"]}>
+              {nextTemplate ? (
+                <>
+                  Continue with <strong>{nextTemplate.title}</strong>.
+                </>
+              ) : (
+                "Your applicant-side requirements are complete."
+              )}
+            </div>
+            {nextTemplate ? (
+              <button
+                type="button"
+                className={styles["rail-btn"]}
+                onClick={() => setDrawer({ kind: "item", externalId: nextTemplate.external_id })}
+              >
+                Open requirement
+              </button>
+            ) : (
+              <button type="button" className={`${styles["rail-btn"]} ${styles.primary}`} onClick={() => requestReview("final")}>
+                Request final review
+              </button>
+            )}
+          </section>
+
+          <section className={styles["rail-card"]}>
+            <div className={styles["rail-label"]}>Expert Support</div>
+            <div className={styles["rail-next"]}>Ask a question or request a review at any stage.</div>
+            <button type="button" className={styles["rail-btn"]} onClick={() => setDrawer({ kind: "expert" })}>
+              Ask a question
+            </button>
+            <button type="button" className={styles["rail-btn"]} onClick={() => requestReview("interim")}>
+              Request application review
+            </button>
+          </section>
+        </aside>
       </div>
+
+      <div className={`${styles.overlay} ${drawer ? styles.open : ""}`} onClick={() => setDrawer(null)} />
+      <aside className={`${styles.drawer} ${drawer ? styles.open : ""}`}>
+        <div className={styles["drawer-head"]}>
+          <div>
+            <div className={styles["drawer-eyebrow"]}>{drawerEyebrow}</div>
+            <h2>{drawerTitle}</h2>
+          </div>
+          <button type="button" className={styles["drawer-close"]} onClick={() => setDrawer(null)} aria-label="Close">
+            ×
+          </button>
+        </div>
+        <div className={styles["drawer-body"]}>{drawerBody}</div>
+        <div className={styles["drawer-footer"]}>
+          {drawerHasRequirementContext && drawerTemplate ? (
+            <button
+              type="button"
+              className={styles["text-link"]}
+              onClick={() => setDrawer({ kind: "expert", externalId: drawerTemplate.external_id })}
+            >
+              Ask an expert about this requirement
+            </button>
+          ) : (
+            <span />
+          )}
+          <button type="button" className={styles["subtle-btn"]} onClick={() => setDrawer(null)}>
+            Close
+          </button>
+        </div>
+      </aside>
     </div>
   );
 }
@@ -631,258 +994,156 @@ function SubmittedScreen({
 }
 
 // ---------------------------------------------------------------------------
-// Phase rail
+// Requirement card (req-card row)
 // ---------------------------------------------------------------------------
 
-function PhaseRail({
-  phaseGroups,
-  itemStates,
-  activePhase,
-  reviewMode,
-  onSelectPhase,
-  onSelectReview,
-  routeLabel,
-  feeAmount,
-  readyCount,
-  total,
-}: {
-  phaseGroups: Record<Phase, LicenceApplicationTemplate[]>;
-  itemStates: Record<string, MemberLicenceApplicationItemState>;
-  activePhase: Phase;
-  reviewMode: boolean;
-  onSelectPhase: (p: Phase) => void;
-  onSelectReview: () => void;
-  routeLabel: string;
-  feeAmount: number | null;
-  readyCount: number;
-  total: number;
-}) {
-  return (
-    <aside className="w-full md:w-64 shrink-0 space-y-3">
-      <div className="card p-4">
-        <div className="text-xs font-semibold uppercase" style={{ color: "var(--color-text-muted)" }}>
-          Route
-        </div>
-        <div className="font-medium mt-1">{routeLabel}</div>
-        <div className="text-sm mt-2" style={{ color: "var(--color-text-muted)" }}>
-          {readyCount} of {total} items ready
-        </div>
-        {feeAmount != null && (
-          <div className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-            Application fee: UGX {feeAmount.toLocaleString()}
-          </div>
-        )}
-      </div>
-      <nav className="card overflow-hidden">
-        {PHASE_ORDER.map((p) => {
-          const items = phaseGroups[p] ?? [];
-          const ready = items.filter((t) => (itemStates[t.external_id]?.status ?? "not_started") === "ready").length;
-          const active = !reviewMode && activePhase === p;
-          return (
-            <button
-              key={p}
-              type="button"
-              onClick={() => onSelectPhase(p)}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 text-sm text-left border-b last:border-b-0"
-              style={{
-                borderColor: "var(--color-border)",
-                background: active ? "#f1efe6" : "transparent",
-                fontWeight: active ? 600 : 400,
-              }}
-            >
-              <span>{PHASE_LABELS[p]}</span>
-              <span style={{ color: "var(--color-text-muted)" }}>
-                {ready} of {items.length}
-              </span>
-            </button>
-          );
-        })}
-        <button
-          type="button"
-          onClick={onSelectReview}
-          className="w-full px-4 py-3 text-sm text-left"
-          style={{ background: reviewMode ? "#f1efe6" : "transparent", fontWeight: reviewMode ? 600 : 400 }}
-        >
-          Review &amp; submit
-        </button>
-      </nav>
-    </aside>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Review & submit
-// ---------------------------------------------------------------------------
-
-function ReviewPanel({
-  phaseGroups,
-  itemStates,
-  allReady,
-  submitting,
-  onSubmit,
-  onJump,
-}: {
-  phaseGroups: Record<Phase, LicenceApplicationTemplate[]>;
-  itemStates: Record<string, MemberLicenceApplicationItemState>;
-  allReady: boolean;
-  submitting: boolean;
-  onSubmit: () => void;
-  onJump: (t: LicenceApplicationTemplate) => void;
-}) {
-  return (
-    <div>
-      <h2 className="text-lg font-semibold">Review &amp; submit</h2>
-      <p className="text-sm mt-1 mb-4" style={{ color: "var(--color-text-muted)" }}>
-        Every item must be Ready before you can submit. Click an item to jump back and finish it.
-      </p>
-      {PHASE_ORDER.map((p) => {
-        const items = phaseGroups[p] ?? [];
-        if (items.length === 0) return null;
-        return (
-          <div key={p} className="mb-5">
-            <div className="text-xs font-semibold uppercase mb-2" style={{ color: "var(--color-text-muted)" }}>
-              {PHASE_LABELS[p]}
-            </div>
-            <div className="card divide-y" style={{ borderColor: "var(--color-border)" }}>
-              {items.map((t) => {
-                const status = itemStates[t.external_id]?.status ?? "not_started";
-                return (
-                  <button
-                    key={t.external_id}
-                    type="button"
-                    onClick={() => onJump(t)}
-                    className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left text-sm"
-                    style={{ borderColor: "var(--color-border)" }}
-                  >
-                    <span>{t.title}</span>
-                    <StatusBadge status={status} />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-      <div className="mt-6">
-        <button className="btn btn-primary" type="button" disabled={!allReady || submitting} onClick={onSubmit}>
-          {submitting ? "Submitting…" : "Submit application"}
-        </button>
-        {!allReady && (
-          <p className="text-xs mt-2" style={{ color: "var(--color-text-muted)" }}>
-            Finish every checklist item to unlock submission.
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Checklist item + guidance
-// ---------------------------------------------------------------------------
-
-function StatusBadge({ status }: { status: ItemStatus }) {
-  const cls = status === "ready" ? "badge-green" : status === "in_progress" ? "badge-amber" : "badge-gray";
-  const label = status === "ready" ? "Ready" : status === "in_progress" ? "In progress" : "Remaining";
-  return <span className={`badge ${cls}`}>{label}</span>;
-}
-
-function GuidancePanel({ template }: { template: LicenceApplicationTemplate }) {
-  if (!template.guide_what && !template.guide_do && !template.guide_evidence && !template.source_url) return null;
-  return (
-    <div className="rounded-lg p-3 text-sm space-y-1.5" style={{ background: "#f1efe6" }}>
-      {template.guide_what && (
-        <p>
-          <span className="font-semibold">What this is: </span>
-          {template.guide_what}
-        </p>
-      )}
-      {template.guide_do && (
-        <p>
-          <span className="font-semibold">What to do: </span>
-          {template.guide_do}
-        </p>
-      )}
-      {template.guide_evidence && (
-        <p>
-          <span className="font-semibold">Evidence needed: </span>
-          {template.guide_evidence}
-        </p>
-      )}
-      {template.source_url && (
-        <p>
-          <a
-            href={template.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-            style={{ color: "var(--color-primary)" }}
-          >
-            Source{template.source_label ? `: ${template.source_label}` : ""} ↗
-          </a>
-        </p>
-      )}
-    </div>
-  );
-}
-
-function ChecklistItem({
+function RequirementCard({
   template,
   status,
-  answers,
-  itemFiles,
-  expanded,
-  onToggle,
-  onSaveAnswers,
-  onUpload,
-  onViewFile,
-  feeAmount,
+  progressText,
+  onOpenGuide,
+  onOpenItem,
 }: {
   template: LicenceApplicationTemplate;
   status: ItemStatus;
-  answers: Record<string, unknown>;
-  itemFiles: MemberLicenceApplicationFile[];
-  expanded: boolean;
-  onToggle: () => void;
-  onSaveAnswers: (a: Record<string, unknown>) => void;
-  onUpload: (slot: string, file: File) => Promise<boolean>;
-  onViewFile: (f: MemberLicenceApplicationFile) => void;
-  feeAmount: number | null;
+  progressText: string;
+  onOpenGuide: () => void;
+  onOpenItem: () => void;
 }) {
+  const statusLabel = status === "ready" ? "Ready to submit" : status === "in_progress" ? "In progress" : "Not started";
+  const statusClass = status === "ready" ? styles.ready : status === "in_progress" ? styles.inprogress : "";
   return (
-    <div className="card mb-3 overflow-hidden">
-      <button type="button" className="w-full flex items-center justify-between gap-3 p-4 text-left" onClick={onToggle}>
-        <div className="min-w-0">
-          <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
-            {template.external_id}
-          </div>
-          <div className="font-medium">{template.title}</div>
-          {template.copy && (
-            <div className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-              {template.copy}
-            </div>
-          )}
+    <article className={styles["req-card"]}>
+      <div>
+        <div className={styles["req-title-line"]}>
+          <span className={styles["req-title"]}>{template.title}</span>
+          <button type="button" className={styles["info-btn"]} aria-label={`About ${template.title}`} onClick={onOpenGuide}>
+            i
+          </button>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <StatusBadge status={status} />
-          <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
-        </div>
+        {template.copy && <div className={styles["req-copy"]}>{template.copy}</div>}
+        {progressText && <div className={styles["req-progress"]}>{progressText}</div>}
+      </div>
+      <span className={`${styles.status} ${statusClass}`}>{statusLabel}</span>
+      <button type="button" className={styles["req-action"]} onClick={onOpenItem}>
+        {template.cta_label ?? "Open requirement"}
       </button>
-      {expanded && (
-        <div className="border-t p-4 space-y-4" style={{ borderColor: "var(--color-border)" }}>
-          <GuidancePanel template={template} />
-          <DrawerInput
-            template={template}
-            answers={answers}
-            itemFiles={itemFiles}
-            onSaveAnswers={onSaveAnswers}
-            onUpload={onUpload}
-            onViewFile={onViewFile}
-            feeAmount={feeAmount}
-          />
+    </article>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Guidance drawer body (the info-button popover, built as a drawer)
+// ---------------------------------------------------------------------------
+
+function GuidanceDrawerBody({ template }: { template: LicenceApplicationTemplate }) {
+  if (!template.guide_what && !template.guide_do && !template.guide_evidence && !template.source_url) {
+    return <p className={styles["guide-text"]}>No additional guidance is recorded for this requirement.</p>;
+  }
+  return (
+    <>
+      {template.guide_what && (
+        <div className={styles["guide-block"]}>
+          <div className={styles["guide-label"]}>What this is</div>
+          <div className={styles["guide-text"]}>{template.guide_what}</div>
         </div>
       )}
-    </div>
+      {template.guide_do && (
+        <div className={styles["guide-block"]}>
+          <div className={styles["guide-label"]}>What you need to do</div>
+          <div className={styles["guide-text"]}>{template.guide_do}</div>
+        </div>
+      )}
+      {template.guide_evidence && (
+        <div className={styles["guide-block"]}>
+          <div className={styles["guide-label"]}>What good evidence looks like</div>
+          <div className={styles["guide-text"]}>{template.guide_evidence}</div>
+        </div>
+      )}
+      {template.source_url && (
+        <div className={styles["guide-block"]}>
+          <div className={styles["guide-label"]}>Source</div>
+          <a className={styles["source-link"]} href={template.source_url} target="_blank" rel="noopener noreferrer">
+            {template.source_label ?? "Source"} ↗
+          </a>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Expert Support drawer body -- "Ask a question" posts to /api/expert-support
+// the same way apply-expert-panel.tsx does; "Request application review"
+// calls back up to the facts-merge helper via onRequestReview. No support
+// history list here (the prototype's is sourced from a purely client-side
+// array with no backing table on this site -- skipped rather than invented).
+// ---------------------------------------------------------------------------
+
+function ExpertSupportBody({
+  contextLabel,
+  onRequestReview,
+}: {
+  contextLabel: string;
+  onRequestReview: () => void;
+}) {
+  const [question, setQuestion] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  async function send() {
+    if (!question.trim()) return;
+    setSending(true);
+    try {
+      const res = await fetch("/api/expert-support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceModule: "apply",
+          contextKey: "digital-lending-application",
+          message: question,
+        }),
+      });
+      if (res.ok) {
+        setSent(true);
+        setQuestion("");
+      }
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <>
+      <div className={styles["support-context"]}>
+        <strong>Context</strong>
+        <p>{contextLabel}</p>
+      </div>
+      <div className={styles["drawer-section"]}>
+        <h3>Ask a question</h3>
+        <div className={styles.field}>
+          <textarea
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="What do you need help with?"
+          />
+        </div>
+        <button type="button" className={styles["save-btn"]} onClick={send} disabled={sending || !question.trim()}>
+          {sending ? "Sending…" : "Send question"}
+        </button>
+        {sent && <p className={styles["rail-note"]}>Question sent to Expert Support.</p>}
+      </div>
+      <div className={styles["drawer-section"]}>
+        <h3>Application review</h3>
+        <p>
+          Request a review of the application as it stands now. A final review becomes most useful when the
+          applicant-side requirements are complete.
+        </p>
+        <button type="button" className={styles["subtle-btn"]} onClick={onRequestReview}>
+          Request application review
+        </button>
+      </div>
+    </>
   );
 }
 
@@ -942,7 +1203,9 @@ function FileSlotRow({
 }
 
 // ---------------------------------------------------------------------------
-// Drawer dispatch
+// Drawer dispatch (the per-requirement editing forms -- unchanged from the
+// previous inline-expand implementation, just relocated into the overlay
+// drawer above)
 // ---------------------------------------------------------------------------
 
 type DrawerProps = {

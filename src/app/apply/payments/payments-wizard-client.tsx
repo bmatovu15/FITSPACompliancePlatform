@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
+import styles from "./payments-workspace.module.css";
 import type {
   LicenceApplicationDrawerType,
   LicenceApplicationFeeTier,
@@ -32,27 +33,47 @@ const BUCKET = "licence-application-files";
 
 const PHASE_ORDER = ["company", "people", "business", "technology", "policies", "forms", "review"] as const;
 type Phase = (typeof PHASE_ORDER)[number];
+// Exact category names + order from the Beacon prototype's PHASES array for
+// this selection of licence classes (Funds Transfer System / Small Funds
+// Transfer System / Settlement System / Electronic Money Issuer / Small
+// Electronic Money Issuer). These map 1:1 onto PHASE_ORDER.
 const PHASE_LABELS: Record<Phase, string> = {
-  company: "Company",
-  people: "People",
-  business: "Business",
-  technology: "Technology",
-  policies: "Policies",
-  forms: "Forms & Fees",
-  review: "Review & Submit",
-};
-const PHASE_NOTES: Record<Phase, string> = {
-  company: "The applicant entity, its structure and ownership, and its premises.",
-  people: "The directors, senior managers, shareholders and other individuals behind the application.",
-  business: "The products, business plan, capital and organisational structure.",
-  technology: "The systems, controls and security behind how the service is delivered.",
-  policies: "The AML/CFT, consumer-protection and commercial policies that govern the business.",
-  forms: "The regulator's official forms, other licences held, and the application fee.",
-  review: "Final checks before you submit, and what happens after approval.",
+  company: "Company setup",
+  people: "Owners, directors & management",
+  business: "Business & financials",
+  technology: "Risk, technology & operations",
+  policies: "Customers & compliance",
+  forms: "Forms & submission",
+  review: "BoU review & approval readiness",
 };
 
 type ItemStatus = "not_started" | "in_progress" | "ready";
 type Screen = "loading" | "classify" | "facts" | "wizard" | "submitted";
+type WorkspaceTab = "checklist" | "documents" | "review";
+type StatusFilter = "all" | "remaining" | "done";
+// The single slide-in workspace drawer serves three purposes, matching the
+// prototype's one #workspace-drawer reused by openWorkDrawer / openGuidance /
+// openExpertSupport / openExpertInquiry.
+type DrawerState =
+  | { kind: "requirement"; externalId: string }
+  | { kind: "guidance"; externalId: string }
+  | { kind: "expert-menu" }
+  | { kind: "expert-ask" }
+  | { kind: "expert-sent" }
+  | null;
+
+type ApplicationReview = {
+  status: "requested";
+  type: "interim" | "final";
+  requestedAt: string;
+  requestedProgress: number;
+};
+
+function readApplicationReview(facts: Record<string, unknown>): ApplicationReview | null {
+  const v = facts.applicationReview;
+  if (v && typeof v === "object") return v as ApplicationReview;
+  return null;
+}
 
 type Category = "pso" | "psp" | "instrument";
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -299,11 +320,21 @@ export default function PaymentsWizardClient({
   const [application, setApplication] = useState<MemberLicenceApplication | null>(null);
   const [itemStates, setItemStates] = useState<Record<string, MemberLicenceApplicationItemState>>({});
   const [files, setFiles] = useState<Record<string, MemberLicenceApplicationFile[]>>({});
-  const [activePhase, setActivePhase] = useState<Phase>("company");
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [creatingApplication, setCreatingApplication] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // ---- workspace UI state (Application/Documents/Review tabs, phase rail,
+  // search/filter, and the single slide-in workspace drawer that hosts
+  // requirement editors, guidance and expert support -- mirrors the
+  // prototype's one #workspace-drawer reused for all three) ----
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>("checklist");
+  const [phaseFilter, setPhaseFilter] = useState<Phase | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeDrawer, setActiveDrawer] = useState<DrawerState>(null);
+  const [expertMessage, setExpertMessage] = useState("");
+  const [expertSending, setExpertSending] = useState(false);
 
   async function loadApplicationData(appRow: MemberLicenceApplication) {
     setApplication(appRow);
@@ -417,8 +448,11 @@ export default function PaymentsWizardClient({
     setApplication(null);
     setItemStates({});
     setFiles({});
-    setExpanded({});
-    setActivePhase("company");
+    setActiveTab("checklist");
+    setPhaseFilter(null);
+    setStatusFilter("all");
+    setSearchTerm("");
+    setActiveDrawer(null);
     setScreen("classify");
   }
 
@@ -501,10 +535,6 @@ export default function PaymentsWizardClient({
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 
-  function toggleExpanded(externalId: string) {
-    setExpanded((e) => ({ ...e, [externalId]: !e[externalId] }));
-  }
-
   async function submitApplication() {
     if (!application) return;
     setSubmitting(true);
@@ -524,7 +554,6 @@ export default function PaymentsWizardClient({
   }
 
   const facts = useMemo(() => application?.facts ?? {}, [application]);
-  const categories = useMemo(() => readCategories(facts), [facts]);
   const assignedClasses = useMemo(() => deriveAssignedClasses(facts), [facts]);
   const chosenRoutes = useMemo(() => deriveChosenRoutes(facts), [facts]);
   const factAnswers = useMemo(() => {
@@ -577,6 +606,124 @@ export default function PaymentsWizardClient({
   const readyCount = visibleTemplates.filter((t) => statusFor(t.external_id) === "ready").length;
   const allReady = visibleTemplates.length > 0 && readyCount === visibleTemplates.length;
   const allFactsAnswered = FACT_QUESTIONS.every((q) => typeof factAnswers[q.key] === "boolean");
+
+  const templatesById = useMemo(() => {
+    const out: Record<string, LicenceApplicationTemplate> = {};
+    visibleTemplates.forEach((t) => {
+      out[t.external_id] = t;
+    });
+    return out;
+  }, [visibleTemplates]);
+
+  const summary = useMemo(() => {
+    const total = visibleTemplates.length;
+    const ready = visibleTemplates.filter((t) => statusFor(t.external_id) === "ready").length;
+    const inProgress = visibleTemplates.filter((t) => statusFor(t.external_id) === "in_progress").length;
+    const remaining = Math.max(0, total - ready - inProgress);
+    const pct = total ? Math.round((100 * ready) / total) : 0;
+    return { total, ready, inProgress, remaining, pct, complete: total > 0 && ready === total };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleTemplates, itemStates]);
+
+  const nextTemplate = useMemo(() => {
+    for (const p of PHASE_ORDER) {
+      const t = (phaseGroups[p] ?? []).find((x) => statusFor(x.external_id) !== "ready");
+      if (t) return t;
+    }
+    return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phaseGroups, itemStates]);
+
+  const allFileRows = useMemo(() => {
+    const rows: (MemberLicenceApplicationFile & { title: string })[] = [];
+    Object.keys(files).forEach((externalId) => {
+      (files[externalId] ?? []).forEach((f) => {
+        rows.push({ ...f, title: templatesById[externalId]?.title ?? externalId });
+      });
+    });
+    return rows.sort((a, b) => (b.uploaded_at ?? "").localeCompare(a.uploaded_at ?? ""));
+  }, [files, templatesById]);
+
+  const applicationReview = readApplicationReview(facts);
+
+  function closeDrawer() {
+    setActiveDrawer(null);
+  }
+
+  function openGuidanceDrawer(externalId: string) {
+    setActiveDrawer({ kind: "guidance", externalId });
+  }
+
+  function openRequirementDrawer(externalId: string) {
+    setActiveDrawer({ kind: "requirement", externalId });
+  }
+
+  // Scrolls the requirement into view in the Application tab, then opens its
+  // drawer -- mirrors openRequirementFromRail's scroll + setTimeout(180).
+  function openRequirementFromRail(externalId: string) {
+    setPhaseFilter(null);
+    setStatusFilter("all");
+    setSearchTerm("");
+    setActiveTab("checklist");
+    setTimeout(() => {
+      document.getElementById(`requirement-${externalId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setActiveDrawer({ kind: "requirement", externalId });
+    }, 180);
+  }
+
+  function openExpertMenu() {
+    setActiveDrawer({ kind: "expert-menu" });
+  }
+
+  function openExpertAsk() {
+    setExpertMessage("");
+    setActiveDrawer({ kind: "expert-ask" });
+  }
+
+  async function sendExpertInquiry() {
+    if (!expertMessage.trim()) return;
+    setExpertSending(true);
+    try {
+      const res = await fetch("/api/expert-support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceModule: "apply",
+          contextKey: "payments-application",
+          message: expertMessage,
+        }),
+      });
+      if (res.ok) {
+        setExpertMessage("");
+        setActiveDrawer({ kind: "expert-sent" });
+      } else {
+        setErrorMsg("We couldn't send that question. Please try again.");
+      }
+    } catch (err) {
+      console.error("Failed to send expert inquiry", err);
+      setErrorMsg("We couldn't send that question. Please try again.");
+    } finally {
+      setExpertSending(false);
+    }
+  }
+
+  async function requestApplicationReview() {
+    await persistFacts({
+      applicationReview: {
+        status: "requested",
+        type: summary.complete ? "final" : "interim",
+        requestedAt: new Date().toISOString(),
+        requestedProgress: summary.pct,
+      },
+    });
+    setActiveDrawer(null);
+    setActiveTab("review");
+  }
+
+  function cancelApplicationReview() {
+    persistFacts({ applicationReview: null });
+    setActiveTab("checklist");
+  }
 
   // ---- Screens ----
 
@@ -632,78 +779,233 @@ export default function PaymentsWizardClient({
 
   const classLabels = assignedClasses.map((ac) => wizardClassesByKey[ac.classKey]?.label ?? ac.classKey).join(", ");
 
+  // Filtered/grouped checklist for the Application tab -- mirrors
+  // renderChecklist: phase filter (if any) -> status filter -> search, then
+  // grouped back out by phase for the heading + progress bar per group.
+  const term = searchTerm.trim().toLowerCase();
+  const visiblePhaseGroups = PHASE_ORDER.map((phase) => {
+    if (phaseFilter && phaseFilter !== phase) return null;
+    let items = phaseGroups[phase] ?? [];
+    if (statusFilter === "remaining") items = items.filter((t) => statusFor(t.external_id) !== "ready");
+    else if (statusFilter === "done") items = items.filter((t) => statusFor(t.external_id) === "ready");
+    if (term) {
+      items = items.filter((t) => {
+        const haystack = `${t.title} ${t.copy ?? ""} ${t.guide_what ?? ""} ${t.guide_evidence ?? ""}`.toLowerCase();
+        return haystack.includes(term);
+      });
+    }
+    if (!items.length) return null;
+    const ready = items.filter((t) => statusFor(t.external_id) === "ready").length;
+    return { phase, items, ready };
+  }).filter((g): g is { phase: Phase; items: LicenceApplicationTemplate[]; ready: number } => g !== null);
+
+  // The submit-application action stays attached to the "BoU review &
+  // approval readiness" phase group (simplest option -- preserves the
+  // existing submission logic exactly where it already lived) and is shown
+  // whenever that phase is in view, independent of the search/status filter
+  // so it's never hidden by a filter that happens to hide the review item.
+  const showSubmitCard = phaseFilter === null || phaseFilter === "review";
+
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
-      <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+    <div className={styles.pwRoot}>
+      <header className={styles.pwSubhead}>
         <div>
-          <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
-            Payments application
-          </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+          <div className={styles.pwTitle}>Payments application</div>
+          <div className={styles.pwSubtitle}>
             {classLabels || "Payments"} · saved automatically in this browser · reference {application.id.slice(0, 8)}
-          </p>
+          </div>
         </div>
-        <button className="btn btn-ghost btn-sm" onClick={startOver} type="button">
-          Start a different application
+        <div className={styles.pwSubheadRight}>
+          <button type="button" className={styles.linkBtn} onClick={() => setScreen("classify")}>
+            Change selections
+          </button>
+          <button type="button" className={styles.linkBtn} onClick={startOver}>
+            Restart
+          </button>
+        </div>
+      </header>
+
+      {errorMsg && <div className={styles.errorBanner}>{errorMsg}</div>}
+
+      <div className={styles.appTabs}>
+        <button
+          type="button"
+          className={`${styles.appTab} ${activeTab === "checklist" ? styles.active : ""}`}
+          onClick={() => setActiveTab("checklist")}
+        >
+          Application
         </button>
+        <button
+          type="button"
+          className={`${styles.appTab} ${activeTab === "documents" ? styles.active : ""}`}
+          onClick={() => setActiveTab("documents")}
+        >
+          Documents
+        </button>
+        {applicationReview && (
+          <button
+            type="button"
+            className={`${styles.appTab} ${activeTab === "review" ? styles.active : ""}`}
+            onClick={() => setActiveTab("review")}
+          >
+            Review
+          </button>
+        )}
       </div>
 
-      {errorMsg && (
-        <div className="badge badge-red mb-4" style={{ display: "block", padding: "0.5rem 0.75rem", borderRadius: "0.5rem" }}>
-          {errorMsg}
+      {activeTab === "checklist" && (
+        <div className={styles.tabChecklist}>
+          <PhaseRail
+            phaseGroups={phaseGroups}
+            statusFor={statusFor}
+            phaseFilter={phaseFilter}
+            onSelectPhase={setPhaseFilter}
+            readyCount={readyCount}
+            total={visibleTemplates.length}
+            assignedClasses={assignedClasses}
+            wizardClassesByKey={wizardClassesByKey}
+            feeTiers={feeTiers}
+          />
+
+          <main className={styles.checklistMain}>
+            <div className={styles.checklistToolbar}>
+              <input
+                type="search"
+                className={styles.searchBox}
+                placeholder="Search requirements…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <div className={styles.filterGroup}>
+                {([
+                  { key: "all", label: "All" },
+                  { key: "remaining", label: "Remaining" },
+                  { key: "done", label: "Ready" },
+                ] as { key: StatusFilter; label: string }[]).map((f) => (
+                  <button
+                    key={f.key}
+                    type="button"
+                    className={`${styles.filterChip} ${statusFilter === f.key ? styles.active : ""}`}
+                    onClick={() => setStatusFilter(f.key)}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {visiblePhaseGroups.length === 0 ? (
+              <div className={styles.emptyState}>No requirements match this view.</div>
+            ) : (
+              visiblePhaseGroups.map(({ phase, items, ready }) => (
+                <div key={phase}>
+                  <div className={styles.phaseHeadingRow}>
+                    <div>
+                      <h3>{PHASE_LABELS[phase]}</h3>
+                      <p>
+                        {ready} of {items.length} ready
+                      </p>
+                    </div>
+                  </div>
+                  <div className={styles.phaseProgressBar}>
+                    <div
+                      className={styles.phaseProgressFill}
+                      style={{ width: `${items.length ? Math.round((100 * ready) / items.length) : 0}%` }}
+                    />
+                  </div>
+                  {items.map((t) => (
+                    <WorkCard
+                      key={t.external_id}
+                      template={t}
+                      status={statusFor(t.external_id)}
+                      answers={itemStates[t.external_id]?.answers ?? {}}
+                      itemFiles={files[t.external_id] ?? []}
+                      onOpenGuidance={openGuidanceDrawer}
+                      onOpenRequirement={openRequirementDrawer}
+                    />
+                  ))}
+                </div>
+              ))
+            )}
+
+            {showSubmitCard && (
+              <div className={styles.workCard}>
+                <div className={styles.workCardTop}>
+                  <p className={styles.workCardTitle}>Submit application</p>
+                </div>
+                <p className={styles.workCardNote}>
+                  {readyCount} of {visibleTemplates.length} checklist items are ready. Every applicable item must be
+                  Ready before you can submit.
+                </p>
+                <div className={styles.workCardActions}>
+                  <button
+                    type="button"
+                    className={`${styles.workBtn} ${styles.primary}`}
+                    disabled={!allReady || submitting}
+                    onClick={submitApplication}
+                  >
+                    {submitting ? "Submitting…" : "Submit application"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </main>
+
+          <ApplicationRail
+            summary={summary}
+            fileCount={allFileRows.length}
+            nextTemplate={nextTemplate}
+            review={applicationReview}
+            onOpenDocuments={() => setActiveTab("documents")}
+            onOpenNext={() => nextTemplate && openRequirementFromRail(nextTemplate.external_id)}
+            onOpenExpertSupport={openExpertMenu}
+          />
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <Sidebar
-          phaseGroups={phaseGroups}
+      {activeTab === "documents" && (
+        <DocumentsTab rows={allFileRows} onOpenRequirement={openRequirementFromRail} />
+      )}
+
+      {activeTab === "review" && applicationReview && (
+        <ReviewTab
+          review={applicationReview}
+          ready={summary.ready}
+          total={summary.total}
+          fileCount={allFileRows.length}
+          pct={summary.pct}
+          onCancel={cancelApplicationReview}
+        />
+      )}
+
+      {activeDrawer && (
+        <WorkspaceDrawer
+          drawerState={activeDrawer}
+          onClose={closeDrawer}
+          templatesById={templatesById}
           itemStates={itemStates}
-          activePhase={activePhase}
-          onSelectPhase={setActivePhase}
-          categories={categories}
+          files={files}
+          onSaveAnswers={commitAnswers}
+          onUpload={handleUpload}
+          onViewFile={viewFile}
           assignedClasses={assignedClasses}
           wizardClassesByKey={wizardClassesByKey}
           feeTiers={feeTiers}
-          readyCount={readyCount}
-          total={visibleTemplates.length}
+          summary={summary}
+          review={applicationReview}
+          onAskQuestion={openExpertAsk}
+          onRequestReview={requestApplicationReview}
+          onOpenReviewTab={() => {
+            closeDrawer();
+            setActiveTab("review");
+          }}
+          expertMessage={expertMessage}
+          onExpertMessageChange={setExpertMessage}
+          expertSending={expertSending}
+          onSendExpertInquiry={sendExpertInquiry}
+          onBackToExpertMenu={openExpertMenu}
         />
-
-        <main className="flex-1 min-w-0">
-          <h2 className="text-lg font-semibold">{PHASE_LABELS[activePhase]}</h2>
-          <p className="text-sm mt-1 mb-4" style={{ color: "var(--color-text-muted)" }}>
-            {PHASE_NOTES[activePhase]}
-          </p>
-          {(phaseGroups[activePhase] ?? []).map((t) => (
-            <ChecklistItem
-              key={t.external_id}
-              template={t}
-              status={statusFor(t.external_id)}
-              answers={itemStates[t.external_id]?.answers ?? {}}
-              itemFiles={files[t.external_id] ?? []}
-              expanded={!!expanded[t.external_id]}
-              onToggle={() => toggleExpanded(t.external_id)}
-              onSaveAnswers={(a) => commitAnswers(t, a)}
-              onUpload={(slot, f) => handleUpload(t, slot, f)}
-              onViewFile={viewFile}
-              assignedClasses={assignedClasses}
-              wizardClassesByKey={wizardClassesByKey}
-              feeTiers={feeTiers}
-            />
-          ))}
-          {activePhase === "review" && (
-            <div className="card p-4 mt-6">
-              <h3 className="text-base font-semibold">Submit application</h3>
-              <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-                {readyCount} of {visibleTemplates.length} checklist items are ready. Every applicable item must be
-                Ready before you can submit.
-              </p>
-              <button className="btn btn-primary mt-3" type="button" disabled={!allReady || submitting} onClick={submitApplication}>
-                {submitting ? "Submitting…" : "Submit application"}
-              </button>
-            </div>
-          )}
-        </main>
-      </div>
+      )}
     </div>
   );
 }
@@ -1046,70 +1348,69 @@ function SubmittedScreen({
 }
 
 // ---------------------------------------------------------------------------
-// Sidebar: phase nav + per-category fee summary
+// Phase rail (left): "All requirements X/Y" + one row per phase, with the
+// existing per-category fee summary folded in underneath -- the prototype's
+// rail has no fee content (fees live on the old Fees tab it doesn't need
+// here), so this is the one place in the workspace that isn't a straight
+// port; keeping it in the left rail (rather than the right application rail,
+// which is reserved for progress/files/next/expert-support exactly as
+// specced) keeps it next to "what applies to you" rather than "how you're
+// progressing".
 // ---------------------------------------------------------------------------
 
-function Sidebar({
+function PhaseRail({
   phaseGroups,
-  itemStates,
-  activePhase,
+  statusFor,
+  phaseFilter,
   onSelectPhase,
-  categories,
+  readyCount,
+  total,
   assignedClasses,
   wizardClassesByKey,
   feeTiers,
-  readyCount,
-  total,
 }: {
   phaseGroups: Record<Phase, LicenceApplicationTemplate[]>;
-  itemStates: Record<string, MemberLicenceApplicationItemState>;
-  activePhase: Phase;
-  onSelectPhase: (p: Phase) => void;
-  categories: Category[];
+  statusFor: (externalId: string) => ItemStatus;
+  phaseFilter: Phase | null;
+  onSelectPhase: (p: Phase | null) => void;
+  readyCount: number;
+  total: number;
   assignedClasses: AssignedClass[];
   wizardClassesByKey: Record<string, LicenceApplicationWizardClass>;
   feeTiers: LicenceApplicationFeeTier[];
-  readyCount: number;
-  total: number;
 }) {
   return (
-    <aside className="w-full md:w-72 shrink-0 space-y-3">
-      <div className="card p-4">
-        <div className="text-xs font-semibold uppercase" style={{ color: "var(--color-text-muted)" }}>
-          Categories
-        </div>
-        <div className="font-medium mt-1 text-sm">{categories.map((c) => CATEGORY_LABELS[c]).join(", ") || "—"}</div>
-        <div className="text-sm mt-2" style={{ color: "var(--color-text-muted)" }}>
-          {readyCount} of {total} items ready
-        </div>
-      </div>
-      <nav className="card overflow-hidden">
-        {PHASE_ORDER.map((p) => {
-          const items = phaseGroups[p] ?? [];
-          const ready = items.filter((t) => (itemStates[t.external_id]?.status ?? "not_started") === "ready").length;
-          const active = activePhase === p;
-          return (
-            <button
-              key={p}
-              type="button"
-              onClick={() => onSelectPhase(p)}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 text-sm text-left border-b last:border-b-0"
-              style={{
-                borderColor: "var(--color-border)",
-                background: active ? "#f1efe6" : "transparent",
-                fontWeight: active ? 600 : 400,
-              }}
-            >
-              <span>{PHASE_LABELS[p]}</span>
-              <span style={{ color: "var(--color-text-muted)" }}>
-                {ready} of {items.length}
-              </span>
-            </button>
-          );
-        })}
-      </nav>
+    <nav className={styles.phaseRail} aria-label="Application phases">
+      <button
+        type="button"
+        className={`${styles.phaseLink} ${phaseFilter === null ? styles.active : ""}`}
+        onClick={() => onSelectPhase(null)}
+      >
+        All requirements
+        <span className={styles.plCount}>
+          {readyCount}/{total}
+        </span>
+      </button>
+      {PHASE_ORDER.map((p) => {
+        const items = phaseGroups[p] ?? [];
+        if (!items.length) return null;
+        const ready = items.filter((t) => statusFor(t.external_id) === "ready").length;
+        return (
+          <button
+            key={p}
+            type="button"
+            className={`${styles.phaseLink} ${phaseFilter === p ? styles.active : ""}`}
+            onClick={() => onSelectPhase(p)}
+          >
+            {PHASE_LABELS[p]}
+            <span className={styles.plCount}>
+              {ready}/{items.length}
+            </span>
+          </button>
+        );
+      })}
       <FeeSummaryPanel assignedClasses={assignedClasses} wizardClassesByKey={wizardClassesByKey} feeTiers={feeTiers} />
-    </aside>
+    </nav>
   );
 }
 
@@ -1126,31 +1427,22 @@ function FeeSummaryPanel({
 }) {
   if (assignedClasses.length === 0) return null;
   return (
-    <div className="space-y-3">
+    <div className={styles.railFees}>
+      <div className={styles.railFeesLabel}>Fees</div>
       {assignedClasses.map((ac) => {
         const cls = wizardClassesByKey[ac.classKey];
         const rows = feeTiers.filter((f) => f.class_key === ac.classKey);
         return (
-          <div key={`${ac.category}-${ac.classKey}`} className="card p-4">
-            <div className="text-xs font-semibold uppercase" style={{ color: "var(--color-text-muted)" }}>
-              {cls?.fee_class_label ?? ac.category.toUpperCase()} fees
-            </div>
-            <div className="font-medium mt-1 text-sm">{cls?.label ?? ac.classKey}</div>
-            {cls?.description && (
-              <div className="text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>
-                {cls.description}
-              </div>
-            )}
-            <div className="mt-2 space-y-1">
+          <div key={`${ac.category}-${ac.classKey}`} style={{ padding: "0 10px 14px" }}>
+            <div style={{ fontSize: 12, fontWeight: 600 }}>{cls?.label ?? ac.classKey}</div>
+            <div style={{ marginTop: 4 }}>
               {rows.length === 0 && (
-                <div className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-                  No fee schedule on file for this class.
-                </div>
+                <div style={{ fontSize: 11.5, color: "var(--pw-slate-light, #767676)" }}>No fee schedule on file.</div>
               )}
               {rows.map((r) => (
-                <div key={r.id} className="flex items-center justify-between text-xs">
+                <div key={r.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, marginTop: 2 }}>
                   <span>{FEE_TYPE_LABELS[r.fee_type] ?? r.fee_type}</span>
-                  <span className="font-medium">{formatUGX(Number(r.amount))}</span>
+                  <span style={{ fontWeight: 600 }}>{formatUGX(Number(r.amount))}</span>
                 </div>
               ))}
             </div>
@@ -1162,116 +1454,552 @@ function FeeSummaryPanel({
 }
 
 // ---------------------------------------------------------------------------
-// Checklist item + guidance
+// Work card (center list) -- title, info button, status pill, note,
+// action button, ready-state summary. Mirrors renderReqCard/cardSummary.
 // ---------------------------------------------------------------------------
 
-function StatusBadge({ status }: { status: ItemStatus }) {
-  const cls = status === "ready" ? "badge-green" : status === "in_progress" ? "badge-amber" : "badge-gray";
-  const label = status === "ready" ? "Ready" : status === "in_progress" ? "In progress" : "Remaining";
-  return <span className={`badge ${cls}`}>{label}</span>;
+function statusLabel(status: ItemStatus): string {
+  return status === "ready" ? "Ready" : status === "in_progress" ? "In progress" : "Not started";
 }
 
-function GuidancePanel({ template }: { template: LicenceApplicationTemplate }) {
-  if (!template.guide_what && !template.guide_do && !template.guide_evidence && !template.source_url) return null;
-  return (
-    <div className="rounded-lg p-3 text-sm space-y-1.5" style={{ background: "#f1efe6" }}>
-      {template.guide_what && (
-        <p>
-          <span className="font-semibold">What this is: </span>
-          {template.guide_what}
-        </p>
-      )}
-      {template.guide_do && (
-        <p>
-          <span className="font-semibold">What to do: </span>
-          {template.guide_do}
-        </p>
-      )}
-      {template.guide_evidence && (
-        <p>
-          <span className="font-semibold">Evidence needed: </span>
-          {template.guide_evidence}
-        </p>
-      )}
-      {template.source_url && (
-        <p>
-          <a
-            href={template.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-            style={{ color: "var(--color-primary)" }}
-          >
-            Source{template.source_label ? `: ${template.source_label}` : ""} ↗
-          </a>
-        </p>
-      )}
-    </div>
-  );
+// Adapted from the prototype's cfg.type-keyed cardSummary(): our app doesn't
+// carry that generic per-item-type config, so this keys off drawer_type
+// (people gets a person count, single/multi-file items get a filename or a
+// document count) with a "Complete" fallback for every other drawer type.
+function cardSummaryFor(
+  template: LicenceApplicationTemplate,
+  status: ItemStatus,
+  answers: Record<string, unknown>,
+  itemFiles: MemberLicenceApplicationFile[]
+): string {
+  if (status === "in_progress") return "Work saved";
+  if (status !== "ready") return "";
+  if (template.drawer_type === "people") {
+    const people = Array.isArray(answers.people) ? answers.people : [];
+    return `${people.length} ${people.length === 1 ? "person" : "people"} complete`;
+  }
+  if (itemFiles.length === 1) return `${itemFiles[0].file_name} · v${itemFiles[0].version}`;
+  if (itemFiles.length > 1) return `${itemFiles.length} documents added`;
+  return "Complete";
 }
 
-function ChecklistItem({
+function WorkCard({
   template,
   status,
   answers,
   itemFiles,
-  expanded,
-  onToggle,
+  onOpenGuidance,
+  onOpenRequirement,
+}: {
+  template: LicenceApplicationTemplate;
+  status: ItemStatus;
+  answers: Record<string, unknown>;
+  itemFiles: MemberLicenceApplicationFile[];
+  onOpenGuidance: (externalId: string) => void;
+  onOpenRequirement: (externalId: string) => void;
+}) {
+  const statusStateClass = status === "ready" ? styles.isReady : status === "in_progress" ? styles.isProgress : "";
+  const pillClass = status === "ready" ? styles.ready : status === "in_progress" ? styles.progress : styles.notStarted;
+  const note = template.copy || template.guide_evidence || "Complete this requirement.";
+  const summary = cardSummaryFor(template, status, answers, itemFiles);
+  return (
+    <div id={`requirement-${template.external_id}`} className={`${styles.workCard} ${statusStateClass}`}>
+      <div className={styles.workCardTop}>
+        <div className={styles.workCardHeading}>
+          <p className={styles.workCardTitle}>{template.title}</p>
+          <button
+            type="button"
+            className={styles.workInfoBtn}
+            aria-label={`Guidance for ${template.title}`}
+            onClick={() => onOpenGuidance(template.external_id)}
+          >
+            i
+          </button>
+        </div>
+        <span className={`${styles.workStatus} ${pillClass}`}>{statusLabel(status)}</span>
+      </div>
+      <p className={styles.workCardNote}>{note}</p>
+      <div className={styles.workCardActions}>
+        <button
+          type="button"
+          className={`${styles.workBtn} ${status === "ready" ? styles.subtle : styles.primary}`}
+          onClick={() => onOpenRequirement(template.external_id)}
+        >
+          {template.cta_label || "Open"}
+        </button>
+        {summary && <span className={styles.workSummary}>{summary}</span>}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Application rail (right): Progress / Files / Next / Expert support.
+// This is the panel the prototype screenshots showed on the extreme right
+// that the previous build was missing entirely. Mirrors renderApplicationRail.
+// ---------------------------------------------------------------------------
+
+function ApplicationRail({
+  summary,
+  fileCount,
+  nextTemplate,
+  review,
+  onOpenDocuments,
+  onOpenNext,
+  onOpenExpertSupport,
+}: {
+  summary: { total: number; ready: number; inProgress: number; remaining: number; pct: number; complete: boolean };
+  fileCount: number;
+  nextTemplate: LicenceApplicationTemplate | null;
+  review: ApplicationReview | null;
+  onOpenDocuments: () => void;
+  onOpenNext: () => void;
+  onOpenExpertSupport: () => void;
+}) {
+  return (
+    <aside className={styles.applicationRail} aria-label="Application progress">
+      <section className={styles.railCard}>
+        <div className={styles.railLabel}>Progress</div>
+        <div className={styles.railNumber}>{summary.pct}%</div>
+        <div className={styles.railProgress}>
+          <span style={{ width: `${summary.pct}%` }} />
+        </div>
+        <div className={styles.railStat}>
+          <span>Ready</span>
+          <strong>{summary.ready}</strong>
+        </div>
+        <div className={styles.railStat}>
+          <span>In progress</span>
+          <strong>{summary.inProgress}</strong>
+        </div>
+        <div className={styles.railStat}>
+          <span>Remaining</span>
+          <strong>{summary.remaining}</strong>
+        </div>
+      </section>
+
+      <section className={styles.railCard}>
+        <div className={styles.railLabel}>Files</div>
+        <div className={styles.railFileCount}>{fileCount}</div>
+        <button type="button" className={styles.railBtn} onClick={onOpenDocuments}>
+          Open documents
+        </button>
+      </section>
+
+      <section className={styles.railCard}>
+        <div className={styles.railLabel}>Next</div>
+        {summary.complete ? (
+          <>
+            <p className={styles.railNextTitle}>Your application requirements are complete.</p>
+            <button type="button" className={styles.railBtn} onClick={onOpenDocuments}>
+              Review application pack
+            </button>
+          </>
+        ) : nextTemplate ? (
+          <>
+            <p className={styles.railNextTitle}>Continue with {nextTemplate.title}.</p>
+            <button type="button" className={styles.railBtn} onClick={onOpenNext}>
+              Open requirement
+            </button>
+          </>
+        ) : (
+          <p className={styles.railNextTitle}>Continue preparing your application.</p>
+        )}
+      </section>
+
+      <section className={styles.railCard}>
+        <div className={styles.railLabel}>Expert support</div>
+        {review ? (
+          <>
+            <div className={styles.railReviewState}>Review requested</div>
+            <p className={styles.railCopy}>Ask a question or return to your review.</p>
+          </>
+        ) : (
+          <p className={styles.railCopy}>Ask a question or request an application review at any stage.</p>
+        )}
+        <button
+          type="button"
+          className={`${styles.railBtn} ${summary.complete && !review ? styles.primary : ""}`}
+          onClick={onOpenExpertSupport}
+        >
+          Get expert help
+        </button>
+      </section>
+    </aside>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Guidance content (the info-button popover, rendered inside the workspace
+// drawer). Mirrors openGuidance: source line, guidance paragraph, "what you
+// need to provide" deliverable.
+// ---------------------------------------------------------------------------
+
+function GuidanceContent({ template }: { template: LicenceApplicationTemplate }) {
+  const deliverable = template.guide_evidence || template.guide_do;
+  const hasAnyGuidance = template.guide_what || deliverable || template.source_url;
+  return (
+    <div>
+      {template.source_label && (
+        <p className={styles.sourceLine}>
+          {template.source_url ? (
+            <a href={template.source_url} target="_blank" rel="noopener noreferrer">
+              {template.source_label} ↗
+            </a>
+          ) : (
+            template.source_label
+          )}
+        </p>
+      )}
+      {template.guide_what && <p className={styles.guidanceCopy}>{template.guide_what}</p>}
+      {deliverable && (
+        <div className={styles.guidanceDeliverable}>
+          <strong>What you need to provide</strong>
+          <p>{deliverable}</p>
+        </div>
+      )}
+      {!hasAnyGuidance && <p className={styles.guidanceCopy}>No additional guidance is available for this requirement yet.</p>}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Expert support -- the two-option menu (ask a question / request review)
+// and the question sub-panel. Mirrors openExpertSupport / openExpertInquiry.
+// ---------------------------------------------------------------------------
+
+function ExpertMenu({
+  complete,
+  review,
+  onAskQuestion,
+  onRequestReview,
+  onOpenReviewTab,
+}: {
+  complete: boolean;
+  review: ApplicationReview | null;
+  onAskQuestion: () => void;
+  onRequestReview: () => void;
+  onOpenReviewTab: () => void;
+}) {
+  const reviewTitle = complete ? "Request final application review" : "Request application review";
+  const reviewCopy = complete
+    ? "Your required application items are complete. An expert can review the full application before submission."
+    : "An expert can review the application as it currently stands and flag issues in the information and documents already prepared.";
+  return (
+    <div className={styles.supportOptions}>
+      <div className={styles.supportOption}>
+        <h3>Ask a question</h3>
+        <p>Get help with a requirement, document or application issue.</p>
+        <button type="button" className={`${styles.workBtn} ${styles.subtle}`} onClick={onAskQuestion}>
+          Ask a question
+        </button>
+      </div>
+      <div className={styles.supportOption}>
+        {review ? (
+          <>
+            <h3>{review.type === "final" ? "Final application review" : "Application review"}</h3>
+            <p>Your review request has already been submitted.</p>
+            <button type="button" className={`${styles.workBtn} ${styles.subtle}`} onClick={onOpenReviewTab}>
+              Open review
+            </button>
+          </>
+        ) : (
+          <>
+            <h3>{reviewTitle}</h3>
+            <p>{reviewCopy}</p>
+            <button type="button" className={`${styles.workBtn} ${styles.primary}`} onClick={onRequestReview}>
+              {complete ? "Request final review" : "Request review"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ExpertAsk({
+  value,
+  onChange,
+  onSend,
+  onBack,
+  sending,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSend: () => void;
+  onBack: () => void;
+  sending: boolean;
+}) {
+  return (
+    <div>
+      <label className={styles.supportFieldLabel} htmlFor="expert-inquiry-text">
+        What do you need help with?
+      </label>
+      <textarea
+        id="expert-inquiry-text"
+        className={styles.supportTextarea}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Ask about a requirement, document, regulatory issue or part of your application."
+      />
+      <div className={styles.workCardActions} style={{ marginTop: 14 }}>
+        <button type="button" className={`${styles.workBtn} ${styles.primary}`} disabled={sending || !value.trim()} onClick={onSend}>
+          {sending ? "Sending…" : "Send inquiry"}
+        </button>
+        <button type="button" className={`${styles.workBtn} ${styles.subtle}`} onClick={onBack}>
+          Back
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Workspace drawer -- the single slide-in overlay panel that hosts the
+// requirement editor, guidance, and expert support, exactly like the
+// prototype's one #workspace-drawer reused across openWorkDrawer /
+// openGuidance / openExpertSupport / openExpertInquiry.
+// ---------------------------------------------------------------------------
+
+function WorkspaceDrawer({
+  drawerState,
+  onClose,
+  templatesById,
+  itemStates,
+  files,
   onSaveAnswers,
   onUpload,
   onViewFile,
   assignedClasses,
   wizardClassesByKey,
   feeTiers,
+  summary,
+  review,
+  onAskQuestion,
+  onRequestReview,
+  onOpenReviewTab,
+  expertMessage,
+  onExpertMessageChange,
+  expertSending,
+  onSendExpertInquiry,
+  onBackToExpertMenu,
 }: {
-  template: LicenceApplicationTemplate;
-  status: ItemStatus;
-  answers: Record<string, unknown>;
-  itemFiles: MemberLicenceApplicationFile[];
-  expanded: boolean;
-  onToggle: () => void;
-  onSaveAnswers: (a: Record<string, unknown>) => void;
-  onUpload: (slot: string, file: File) => Promise<boolean>;
+  drawerState: Exclude<DrawerState, null>;
+  onClose: () => void;
+  templatesById: Record<string, LicenceApplicationTemplate>;
+  itemStates: Record<string, MemberLicenceApplicationItemState>;
+  files: Record<string, MemberLicenceApplicationFile[]>;
+  onSaveAnswers: (template: LicenceApplicationTemplate, answers: Record<string, unknown>) => void;
+  onUpload: (template: LicenceApplicationTemplate, slot: string, file: File) => Promise<boolean>;
   onViewFile: (f: MemberLicenceApplicationFile) => void;
   assignedClasses: AssignedClass[];
   wizardClassesByKey: Record<string, LicenceApplicationWizardClass>;
   feeTiers: LicenceApplicationFeeTier[];
+  summary: { complete: boolean };
+  review: ApplicationReview | null;
+  onAskQuestion: () => void;
+  onRequestReview: () => void;
+  onOpenReviewTab: () => void;
+  expertMessage: string;
+  onExpertMessageChange: (v: string) => void;
+  expertSending: boolean;
+  onSendExpertInquiry: () => void;
+  onBackToExpertMenu: () => void;
+}) {
+  let eyebrow = "";
+  let title = "";
+  let body: ReactNode = null;
+
+  if (drawerState.kind === "requirement" || drawerState.kind === "guidance") {
+    const template = templatesById[drawerState.externalId];
+    if (!template) {
+      body = <div className={styles.drawerEmpty}>This requirement is no longer part of your application.</div>;
+    } else if (drawerState.kind === "guidance") {
+      eyebrow = "Guidance";
+      title = template.title;
+      body = <GuidanceContent template={template} />;
+    } else {
+      eyebrow = "Requirement";
+      title = template.title;
+      body = (
+        <DrawerInput
+          template={template}
+          answers={itemStates[template.external_id]?.answers ?? {}}
+          itemFiles={files[template.external_id] ?? []}
+          onSaveAnswers={(a) => onSaveAnswers(template, a)}
+          onUpload={(slot, f) => onUpload(template, slot, f)}
+          onViewFile={onViewFile}
+          assignedClasses={assignedClasses}
+          wizardClassesByKey={wizardClassesByKey}
+          feeTiers={feeTiers}
+        />
+      );
+    }
+  } else if (drawerState.kind === "expert-menu") {
+    eyebrow = "Help & review";
+    title = "Expert support";
+    body = (
+      <ExpertMenu
+        complete={summary.complete}
+        review={review}
+        onAskQuestion={onAskQuestion}
+        onRequestReview={onRequestReview}
+        onOpenReviewTab={onOpenReviewTab}
+      />
+    );
+  } else if (drawerState.kind === "expert-ask") {
+    eyebrow = "Expert support";
+    title = "Ask an expert";
+    body = (
+      <ExpertAsk
+        value={expertMessage}
+        onChange={onExpertMessageChange}
+        onSend={onSendExpertInquiry}
+        onBack={onBackToExpertMenu}
+        sending={expertSending}
+      />
+    );
+  } else if (drawerState.kind === "expert-sent") {
+    eyebrow = "Expert support";
+    title = "Inquiry sent";
+    body = (
+      <div className={styles.supportConfirmation}>
+        <strong>Your inquiry has been captured.</strong>
+        An expert can respond using the application context available at this stage.
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className={styles.workspaceOverlay} onClick={onClose} />
+      <aside className={styles.workspaceDrawer} aria-label="Requirement details">
+        <div className={styles.drawerHead}>
+          <div>
+            <div className={styles.drawerEyebrow}>{eyebrow}</div>
+            <h2>{title}</h2>
+          </div>
+          <button type="button" className={styles.drawerClose} aria-label="Close" onClick={onClose}>
+            ×
+          </button>
+        </div>
+        <div className={styles.drawerBody}>{body}</div>
+      </aside>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Documents tab -- every uploaded file across every item, derived from the
+// existing `files` state. Mirrors allFileRows/renderDocuments (minus the
+// "final application pack" builder, which has no backend equivalent here).
+// ---------------------------------------------------------------------------
+
+function DocumentsTab({
+  rows,
+  onOpenRequirement,
+}: {
+  rows: (MemberLicenceApplicationFile & { title: string })[];
+  onOpenRequirement: (externalId: string) => void;
 }) {
   return (
-    <div className="card mb-3 overflow-hidden">
-      <button type="button" className="w-full flex items-center justify-between gap-3 p-4 text-left" onClick={onToggle}>
-        <div className="min-w-0">
-          <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
-            {template.external_id}
-          </div>
-          <div className="font-medium">{template.title}</div>
-          {template.copy && (
-            <div className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-              {template.copy}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <StatusBadge status={status} />
-          <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
-        </div>
-      </button>
-      {expanded && (
-        <div className="border-t p-4 space-y-4" style={{ borderColor: "var(--color-border)" }}>
-          <GuidancePanel template={template} />
-          <DrawerInput
-            template={template}
-            answers={answers}
-            itemFiles={itemFiles}
-            onSaveAnswers={onSaveAnswers}
-            onUpload={onUpload}
-            onViewFile={onViewFile}
-            assignedClasses={assignedClasses}
-            wizardClassesByKey={wizardClassesByKey}
-            feeTiers={feeTiers}
-          />
-        </div>
+    <div className={styles.workspaceWide}>
+      <h2>Documents</h2>
+      <p className={styles.workspaceIntro}>
+        Your uploaded application documents appear here automatically. Replacing a file creates a new version.
+      </p>
+      {rows.length === 0 ? (
+        <div className={styles.emptyState}>No documents uploaded yet.</div>
+      ) : (
+        <table className={styles.docsTable}>
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Requirement</th>
+              <th>Version</th>
+              <th>Uploaded</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td>
+                  <div className={styles.docName}>{r.file_name}</div>
+                  <div className={styles.docSub}>{r.slot}</div>
+                </td>
+                <td>
+                  <button type="button" className={styles.railLink} onClick={() => onOpenRequirement(r.external_id)}>
+                    {r.title}
+                  </button>
+                </td>
+                <td>v{r.version}</td>
+                <td>{(r.uploaded_at ?? "").slice(0, 10)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Review tab -- reachable only once an application review has been
+// requested (tab is hidden until then). Mirrors renderReview's summary.
+// ---------------------------------------------------------------------------
+
+function ReviewTab({
+  review,
+  ready,
+  total,
+  fileCount,
+  pct,
+  onCancel,
+}: {
+  review: ApplicationReview;
+  ready: number;
+  total: number;
+  fileCount: number;
+  pct: number;
+  onCancel: () => void;
+}) {
+  return (
+    <div className={styles.workspaceWide}>
+      <h2>Review</h2>
+      <p className={styles.workspaceIntro}>
+        Your review request has been captured. An expert can review the application as prepared at request time and
+        as it stands now.
+      </p>
+      <div className={styles.reviewOverview}>
+        <div className={styles.reviewOverviewTop}>
+          <div>
+            <h3>{review.type === "final" ? "Final application review" : "Application review"}</h3>
+            <p className={styles.reviewNoteBlock} style={{ margin: 0 }}>
+              Requested {new Date(review.requestedAt).toLocaleString()}
+            </p>
+          </div>
+          <span className={`${styles.reviewState} ${styles.requested}`}>Requested</span>
+        </div>
+        <div className={styles.reviewSummaryGrid}>
+          <div className={styles.reviewSummaryBox}>
+            <strong>{pct}%</strong>
+            <span>Complete now</span>
+          </div>
+          <div className={styles.reviewSummaryBox}>
+            <strong>
+              {ready}/{total}
+            </strong>
+            <span>Requirements ready</span>
+          </div>
+          <div className={styles.reviewSummaryBox}>
+            <strong>{fileCount}</strong>
+            <span>Files uploaded</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" className={`${styles.workBtn} ${styles.subtle}`} onClick={onCancel}>
+        Cancel review request
+      </button>
     </div>
   );
 }
