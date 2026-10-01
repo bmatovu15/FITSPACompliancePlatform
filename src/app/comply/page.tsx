@@ -4,16 +4,16 @@ import ComplyExpertPanel from "./comply-expert-panel";
 
 export const metadata = {
   title: "Comply | FITSPA Compliance Platform",
-  description: "Track and manage your ongoing Payments or Digital Lending compliance obligations.",
+  description: "Track and manage your ongoing Payments, Digital Lending or Insurance compliance obligations.",
 };
 
 // Ports `screen-comply-hub` from the uploaded Beacon template 1:1 (§9, Phase
-// 1 of strategy/beacon-template-redesign-plan.md). The two cards now route
-// into the real Beacon-styled Comply modules at /comply/payments and
-// /comply/digital-lending (§5 of the plan) -- the same database-backed,
-// member-gated compliance engine as before, restyled to match the uploaded
-// template. The old /dashboard/compliance-pathway page these used to point
-// at has been retired.
+// 1 of strategy/beacon-template-redesign-plan.md). The cards route into the
+// real Beacon-styled Comply modules at /comply/payments, /comply/digital-
+// lending and /comply/insurance (§5 of the plan) -- the same database-
+// backed, member-gated compliance engine as before, restyled to match the
+// uploaded template. The old /dashboard/compliance-pathway page these used
+// to point at has been retired.
 export default function ComplyHubPage() {
   return (
     <div className={styles.chRoot}>
@@ -57,6 +57,14 @@ export default function ComplyHubPage() {
             <p>Track ongoing obligations for a Money Lender or NDTMFI providing credit through digital channels.</p>
             <Link className={styles["ch-card-action"]} href="/comply/digital-lending">
               Manage Digital Lending compliance →
+            </Link>
+          </article>
+          <article className={styles["ch-card"]}>
+            <div className={styles["ch-card-kicker"]}>Insurance Regulatory Authority</div>
+            <h2>Insurance</h2>
+            <p>Track ongoing obligations for Insurers, Brokers, Agents and HMOs under the IRA&apos;s licensing guidelines.</p>
+            <Link className={styles["ch-card-action"]} href="/comply/insurance">
+              Manage Insurance compliance →
             </Link>
           </article>
         </div>

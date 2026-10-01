@@ -8,6 +8,7 @@ import type { MemberComplianceProfile, Obligation } from "./types";
 
 export const DIGITAL_LENDING_CATALOG_KEY = "digital_lending_compliance_assistant";
 export const PAYMENTS_CATALOG_KEY = "payments_compliance_assistant";
+export const INSURANCE_CATALOG_KEY = "insurance_compliance_assistant";
 
 export const DAY_MS = 86400000;
 
@@ -44,6 +45,11 @@ export type ProfileFields = {
   custody: string;
   crossborder: string;
   advice: string;
+  // Insurance Compliance Assistant (insurance_compliance_assistant).
+  // `route` is reused for the insurer/broker/agent/hmo licence route (the
+  // same generic column Digital Lending already uses for its own route
+  // question), so only the life-vs-non-life dimension needs a new field.
+  business_line: string;
 };
 
 export function emptyProfile(): ProfileFields {
@@ -74,6 +80,7 @@ export function emptyProfile(): ProfileFields {
     custody: "",
     crossborder: "",
     advice: "",
+    business_line: "",
   };
 }
 
@@ -109,12 +116,31 @@ export function profileFromRow(row: MemberComplianceProfile | null): ProfileFiel
     custody: row.custody ?? "",
     crossborder: row.crossborder ?? "",
     advice: row.advice ?? "",
+    business_line: row.business_line ?? "",
   };
 }
 
 export function appliesTo(category: string, profile: ProfileFields, catalogKey: string): boolean {
   const cat = (category || "").toUpperCase();
   if (cat === "ALL") return true;
+  if (catalogKey === INSURANCE_CATALOG_KEY) {
+    switch (cat) {
+      case "INSURER":
+        return profile.route === "insurer";
+      case "BROKER":
+        return profile.route === "broker";
+      case "AGENT":
+        return profile.route === "agent";
+      case "HMO":
+        return profile.route === "hmo";
+      case "LIFE":
+        return profile.business_line === "life" || profile.business_line === "both";
+      case "NONLIFE":
+        return profile.business_line === "non_life" || profile.business_line === "both";
+      default:
+        return false;
+    }
+  }
   if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
     switch (cat) {
       case "MONEY":
@@ -163,6 +189,24 @@ export function appliesTo(category: string, profile: ProfileFields, catalogKey: 
 
 export function obligationApplies(o: Obligation, profile: ProfileFields, catalogKey: string): boolean {
   if (o.applies_all) return true;
+  if (catalogKey === INSURANCE_CATALOG_KEY) {
+    const route = profile.route;
+    const line = profile.business_line;
+    if (o.applies_insurer && route === "insurer") {
+      // Insurer-route obligations that are additionally scoped to a
+      // business line (life/non-life) only fire once that line is set and
+      // matches; obligations with neither applies_life nor applies_nonlife
+      // set apply to every insurer regardless of business line.
+      if (!o.applies_life && !o.applies_nonlife) return true;
+      if (o.applies_life && (line === "life" || line === "both")) return true;
+      if (o.applies_nonlife && (line === "non_life" || line === "both")) return true;
+      return false;
+    }
+    if (o.applies_broker && route === "broker") return true;
+    if (o.applies_agent && route === "agent") return true;
+    if (o.applies_hmo && route === "hmo") return true;
+    return false;
+  }
   if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
     if (o.applies_money_lender && profile.money_lender === "Yes") return true;
     if (o.applies_ndt_mfi && profile.ndt_mfi === "Yes") return true;
@@ -196,7 +240,26 @@ const PSO_CLASS_LABEL: Record<string, string> = {
   third_party: "Third-party system",
 };
 
+export const INSURANCE_ROUTE_LABEL: Record<string, string> = {
+  insurer: "Insurer/Reinsurer",
+  broker: "Insurance/Reinsurance Broker",
+  agent: "Insurance Agent",
+  hmo: "Health Membership Organisation",
+};
+
+export const INSURANCE_BUSINESS_LINE_LABEL: Record<string, string> = {
+  life: "Life business",
+  non_life: "Non-life business",
+  both: "Life & Non-life business",
+};
+
 export function profileSummaryText(p: ProfileFields, catalogKey: string): string {
+  if (catalogKey === INSURANCE_CATALOG_KEY) {
+    const insParts: string[] = [];
+    if (p.route) insParts.push(INSURANCE_ROUTE_LABEL[p.route] || p.route);
+    if (p.business_line) insParts.push(INSURANCE_BUSINESS_LINE_LABEL[p.business_line] || p.business_line);
+    return insParts.join("  ·  ") || "No profile set";
+  }
   if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
     const dlParts: string[] = [];
     if (p.money_lender === "Yes") dlParts.push("Money lender");
@@ -221,6 +284,14 @@ export function profileSummaryText(p: ProfileFields, catalogKey: string): string
 }
 
 export function validateProfile(p: ProfileFields, catalogKey: string): boolean {
+  if (catalogKey === INSURANCE_CATALOG_KEY) {
+    if (!p.route) return false;
+    // Life-vs-non-life only matters (and is only asked) for the Insurer and
+    // Broker routes -- Agent and HMO are single-track in the source
+    // guidelines, so no business_line answer is required for them.
+    if ((p.route === "insurer" || p.route === "broker") && !p.business_line) return false;
+    return true;
+  }
   if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
     return (
       !!p.money_lender &&
@@ -255,6 +326,8 @@ const COVERAGE_WARNINGS: Record<string, string> = {
     "This is a payments compliance map, not a SACCO or digital-credit sheet. It excludes a complete AML/CFT, tax, company-law and data-protection calendar, since the payments source set does not contain the full current primary instruments and regulator instructions for those regimes.\n\nLicence-specific conditions, BoU letters, circulars, return templates and remediation dates must be added as your business receives them — this calendar cannot pre-populate them.",
   [DIGITAL_LENDING_CATALOG_KEY]:
     "This is a digital lending compliance map, not a payments or SACCO sheet. It excludes a complete AML/CFT, tax, company-law and consumer-protection calendar beyond the Tier 4 Microfinance Institutions and Money Lenders Act framework, since the digital-lending source set does not contain the full current primary instruments and regulator instructions for those regimes.\n\nLicence-specific conditions, UMRA letters, circulars, return templates and remediation dates must be added as your business receives them — this calendar cannot pre-populate them.",
+  [INSURANCE_CATALOG_KEY]:
+    "This is an insurance compliance map built from the IRA's licensing guideline documents (Insurer/Reinsurer, Broker, Agent and HMO guidelines, plus the Mutual Insurance Company form) — it is not a comprehensive Insurance Act rulebook. It excludes a complete AML/CFT, tax, company-law, market-conduct and solvency-returns calendar, since the source guidelines are primarily about how to get licensed, not a full statement of every ongoing IRA reporting and prudential obligation.\n\nLicence-specific conditions, IRA circulars, return templates, gazetted deadlines and remediation dates must be added as your business receives them — this calendar cannot pre-populate them.",
 };
 
 export function coverageWarning(catalogKey: string): string {

@@ -3,17 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// The Beacon shell (home, /apply, /comply, /signup) ships its own
-// self-contained masthead per screen (bp-nav / ah-nav / ch-nav / su-nav in
-// the ported template), so the legacy FITSPA site chrome below must not
-// double up on top of it. /signup joined the Beacon shell in the Insurance
-// round (superseding the narrower removal scope originally confirmed in
-// strategy/beacon-template-redesign-plan.md §8.1), per an explicit request
-// to keep the same UI template -- including the standard nav and "Search a
-// member" -- on the signup page. Every other route (login, lookup, search,
-// assistant, dashboard, admin) still keeps this legacy chrome as before.
+// The Beacon shell (home, /apply, /comply, /signup, /lookup, /login,
+// /search) ships its own self-contained masthead per screen (bp-nav /
+// ah-nav / ch-nav / su-nav in the ported template, now centralised as
+// <BeaconNav /> -- see src/components/beacon-nav.tsx), so the legacy FITSPA
+// site chrome below must not double up on top of it. /signup joined the
+// Beacon shell in the Insurance round (superseding the narrower removal
+// scope originally confirmed in strategy/beacon-template-redesign-plan.md
+// §8.1), per an explicit request to keep the same UI template -- including
+// the standard nav and "Search a member" -- on the signup page. /lookup,
+// /login and /search joined in this round for the same reason, now that
+// they share BeaconNav instead of each carrying their own copy of the
+// masthead. /dashboard and /admin are intentionally excluded: they keep
+// this legacy authenticated chrome (sign-out, admin links) rather than the
+// public Beacon shell.
 function isBeaconShellRoute(pathname: string) {
-  return pathname === "/" || pathname.startsWith("/apply") || pathname.startsWith("/comply") || pathname.startsWith("/signup");
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/apply") ||
+    pathname.startsWith("/comply") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/lookup") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/search")
+  );
 }
 
 export default function SiteChrome({

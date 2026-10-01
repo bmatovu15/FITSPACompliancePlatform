@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import BeaconNav from "@/components/beacon-nav";
+import styles from "./login.module.css";
 
 // TEMPORARY: demo credentials shown on-page for review/testing. Remove this
 // block (and the panel that renders it below) once real member onboarding
@@ -32,6 +34,18 @@ const DEMO_ACCOUNTS = [
     email: "nile.microfinance@fitspa-demo.local",
     password: "Fitspa2026!Member3",
   },
+  {
+    label: "Mcash Uganda Limited",
+    detail: "DEMO-004 — BOU PSP licence",
+    email: "mcash@fitspa-demo.local",
+    password: "Fitspa2026!Member4",
+  },
+  {
+    label: "BCC PAY Insurance Brokers Ltd",
+    detail: "DEMO-005 — IRA Insurance Broker",
+    email: "bccpay@fitspa-demo.local",
+    password: "Fitspa2026!Member5",
+  },
 ];
 
 export default function LoginPage() {
@@ -57,69 +71,77 @@ export default function LoginPage() {
     router.refresh();
   }
 
-  function useDemoAccount(acct: (typeof DEMO_ACCOUNTS)[number]) {
+  function fillDemoAccount(acct: (typeof DEMO_ACCOUNTS)[number]) {
     setEmail(acct.email);
     setPassword(acct.password);
     setError(null);
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-      <div className="grid gap-10 sm:grid-cols-2 sm:items-start">
-        <div className="mx-auto w-full max-w-sm">
-          <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>Member sign in</h1>
-          <form className="mt-6 space-y-4" onSubmit={onSubmit}>
-            <div>
-              <label className="label">Email</label>
-              <input className="input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <div>
-              <label className="label">Password</label>
-              <input className="input" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            {error && <p className="text-sm" style={{ color: "#a3372f" }}>{error}</p>}
-            <button className="btn btn-primary w-full" type="submit" disabled={loading}>
-              {loading ? "Signing in…" : "Sign in"}
-            </button>
-          </form>
-          <p className="mt-4 text-sm" style={{ color: "var(--color-text-muted)" }}>
-            Not a member yet? <a className="underline" href="/signup">Join FITSPA</a>
-          </p>
-        </div>
+    <div className={styles.loRoot}>
+      <BeaconNav active="login" />
+      <main className={styles.main}>
+        <div className={styles.eyebrow}>Member Portal</div>
+        <h1 className={styles.title}>Member sign in</h1>
+        <p className={styles.dek}>Sign in to manage your FITSPA membership, licences, and ongoing compliance.</p>
 
-        <div className="card w-full max-w-sm p-5 sm:mx-0 mx-auto">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold">Demo credentials</h2>
-            <span className="badge badge-amber">Temporary</span>
-          </div>
-          <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
-            For review and testing only. Click an account to fill the form, both members and the FITSPA admin sign in
-            here.
-          </p>
-          <div className="mt-4 space-y-3">
-            {DEMO_ACCOUNTS.map((acct) => (
-              <button
-                key={acct.email}
-                type="button"
-                onClick={() => useDemoAccount(acct)}
-                className="w-full rounded-lg border p-3 text-left text-sm transition hover:opacity-80"
-                style={{ borderColor: "var(--color-border)", background: "var(--color-bg)" }}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold">{acct.label}</span>
-                  <span style={{ color: "var(--color-text-muted)" }} className="text-xs">{acct.detail}</span>
-                </div>
-                <div className="mt-1 font-mono text-xs" style={{ color: "var(--color-text-muted)" }}>
-                  {acct.email}
-                </div>
-                <div className="font-mono text-xs" style={{ color: "var(--color-text-muted)" }}>
-                  {acct.password}
-                </div>
+        <div className={styles.layout}>
+          <div className={styles.card}>
+            <form onSubmit={onSubmit}>
+              <div className={styles.field}>
+                <label className={styles.label}>Email</label>
+                <input
+                  className={styles.input}
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Password</label>
+                <input
+                  className={styles.input}
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              {error && <p className={styles.msgError}>{error}</p>}
+              <button className={styles.btn} type="submit" disabled={loading}>
+                {loading ? "Signing in…" : "Sign in"}
               </button>
-            ))}
+            </form>
+            <p className={styles.footNote}>
+              Not a member yet? <a href="/signup">Join FITSPA</a>
+            </p>
+          </div>
+
+          <div className={styles.card}>
+            <div className={styles.demoHead}>
+              <h2>Demo credentials</h2>
+              <span className={styles.badgeAmber}>Temporary</span>
+            </div>
+            <p className={styles.demoNote}>
+              For review and testing only. Click an account to fill the form — both members and the FITSPA admin
+              sign in here.
+            </p>
+            <div className={styles.demoList}>
+              {DEMO_ACCOUNTS.map((acct) => (
+                <button key={acct.email} type="button" onClick={() => fillDemoAccount(acct)} className={styles.demoBtn}>
+                  <div className={styles.demoRow}>
+                    <span className={styles.demoLabel}>{acct.label}</span>
+                    <span className={styles.demoDetail}>{acct.detail}</span>
+                  </div>
+                  <div className={styles.demoCred}>{acct.email}</div>
+                  <div className={styles.demoCred}>{acct.password}</div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

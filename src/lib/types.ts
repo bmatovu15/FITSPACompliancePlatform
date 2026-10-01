@@ -82,6 +82,14 @@ export type Obligation = {
   applies_custody: boolean;
   applies_crossborder: boolean;
   applies_advice: boolean;
+  // Insurance Compliance Calendar (insurance_compliance_assistant)
+  // applicability flags: insurer/broker/agent(reuses applies_agent above)/hmo
+  // for the licence route, plus life/non-life for business-line scoping.
+  applies_insurer: boolean;
+  applies_broker: boolean;
+  applies_hmo: boolean;
+  applies_life: boolean;
+  applies_nonlife: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -274,6 +282,9 @@ export type MemberComplianceProfile = {
   custody: string | null;
   crossborder: string | null;
   advice: string | null;
+  // Insurance Compliance Calendar profile field. `route` above is reused for
+  // the insurer/broker/agent/hmo licence route.
+  business_line: string | null;
   profile_set: boolean;
   updated_at: string;
 };
