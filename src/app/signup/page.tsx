@@ -1,11 +1,38 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { FintechVertical, Regulator, Licence } from "@/lib/types";
 import { CONTACT_ROLES } from "@/lib/types";
+import styles from "./signup.module.css";
 
 type Step = 1 | 2 | 3 | 4 | 5;
+
+const STEP_LABELS = ["Vertical", "Company", "Contact", "Licence", "Account"];
+
+function SignupNav() {
+  return (
+    <header className={styles["su-nav"]}>
+      <Link className={styles["su-brand"]} href="/" aria-label="FITSPA Compliance Platform home">
+        <span className={styles["su-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
+      </Link>
+      <nav className={styles["su-nav-links"]} aria-label="Primary">
+        <button className={`${styles["su-nav-link"]} ${styles.muted}`} type="button" disabled>
+          Explore
+        </button>
+        <Link className={styles["su-nav-link"]} href="/apply">Apply</Link>
+        <Link className={styles["su-nav-link"]} href="/comply">Comply</Link>
+        <Link className={styles["su-nav-link"]} href="/assistant">AI Assistant</Link>
+      </nav>
+      <div className={styles["su-nav-actions"]}>
+        <Link className={styles["su-nav-search"]} href="/lookup">Search a member</Link>
+        <span className={`${styles["su-nav-link"]} ${styles.active}`} style={{ padding: 0 }}>Register</span>
+        <Link className={styles["su-nav-back"]} href="/">← Home</Link>
+      </div>
+    </header>
+  );
+}
 
 export default function SignupPage() {
   const supabase = useMemo(() => createClient(), []);
@@ -108,8 +135,8 @@ export default function SignupPage() {
       if (rpcErr) throw rpcErr;
       setCheckResult(signupRes?.[0]?.licence_verified ? "match" : "nomatch");
       setDone(true);
-    } catch (e: any) {
-      setError(e.message ?? "Something went wrong. Please try again.");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -119,168 +146,177 @@ export default function SignupPage() {
 
   if (done) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center sm:px-6">
-        <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>Check your email</h1>
-        <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
-          We've sent an activation link to <strong>{companyEmail}</strong>. Click it to confirm you're
-          from {companyName || "your company"} and activate your account.
-        </p>
-        {checkResult === "nomatch" && (
-          <p className="mt-4 rounded-lg p-3 text-sm" style={{ background: "#fbedd9", color: "#93590b" }}>
-            Heads up: the licence number you entered didn't match FITSPA's regulator registry. Your
-            account will still activate, but a FITSPA officer will need to manually verify your licence
-            before it shows as verified.
+      <div className={styles.suRoot}>
+        <SignupNav />
+        <div className={styles["su-done"]}>
+          <h1>Check your email</h1>
+          <p>
+            We&apos;ve sent an activation link to <strong>{companyEmail}</strong>. Click it to confirm you&apos;re
+            from {companyName || "your company"} and activate your account.
           </p>
-        )}
+          {checkResult === "nomatch" && (
+            <div className={styles["su-banner-warn"]} style={{ maxWidth: 480, margin: "20px auto 0", textAlign: "left" }}>
+              Heads up: the licence number you entered didn&apos;t match FITSPA&apos;s regulator registry. Your
+              account will still activate, but a FITSPA officer will need to manually verify your licence
+              before it shows as verified.
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>Join FITSPA</h1>
-      <div className="stepper mt-4 mb-8">
-        {["Vertical", "Company", "Contact", "Licence", "Account"].map((label, i) => {
-          const n = (i + 1) as Step;
-          const state = n < step ? "done" : n === step ? "active" : "";
-          return (
-            <div key={label} className="flex items-center gap-2">
-              <div className={`step-dot ${state}`}>{n < step ? "✓" : n}</div>
-              {i < 4 && <div className="h-px w-6" style={{ background: "var(--color-border)" }} />}
+    <div className={styles.suRoot}>
+      <SignupNav />
+      <main className={styles["su-main"]}>
+        <div className={styles["su-eyebrow"]}>Membership</div>
+        <h1 className={styles["su-title"]}>Join FITSPA</h1>
+        <p className={styles["su-dek"]}>Register your company, link your regulator licence, and get a FITSPA Compliance Platform account.</p>
+
+        <div className={styles["su-stepper"]}>
+          {STEP_LABELS.map((label, i) => {
+            const n = (i + 1) as Step;
+            const state = n < step ? "done" : n === step ? "active" : "";
+            return (
+              <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div className={`${styles["su-step-dot"]} ${state ? styles[state] : ""}`}>{n < step ? "✓" : n}</div>
+                {i < STEP_LABELS.length - 1 && <div className={styles["su-step-line"]} />}
+              </div>
+            );
+          })}
+        </div>
+
+        {step === 1 && (
+          <div className={styles["su-card"]}>
+            <h2 className={styles["su-h2"]}>Which fintech vertical are you in?</h2>
+            <div className={styles["su-vertical-grid"]}>
+              {verticals.map((v) => (
+                <label key={v.id} className={`${styles["su-vertical-option"]} ${verticalId === v.id ? styles.checked : ""}`}>
+                  <input type="radio" checked={verticalId === v.id} onChange={() => setVerticalId(v.id)} />
+                  <span>{v.name}</span>
+                </label>
+              ))}
             </div>
-          );
-        })}
-      </div>
+            <div className={styles["su-add-vertical"]}>
+              <input className={styles["su-input"]} placeholder="Don't see yours? Add it" value={newVertical} onChange={(e) => setNewVertical(e.target.value)} />
+              <button className={styles["su-btn-ghost"]} onClick={addVertical} type="button">Add vertical</button>
+            </div>
+            <div className={styles["su-row"]} style={{ justifyContent: "flex-end" }}>
+              <button className={styles["su-btn"]} disabled={!verticalId} onClick={() => setStep(2)}>Next</button>
+            </div>
+          </div>
+        )}
 
-      {step === 1 && (
-        <div>
-          <h2 className="text-lg font-semibold">Which fintech vertical are you in?</h2>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {verticals.map((v) => (
-              <label key={v.id} className="card flex cursor-pointer items-center gap-2 p-3">
-                <input type="radio" checked={verticalId === v.id} onChange={() => setVerticalId(v.id)} />
-                <span className="text-sm">{v.name}</span>
-              </label>
-            ))}
+        {step === 2 && (
+          <div className={styles["su-card"]}>
+            <h2 className={styles["su-h2"]}>Company details</h2>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Company name</label>
+              <input className={styles["su-input"]} value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Company email</label>
+              <input className={styles["su-input"]} type="email" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} />
+              <p className={styles["su-hint"]}>We&apos;ll send an activation link here.</p>
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>FITSPA member ID (if known)</label>
+              <input className={styles["su-input"]} value={fitspaMemberId} onChange={(e) => setFitspaMemberId(e.target.value)} />
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Office location</label>
+              <input className={styles["su-input"]} value={officeLocation} onChange={(e) => setOfficeLocation(e.target.value)} />
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Company logo</label>
+              <input className={styles["su-input"]} type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} />
+            </div>
+            <div className={styles["su-row"]}>
+              <button className={styles["su-btn-ghost"]} onClick={() => setStep(1)}>Back</button>
+              <button className={styles["su-btn"]} disabled={!companyName || !companyEmail} onClick={() => setStep(3)}>Next</button>
+            </div>
           </div>
-          <div className="mt-4 flex gap-2">
-            <input className="input" placeholder="Don't see yours? Add it" value={newVertical} onChange={(e) => setNewVertical(e.target.value)} />
-            <button className="btn btn-ghost" onClick={addVertical} type="button">Add vertical</button>
-          </div>
-          <div className="mt-6 flex justify-end">
-            <button className="btn btn-primary" disabled={!verticalId} onClick={() => setStep(2)}>Next</button>
-          </div>
-        </div>
-      )}
+        )}
 
-      {step === 2 && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Company details</h2>
-          <div>
-            <label className="label">Company name</label>
-            <input className="input" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+        {step === 3 && (
+          <div className={styles["su-card"]}>
+            <h2 className={styles["su-h2"]}>Who&apos;s signing up?</h2>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Your name</label>
+              <input className={styles["su-input"]} value={contactName} onChange={(e) => setContactName(e.target.value)} />
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Your role</label>
+              <select className={styles["su-input"]} value={contactRole} onChange={(e) => setContactRole(e.target.value)}>
+                <option value="">Select…</option>
+                {CONTACT_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div className={styles["su-row"]}>
+              <button className={styles["su-btn-ghost"]} onClick={() => setStep(2)}>Back</button>
+              <button className={styles["su-btn"]} disabled={!contactName || !contactRole} onClick={() => setStep(4)}>Next</button>
+            </div>
           </div>
-          <div>
-            <label className="label">Company email</label>
-            <input className="input" type="email" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} />
-            <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>We'll send an activation link here.</p>
-          </div>
-          <div>
-            <label className="label">FITSPA member ID (if known)</label>
-            <input className="input" value={fitspaMemberId} onChange={(e) => setFitspaMemberId(e.target.value)} />
-          </div>
-          <div>
-            <label className="label">Office location</label>
-            <input className="input" value={officeLocation} onChange={(e) => setOfficeLocation(e.target.value)} />
-          </div>
-          <div>
-            <label className="label">Company logo</label>
-            <input className="input" type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} />
-          </div>
-          <div className="flex justify-between">
-            <button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
-            <button className="btn btn-primary" disabled={!companyName || !companyEmail} onClick={() => setStep(3)}>Next</button>
-          </div>
-        </div>
-      )}
+        )}
 
-      {step === 3 && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Who's signing up?</h2>
-          <div>
-            <label className="label">Your name</label>
-            <input className="input" value={contactName} onChange={(e) => setContactName(e.target.value)} />
+        {step === 4 && (
+          <div className={styles["su-card"]}>
+            <h2 className={styles["su-h2"]}>Your regulator licence</h2>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Regulator</label>
+              <select className={styles["su-input"]} value={regulatorId} onChange={(e) => { setRegulatorId(e.target.value); setLicenceId(""); setCheckResult("idle"); }}>
+                <option value="">Select…</option>
+                {regulators.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+              </select>
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Licence</label>
+              <select className={styles["su-input"]} value={licenceId} onChange={(e) => setLicenceId(e.target.value)} disabled={!regulatorId}>
+                <option value="">Select…</option>
+                {availableLicences.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+              </select>
+            </div>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Licence number</label>
+              <div className={styles["su-check-row"]}>
+                <input className={styles["su-input"]} value={licenceNumber} onChange={(e) => { setLicenceNumber(e.target.value); setCheckResult("idle"); }} />
+                <button className={`${styles["su-btn-ghost"]} ${styles["su-btn-sm"]}`} type="button" onClick={checkLicence} disabled={!regulatorId || !licenceNumber}>
+                  Check
+                </button>
+              </div>
+              {checkResult === "checking" && <p className={styles["su-hint"]}>Checking…</p>}
+              {checkResult === "match" && <p className={styles["su-msg-ok"]}>✓ Matches FITSPA&apos;s regulator registry.</p>}
+              {checkResult === "nomatch" && (
+                <p className={styles["su-msg-warn"]}>
+                  No match found — please double check the licence number. You can still continue; FITSPA will verify manually.
+                </p>
+              )}
+            </div>
+            <div className={styles["su-row"]}>
+              <button className={styles["su-btn-ghost"]} onClick={() => setStep(3)}>Back</button>
+              <button className={styles["su-btn"]} disabled={!regulatorId || !licenceId || !licenceNumber} onClick={() => setStep(5)}>Next</button>
+            </div>
           </div>
-          <div>
-            <label className="label">Your role</label>
-            <select className="input" value={contactRole} onChange={(e) => setContactRole(e.target.value)}>
-              <option value="">Select…</option>
-              {CONTACT_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
-            </select>
-          </div>
-          <div className="flex justify-between">
-            <button className="btn btn-ghost" onClick={() => setStep(2)}>Back</button>
-            <button className="btn btn-primary" disabled={!contactName || !contactRole} onClick={() => setStep(4)}>Next</button>
-          </div>
-        </div>
-      )}
+        )}
 
-      {step === 4 && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Your regulator licence</h2>
-          <div>
-            <label className="label">Regulator</label>
-            <select className="input" value={regulatorId} onChange={(e) => { setRegulatorId(e.target.value); setLicenceId(""); setCheckResult("idle"); }}>
-              <option value="">Select…</option>
-              {regulators.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="label">Licence</label>
-            <select className="input" value={licenceId} onChange={(e) => setLicenceId(e.target.value)} disabled={!regulatorId}>
-              <option value="">Select…</option>
-              {availableLicences.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="label">Licence number</label>
-            <div className="flex gap-2">
-              <input className="input" value={licenceNumber} onChange={(e) => { setLicenceNumber(e.target.value); setCheckResult("idle"); }} />
-              <button className="btn btn-ghost btn-sm" type="button" onClick={checkLicence} disabled={!regulatorId || !licenceNumber}>
-                Check
+        {step === 5 && (
+          <div className={styles["su-card"]}>
+            <h2 className={styles["su-h2"]}>Create your password</h2>
+            <div className={styles["su-field"]}>
+              <label className={styles["su-label"]}>Password</label>
+              <input className={styles["su-input"]} type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} />
+            </div>
+            {error && <p className={styles["su-msg-error"]}>{error}</p>}
+            <div className={styles["su-row"]}>
+              <button className={styles["su-btn-ghost"]} onClick={() => setStep(4)}>Back</button>
+              <button className={styles["su-btn"]} disabled={password.length < 8 || submitting} onClick={submit}>
+                {submitting ? "Creating account…" : "Create account"}
               </button>
             </div>
-            {checkResult === "checking" && <p className="mt-1 text-xs">Checking…</p>}
-            {checkResult === "match" && <p className="mt-1 text-xs" style={{ color: "#0d3b2e" }}>✓ Matches FITSPA's regulator registry.</p>}
-            {checkResult === "nomatch" && (
-              <p className="mt-1 text-xs" style={{ color: "#a3372f" }}>
-                No match found — please double check the licence number. You can still continue; FITSPA will verify manually.
-              </p>
-            )}
           </div>
-          <div className="flex justify-between">
-            <button className="btn btn-ghost" onClick={() => setStep(3)}>Back</button>
-            <button className="btn btn-primary" disabled={!regulatorId || !licenceId || !licenceNumber} onClick={() => setStep(5)}>Next</button>
-          </div>
-        </div>
-      )}
-
-      {step === 5 && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Create your password</h2>
-          <div>
-            <label className="label">Password</label>
-            <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} />
-          </div>
-          {error && <p className="text-sm" style={{ color: "#a3372f" }}>{error}</p>}
-          <div className="flex justify-between">
-            <button className="btn btn-ghost" onClick={() => setStep(4)}>Back</button>
-            <button className="btn btn-primary" disabled={password.length < 8 || submitting} onClick={submit}>
-              {submitting ? "Creating account…" : "Create account"}
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </main>
     </div>
   );
 }

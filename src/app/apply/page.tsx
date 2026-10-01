@@ -4,7 +4,7 @@ import ApplyExpertPanel from "./apply-expert-panel";
 
 export const metadata = {
   title: "Apply | FITSPA Compliance Platform",
-  description: "Prepare and manage your Payments or Digital Lending licence application.",
+  description: "Prepare and manage your Payments, Digital Lending, or Insurance licence application.",
 };
 
 // Ports `screen-apply-hub` from the uploaded Beacon template 1:1 (§9, Phase 1
@@ -50,6 +50,12 @@ export default function ApplyHubPage() {
             <h2>Digital Lending</h2>
             <p>Prepare a Money Lender or NDTMFI application for digital lending.</p>
             <Link className={styles["ah-card-action"]} href="/apply/digital-lending">Start Digital Lending application →</Link>
+          </article>
+          <article className={styles["ah-card"]}>
+            <div className={styles["ah-card-kicker"]}>Insurance Regulatory Authority</div>
+            <h2>Insurance</h2>
+            <p>Prepare an IRA licence application as an Insurer, Reinsurer, Broker, Agent, or HMO.</p>
+            <Link className={styles["ah-card-action"]} href="/apply/insurance">Start Insurance application →</Link>
           </article>
         </div>
 

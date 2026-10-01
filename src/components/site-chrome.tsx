@@ -3,15 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// The Beacon shell (home, /apply, /comply) ships its own self-contained
-// masthead per screen (bp-nav / ah-nav / ch-nav in the ported template), so
-// the legacy FITSPA site chrome below must not double up on top of it.
-// Every other route (login, signup, lookup, search, assistant, dashboard,
-// admin) keeps this chrome exactly as before -- none of it is redesigned by
-// the Beacon template, per the confirmed removal scope in
-// strategy/beacon-template-redesign-plan.md §8.1.
+// The Beacon shell (home, /apply, /comply, /signup) ships its own
+// self-contained masthead per screen (bp-nav / ah-nav / ch-nav / su-nav in
+// the ported template), so the legacy FITSPA site chrome below must not
+// double up on top of it. /signup joined the Beacon shell in the Insurance
+// round (superseding the narrower removal scope originally confirmed in
+// strategy/beacon-template-redesign-plan.md §8.1), per an explicit request
+// to keep the same UI template -- including the standard nav and "Search a
+// member" -- on the signup page. Every other route (login, lookup, search,
+// assistant, dashboard, admin) still keeps this legacy chrome as before.
 function isBeaconShellRoute(pathname: string) {
-  return pathname === "/" || pathname.startsWith("/apply") || pathname.startsWith("/comply");
+  return pathname === "/" || pathname.startsWith("/apply") || pathname.startsWith("/comply") || pathname.startsWith("/signup");
 }
 
 export default function SiteChrome({

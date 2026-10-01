@@ -1,0 +1,213 @@
+/* Beacon — Insurance Licence Application (Apply workspace)
+   Ported verbatim (same selectors, same pixel values) from
+   digital-lending-workspace.module.css -- the Insurance workspace reuses the
+   identical masthead + tabs + phase-nav + req-cards + right rail + slide-in
+   drawer pattern as Digital Lending and Payments; only the root class name
+   below (.iwRoot) differs, so this stylesheet applies. See
+   digital-lending-workspace.module.css for the original prototype-port
+   commentary.
+
+   CRITICAL (sticky-offset fix, carried over correctly from the start -- see
+   strategy/beacon-template-redesign-plan.md for the Payments-round writeup
+   of this bug class): this page already renders the site's persistent
+   .ahRoot .ah-nav header (apply-hub.module.css: height:74px; position:
+   sticky; top:0; z-index:80) ABOVE everything in this module. Every sticky
+   element below (.workspace-head, .workspace-tabs, .phase-nav, .right-rail)
+   offsets its own `top` by --ah-nav-h (and, for the tabs/phase-nav/rail,
+   additionally by the sub-header's own height) so it docks just under the
+   site nav and the sub-header instead of colliding with -- and rendering
+   hidden underneath -- either of them as the page scrolls. Do not add a new
+   sticky element here without including --ah-nav-h in its `top`. */
+
+.iwRoot {
+  --ah-nav-h: 74px;
+  --ink: #111111;
+  --ink-soft: #333333;
+  --slate: #4a4a4a;
+  --muted: #6f737a;
+  --faint: #92959a;
+  --paper: #ffffff;
+  --soft: #fafafa;
+  --soft2: #f5f5f5;
+  --rule: #e5e5e5;
+  --rule2: #d0d0d0;
+  --success: #2e7d4f;
+  --success-bg: #e9f5ee;
+  --warn: #946200;
+  --warn-bg: #fff6e5;
+  --danger: #b3261e;
+  --danger-bg: #fceae9;
+  --sans: "Montserrat", Arial, sans-serif;
+  font-family: var(--sans);
+  background: #fff;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.iwRoot * { box-sizing: border-box; }
+.iwRoot button, .iwRoot input, .iwRoot select, .iwRoot textarea { font: inherit; }
+.iwRoot button { cursor: pointer; }
+.iwRoot a { color: inherit; }
+
+/* ---------------------------------------------------------------------
+   Sub-header + tabs
+--------------------------------------------------------------------- */
+.iwRoot .workspace-head{height:76px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:var(--ah-nav-h);background:rgba(255,255,255,.98);z-index:55}
+.iwRoot .workspace-head-left{display:flex;align-items:center;gap:14px;min-width:0}
+.iwRoot .back-btn{border:0;background:transparent;padding:7px 8px;font-weight:600;font-size:11.5px;color:#555;border-radius:3px}
+.iwRoot .back-btn:hover{background:var(--soft2)}
+.iwRoot .workspace-title{font-size:14px;font-weight:700;white-space:nowrap}
+.iwRoot .route-badge{font-size:9.5px;border:1px solid var(--rule2);border-radius:999px;padding:5px 8px;color:#555;font-weight:600;white-space:nowrap}
+
+.iwRoot .workspace-tabs{height:49px;border-bottom:1px solid var(--rule);display:flex;align-items:end;padding:0 30px;gap:22px;position:sticky;top:calc(var(--ah-nav-h) + 76px);background:#fff;z-index:50}
+.iwRoot .app-tab{height:49px;border:0;background:transparent;padding:0 2px;font-size:11px;font-weight:600;color:#777;position:relative}
+.iwRoot .app-tab.active{color:#111}
+.iwRoot .app-tab.active:after{content:"";height:2px;background:#111;position:absolute;left:0;right:0;bottom:0}
+
+.iwRoot .error-banner{margin:14px 30px 0;border:1px solid #ecb3ad;background:var(--danger-bg);color:var(--danger);border-radius:4px;padding:10px 14px;font-size:11.5px;line-height:1.5}
+
+/* ---------------------------------------------------------------------
+   Grid: phase-nav + main + right rail
+--------------------------------------------------------------------- */
+.iwRoot .workspace-grid{display:grid;grid-template-columns:220px minmax(0,1fr) 245px;max-width:1400px;margin:0 auto}
+.iwRoot .phase-nav{padding:30px 20px 40px 28px;border-right:1px solid var(--rule);position:sticky;top:calc(var(--ah-nav-h) + 125px);height:calc(100vh - var(--ah-nav-h) - 125px);overflow:auto;align-self:start}
+.iwRoot .phase-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#999;font-weight:700;margin-bottom:13px}
+.iwRoot .phase-btn{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:9px 10px;font-size:10.8px;line-height:1.35;color:#6a6a6a;font-weight:550;margin-bottom:3px}
+.iwRoot .phase-btn.active{background:#f4f4f4;color:#111;font-weight:700}
+
+.iwRoot .app-main{padding:34px 34px 90px;min-width:0}
+.iwRoot .app-main h1{font-size:29px;margin:0 0 7px;letter-spacing:-.035em}
+.iwRoot .workspace-intro{font-size:12.5px;color:var(--muted);line-height:1.65;max-width:760px;margin:0}
+.iwRoot .phase-section{margin-top:34px;scroll-margin-top:calc(var(--ah-nav-h) + 150px)}
+.iwRoot .phase-section h2{font-size:15px;margin:0 0 12px;letter-spacing:-.01em}
+
+.iwRoot .req-list{border-top:1px solid var(--rule)}
+.iwRoot .req-card{padding:16px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:minmax(0,1fr) 128px 140px;gap:18px;align-items:center;border-radius:4px}
+.iwRoot .req-title-line{display:flex;align-items:center;gap:6px;min-width:0}
+.iwRoot .req-title{font-size:12.5px;font-weight:700;line-height:1.3}
+.iwRoot .info-btn{width:22px;height:22px;min-width:22px;border:1px solid var(--rule2);background:#fff;border-radius:50%;font-size:12px;font-weight:700;color:#333;padding:0;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.iwRoot .info-btn:hover{border-color:#111;color:#111;background:var(--soft)}
+.iwRoot .req-copy{font-size:10.8px;color:#666;line-height:1.55;margin-top:6px;max-width:690px}
+.iwRoot .req-progress{font-size:9.8px;color:#848484;margin-top:5px}
+
+.iwRoot .status{justify-self:start;font-size:9.5px;font-weight:700;border:1px solid var(--rule2);border-radius:999px;padding:6px 8px;white-space:nowrap}
+.iwRoot .status.inprogress{background:var(--warn-bg);border-color:#ecd8a5;color:#7a5a00}
+.iwRoot .status.ready{background:var(--success-bg);border-color:#bddac8;color:#246541}
+.iwRoot .req-action{width:140px;border:1px solid var(--rule2);background:#fff;border-radius:9px;padding:9px 10px;font-size:10.5px;font-weight:700}
+.iwRoot .req-action:hover{background:#f7f7f7}
+
+/* ---------------------------------------------------------------------
+   Application readiness card (bottom of Application tab)
+--------------------------------------------------------------------- */
+.iwRoot .readiness-card{border:1px solid var(--rule2);border-radius:4px;padding:20px;margin-top:34px}
+.iwRoot .readiness-card h3{font-size:14px;margin:0 0 6px}
+.iwRoot .readiness-card p{font-size:10.8px;line-height:1.6;color:#666;margin:0}
+.iwRoot .readiness-row{display:grid;grid-template-columns:1fr auto;gap:16px;padding:10px 0;border-top:1px solid var(--rule);font-size:10.5px}
+.iwRoot .readiness-row:first-of-type{margin-top:12px}
+.iwRoot .ok{font-weight:700;color:var(--success)}
+.iwRoot .notok{font-weight:700;color:#888}
+
+/* ---------------------------------------------------------------------
+   Right rail
+--------------------------------------------------------------------- */
+.iwRoot .right-rail{border-left:1px solid var(--rule);padding:30px 26px 70px 20px;position:sticky;top:calc(var(--ah-nav-h) + 125px);height:calc(100vh - var(--ah-nav-h) - 125px);overflow:auto;align-self:start}
+.iwRoot .rail-card{border-bottom:1px solid var(--rule);padding:0 0 22px;margin-bottom:22px;border-radius:4px}
+.iwRoot .rail-card:last-child{border-bottom:0}
+.iwRoot .rail-label{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:#888;font-weight:700;margin-bottom:10px}
+.iwRoot .rail-number{font-size:30px;font-weight:700;letter-spacing:-.04em}
+.iwRoot .rail-progress{height:4px;background:#eee;margin:10px 0 13px;border-radius:5px;overflow:hidden}
+.iwRoot .rail-progress span{display:block;height:100%;background:#111}
+.iwRoot .rail-stat{display:flex;justify-content:space-between;font-size:10.5px;color:#666;margin-top:6px}
+.iwRoot .rail-next{font-size:11px;line-height:1.5;margin-bottom:11px}
+.iwRoot .rail-btn{width:100%;border:1px solid var(--rule2);background:#fff;border-radius:3px;padding:9px 10px;font-size:10.5px;font-weight:700;margin-top:6px}
+.iwRoot .rail-btn:hover{background:#f7f7f7}
+.iwRoot .rail-btn.primary{background:#111;color:#fff;border-color:#111}
+.iwRoot .rail-btn.primary:hover{background:#2b2b2b}
+.iwRoot .rail-btn:disabled{opacity:.5;cursor:not-allowed}
+.iwRoot .rail-note{font-size:10px;line-height:1.55;color:#777;margin:7px 0 0}
+
+/* ---------------------------------------------------------------------
+   Documents tab
+--------------------------------------------------------------------- */
+.iwRoot .docs-head{margin-bottom:20px}
+.iwRoot .docs-head h2{font-size:25px;letter-spacing:-.03em;margin:0 0 7px}
+.iwRoot .docs-table{width:100%;border-collapse:collapse;font-size:10.5px}
+.iwRoot .docs-table th{text-align:left;color:#777;font-weight:700;border-bottom:1px solid var(--rule);padding:10px 8px}
+.iwRoot .docs-table td{border-bottom:1px solid var(--rule);padding:12px 8px;vertical-align:top}
+.iwRoot .docs-name{font-weight:700}
+.iwRoot .docs-sub{font-size:9.5px;color:#888;margin-top:3px}
+.iwRoot .open-req{border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;font-size:9.8px;font-weight:600;padding:0}
+.iwRoot .empty{border:1px dashed #d7d7d7;border-radius:12px;padding:22px;color:#777;font-size:11px}
+
+/* ---------------------------------------------------------------------
+   Review tab
+--------------------------------------------------------------------- */
+.iwRoot .review-head{margin-bottom:20px}
+.iwRoot .review-head h2{font-size:25px;letter-spacing:-.03em;margin:0 0 7px}
+.iwRoot .review-card{border:1px solid var(--rule2);border-radius:4px;padding:20px;margin-top:16px}
+.iwRoot .review-top{display:flex;justify-content:space-between;gap:14px}
+.iwRoot .review-card h3{font-size:14px;margin:0 0 6px}
+.iwRoot .review-card p{font-size:10.8px;line-height:1.6;color:#666;margin:0}
+.iwRoot .review-state{font-size:9px;border-radius:999px;padding:6px 8px;border:1px solid #d2d2d2;height:max-content;font-weight:700}
+
+/* ---------------------------------------------------------------------
+   Drawer / overlay
+--------------------------------------------------------------------- */
+.iwRoot .overlay{position:fixed;inset:0;background:rgba(0,0,0,.22);z-index:90;display:none}
+.iwRoot .overlay.open{display:block}
+.iwRoot .drawer{position:fixed;right:0;top:0;bottom:0;width:min(600px,96vw);background:#fff;z-index:100;transform:translateX(102%);transition:transform .2s ease;box-shadow:-16px 0 45px rgba(0,0,0,.10);display:flex;flex-direction:column}
+.iwRoot .drawer.open{transform:translateX(0)}
+.iwRoot .drawer-head{padding:22px 26px 18px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.iwRoot .drawer-eyebrow{font-size:8.8px;text-transform:uppercase;letter-spacing:.12em;color:#8c8c8c;font-weight:700;margin-bottom:6px}
+.iwRoot .drawer-head h2{font-size:19px;line-height:1.3;letter-spacing:-.02em;margin:0}
+.iwRoot .drawer-close{border:0;background:#fff;font-size:20px;line-height:1;padding:3px}
+.iwRoot .drawer-body{padding:24px 26px 30px;overflow:auto;flex:1}
+.iwRoot .drawer-footer{background:#fff;border-top:1px solid var(--rule);padding:12px 26px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.iwRoot .drawer-section{margin-bottom:26px}
+.iwRoot .drawer-section h3{font-size:11.5px;margin:0 0 10px}
+.iwRoot .drawer-section p{font-size:11px;color:#5f5f5f;line-height:1.65;margin:0 0 10px}
+.iwRoot .guide-block{padding:15px 0;border-bottom:1px solid var(--rule)}
+.iwRoot .guide-block:first-child{padding-top:0}
+.iwRoot .guide-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#888;font-weight:700;margin-bottom:7px}
+.iwRoot .guide-text{font-size:11.2px;line-height:1.65;color:#4d4d4d}
+.iwRoot .source-link{font-size:10.5px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.iwRoot .text-link{border:0;background:transparent;padding:0;color:#303030;text-decoration:underline;text-underline-offset:3px;font-size:10.5px;font-weight:600}
+.iwRoot .subtle-btn{border:1px solid var(--rule2);background:#fff;border-radius:9px;padding:10px 14px;font-size:10.5px;font-weight:700}
+.iwRoot .subtle-btn:hover{background:#f7f7f7}
+.iwRoot .subtle-btn:disabled{opacity:.5;cursor:not-allowed}
+.iwRoot .save-btn{border:1px solid #111;background:#111;color:#fff;border-radius:9px;padding:10px 14px;font-size:10.5px;font-weight:700}
+.iwRoot .save-btn:hover{background:#2b2b2b}
+.iwRoot .save-btn:disabled{opacity:.5;cursor:not-allowed;background:#111}
+.iwRoot .drawer-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+
+.iwRoot .field{margin-bottom:15px}
+.iwRoot .field label{display:block;font-size:10px;font-weight:700;margin-bottom:6px}
+.iwRoot .field textarea{width:100%;border:1px solid var(--rule2);border-radius:3px;padding:10px 11px;font-size:11px;outline:none;background:#fff;min-height:90px;resize:vertical}
+.iwRoot .field textarea:focus{border-color:#777}
+
+.iwRoot .support-context{border:1px solid var(--rule);border-radius:10px;padding:12px;margin-bottom:18px}
+.iwRoot .support-context strong{font-size:10.5px}
+.iwRoot .support-context p{font-size:9.8px;color:#777;margin:4px 0 0;line-height:1.5}
+
+/* ---------------------------------------------------------------------
+   Responsive
+--------------------------------------------------------------------- */
+@media(max-width:1050px){
+  .iwRoot .workspace-grid{grid-template-columns:185px minmax(0,1fr)}
+  .iwRoot .right-rail{display:none}
+  .iwRoot .app-main{padding-right:26px}
+  .iwRoot .phase-nav{padding-left:18px}
+  .iwRoot .req-card{grid-template-columns:minmax(0,1fr) 120px 130px}
+  .iwRoot .req-action{width:130px}
+}
+@media(max-width:760px){
+  .iwRoot .workspace-head,.iwRoot .workspace-tabs{padding:0 16px}
+  .iwRoot .workspace-grid{display:block}
+  .iwRoot .phase-nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);display:flex;gap:4px;overflow:auto;padding:11px 16px}
+  .iwRoot .phase-label{display:none}
+  .iwRoot .phase-btn{white-space:nowrap;width:auto;margin:0}
+  .iwRoot .app-main{padding:24px 18px 70px}
+  .iwRoot .req-card{grid-template-columns:1fr 120px}
+  .iwRoot .req-card>div:nth-child(2){display:none}
+  .iwRoot .req-action{width:120px}
+  .iwRoot .workspace-title{display:none}
+}
