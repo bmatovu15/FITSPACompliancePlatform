@@ -84,34 +84,282 @@ function readApplicationReview(facts: Record<string, unknown>): ApplicationRevie
 }
 
 type Category = "pso" | "psp" | "instrument";
-const CATEGORY_LABELS: Record<Category, string> = {
-  pso: "Payment System Operator (PSO)",
-  psp: "Payment Service Provider (PSP)",
-  instrument: "Payment Instrument Issuer",
-};
 
 type AssignedClass = { category: Category; classKey: string };
 
-type FactQuestion = { key: string; label: string };
+// ---------------------------------------------------------------------------
+// Classification data model -- exact port of the Beacon prototype's
+// CLASS_OPTIONS / renderSubQuestions / classificationLabel / classificationDetail
+// / selectedFeeRows / resultFeeClassLabel / renderLicenceResult logic (prototype
+// lines ~2046-2286). Payments classification is a flat, fully multi-select list
+// of 10 independent business activities -- not the 2-level PSO/PSP category +
+// single-radio-class model this screen used before. Any combination of
+// activities may be selected simultaneously; two of them (funds_transfer, emi)
+// trigger an inline follow-up value-band question that determines a specific
+// class_key/fee row. Multiple activities can collapse onto the same underlying
+// licence class (psp_tokens + psp_other both resolve to "psp_other"; all three
+// instrument activities resolve to "instrument") -- deriveAssignedClasses below
+// dedupes on class_key exactly like the prototype's selectedFeeRows pushUnique.
+// ---------------------------------------------------------------------------
+
+type ActivityKey =
+  | "funds_transfer"
+  | "clearing"
+  | "settlement"
+  | "third_party"
+  | "emi"
+  | "psp_tokens"
+  | "psp_other"
+  | "payment_cards"
+  | "electronic_devices"
+  | "paper_instruments";
+
+type ActivityDef = {
+  key: ActivityKey;
+  category: Category;
+  categoryLabel: string;
+  title: string;
+  activity: string;
+  info: string;
+};
+
+// Verbatim copy (title/activity/info text) from the prototype's CLASS_OPTIONS array.
+const ACTIVITY_OPTIONS: ActivityDef[] = [
+  {
+    key: "funds_transfer",
+    category: "pso",
+    categoryLabel: "Payment System Operator",
+    title: "Funds Transfer System",
+    activity: "P2P · P2B · B2B · B2G · Card processors",
+    info: "A funds transfer system enables monetary value or payment orders to be transferred between parties. This includes P2P, P2B, B2B and B2G payment systems, as well as card processors operating common rules and standardised arrangements for transferring payment orders.",
+  },
+  {
+    key: "clearing",
+    category: "pso",
+    categoryLabel: "Payment System Operator",
+    title: "Clearing System / Switch",
+    activity: "Clearing · Switching",
+    info: "Clearing is the process of transmitting, reconciling and confirming transfer orders before settlement and establishing the final positions to be settled. A clearing system provides the rules and procedures through which participants exchange payment information and may calculate their mutual positions before settlement.",
+  },
+  {
+    key: "settlement",
+    category: "pso",
+    categoryLabel: "Payment System Operator",
+    title: "Settlement System",
+    activity: "RTGS · Deferred settlement · Central securities depository systems",
+    info: "A settlement system facilitates the settlement of payment obligations between participants. It includes real-time gross settlement systems, deferred settlement systems and central securities depository systems used to facilitate settlement of funds.",
+  },
+  {
+    key: "third_party",
+    category: "pso",
+    categoryLabel: "Payment System Operator",
+    title: "Third-Party System",
+    activity: "Aggregator · Integrator · Gateway",
+    info: "A third-party system includes an aggregator, integrator or gateway that facilitates the receipt of electronic payments from a customer without first setting up a merchant account.",
+  },
+  {
+    key: "emi",
+    category: "psp",
+    categoryLabel: "Payment Service Provider",
+    title: "Electronic Money Issuer",
+    activity: "Issuance of electronic money",
+    info: "Electronic money is monetary value represented by a claim on the issuer that is stored electronically, issued upon receipt of funds of at least the same value, accepted as a means of payment by persons other than the issuer, and prepaid or redeemable in cash.",
+  },
+  {
+    key: "psp_tokens",
+    category: "psp",
+    categoryLabel: "Payment Service Provider",
+    title: "Payment Services including Tokens",
+    activity: "Payment services · Tokens",
+    info: "Payment services include services enabling cash deposits or withdrawals, execution of payment transactions, issuance and acquisition of payment instruments, and other services incidental to the transfer of funds. This licence class includes payment services involving tokens.",
+  },
+  {
+    key: "psp_other",
+    category: "psp",
+    categoryLabel: "Payment Service Provider",
+    title: "Any other Payment Service Provider",
+    activity: "Payment services that do not create electronic money",
+    info: "A payment service provider offering payment services but not creating electronic money.",
+  },
+  {
+    key: "payment_cards",
+    category: "instrument",
+    categoryLabel: "Issuer of a Payment Instrument",
+    title: "Payment Cards",
+    activity: "Payment cards",
+    info: "A payment card is a card that may be used to pay for goods and services or to withdraw or deposit cash.",
+  },
+  {
+    key: "electronic_devices",
+    category: "instrument",
+    categoryLabel: "Issuer of a Payment Instrument",
+    title: "Electronic Devices",
+    activity: "Electronic devices used as payment instruments",
+    info: "A payment instrument may be an electronic device through which a payment instruction is issued for making a payment or transferring money. An electronic device includes a computer, card or mobile handset.",
+  },
+  {
+    key: "paper_instruments",
+    category: "instrument",
+    categoryLabel: "Issuer of a Payment Instrument",
+    title: "Paper-Based Instruments",
+    activity: "Paper-based payment instruments",
+    info: "A payment instrument is a device or set of procedures through which a payment instruction is issued. Paper-based instruments can include cheques, bills of exchange and promissory notes.",
+  },
+];
+
+type TierOption = { value: string; label: string };
+
+// Verbatim copy of the prototype's q-funds-tier <select> options.
+const FUNDS_TRANSFER_TIER_OPTIONS: TierOption[] = [
+  { value: "", label: "Select a range…" },
+  { value: "small", label: "Up to UGX 1 billion per month" },
+  { value: "medium", label: "More than UGX 1 billion up to UGX 100 billion per month" },
+  { value: "large", label: "More than UGX 100 billion per month" },
+];
+
+// Verbatim copy of the prototype's q-emi-tier <select> options.
+const EMI_TIER_OPTIONS: TierOption[] = [
+  { value: "", label: "Select a range…" },
+  { value: "small2", label: "Up to UGX 250 million" },
+  { value: "small1", label: "More than UGX 250 million up to UGX 500 million" },
+  { value: "medium3", label: "More than UGX 500 million up to UGX 5 billion" },
+  { value: "medium2", label: "More than UGX 5 billion up to UGX 50 billion" },
+  { value: "medium1", label: "More than UGX 50 billion up to UGX 100 billion" },
+  { value: "large", label: "More than UGX 100 billion" },
+];
+
+// Tier value -> Supabase class_key, confirmed against
+// licence_application_wizard_classes.description for application_key =
+// 'payments_nps' (each tier maps 1:1 onto a distinct class_key / fee row).
+const FUNDS_TRANSFER_CLASS_KEY: Record<string, string> = {
+  small: "pso_funds_transfer_small",
+  medium: "pso_funds_transfer_medium",
+  large: "pso_funds_transfer_large",
+};
+const EMI_CLASS_KEY: Record<string, string> = {
+  small2: "psp_emi_small_250m",
+  small1: "psp_emi_small_500m",
+  medium3: "psp_emi_medium_5bn",
+  medium2: "psp_emi_medium_50bn",
+  medium1: "psp_emi_medium_100bn",
+  large: "psp_emi_large",
+};
+
+// Verbatim copy of the prototype's classificationLabel()/classificationDetail().
+const FUNDS_TRANSFER_LABEL: Record<string, string> = {
+  small: "Small Funds Transfer System",
+  medium: "Medium Funds Transfer System",
+  large: "Large Funds Transfer System",
+};
+const FUNDS_TRANSFER_DETAIL: Record<string, string> = {
+  small: "Monthly transaction value ≤ UGX 1bn",
+  medium: "Monthly transaction value > UGX 1bn and ≤ UGX 100bn",
+  large: "Monthly transaction value > UGX 100bn",
+};
+const EMI_LABEL: Record<string, string> = {
+  small2: "Small Electronic Money Issuer",
+  small1: "Small Electronic Money Issuer",
+  medium3: "Medium Electronic Money Issuer",
+  medium2: "Medium Electronic Money Issuer",
+  medium1: "Medium Electronic Money Issuer",
+  large: "Large Electronic Money Issuer",
+};
+const EMI_DETAIL: Record<string, string> = {
+  small2: "Trust account value ≤ UGX 250m",
+  small1: "Trust account value > UGX 250m and ≤ UGX 500m",
+  medium3: "Trust account value > UGX 500m and ≤ UGX 5bn",
+  medium2: "Trust account value > UGX 5bn and ≤ UGX 50bn",
+  medium1: "Trust account value > UGX 50bn and ≤ UGX 100bn",
+  large: "Trust account value > UGX 100bn",
+};
+
+function classificationLabel(key: "funds_transfer" | "emi", fundsTransferTier: string, emiTier: string): string {
+  if (key === "funds_transfer") return FUNDS_TRANSFER_LABEL[fundsTransferTier] ?? "";
+  if (key === "emi") return EMI_LABEL[emiTier] ?? "";
+  return "";
+}
+
+function classificationDetail(key: "funds_transfer" | "emi", fundsTransferTier: string, emiTier: string): string {
+  if (key === "funds_transfer") return FUNDS_TRANSFER_DETAIL[fundsTransferTier] ?? "";
+  if (key === "emi") return EMI_DETAIL[emiTier] ?? "";
+  return "";
+}
+
+// hasFormA()/hasInstrument() -- exact port of the prototype's own helpers
+// (lines 2289-2291), rewritten against the saved `activities` list instead of
+// the live wizard checkbox state.
+function hasFormAActivities(activities: ActivityKey[]): boolean {
+  return activities.some((a) => {
+    const cat = ACTIVITY_OPTIONS.find((d) => d.key === a)?.category;
+    return cat === "pso" || cat === "psp";
+  });
+}
+function hasInstrumentActivities(activities: ActivityKey[]): boolean {
+  return activities.some((a) => ACTIVITY_OPTIONS.find((d) => d.key === a)?.category === "instrument");
+}
+
+type FactQuestion = {
+  key: string;
+  label: string;
+  show: (activities: ActivityKey[], factAnswers: Record<string, boolean | undefined>) => boolean;
+};
+
+// Verbatim port of the prototype's FACT_QUESTIONS (lines 2293-2304) -- 10
+// questions, not the live app's prior flat 9-question set, with exact wording
+// and conditional show() gating: the two payment-instrument-only questions
+// only appear when an instrument activity was selected, and
+// existing_psp_pso_licence further depends on the fi_mdi answer.
 const FACT_QUESTIONS: FactQuestion[] = [
-  { key: "foreign_corporate_shareholder", label: "Does any corporate shareholder come from outside Uganda?" },
+  {
+    key: "fi_mdi",
+    label: "Is the payment-instrument applicant a financial institution or microfinance deposit-taking institution?",
+    show: (activities) => hasInstrumentActivities(activities),
+  },
+  {
+    key: "existing_psp_pso_licence",
+    label: "Does the payment-instrument applicant already hold a PSP or Payment System Operator licence?",
+    show: (activities, factAnswers) => hasInstrumentActivities(activities) && factAnswers.fi_mdi === false,
+  },
+  {
+    key: "foreign_corporate_shareholder",
+    label: "Does the applicant have a foreign corporate shareholder?",
+    show: (activities) => hasFormAActivities(activities),
+  },
   {
     key: "foreign_resident_management",
-    label: "Do any of your directors or senior managers hold foreign residency and need a work permit?",
+    label: "Are any directors or senior managers foreign nationals resident and working in Uganda?",
+    show: (activities) => hasFormAActivities(activities),
   },
-  { key: "established_business", label: "Has this business already been trading (not a new pre-trading entity)?" },
+  {
+    key: "established_business",
+    label: "Is the applicant an established business with at least two years of financial history?",
+    show: (activities) => hasFormAActivities(activities),
+  },
   {
     key: "electronic_platform",
-    label: "Will customers access your service through an electronic platform (app, USSD, web, card)?",
+    label: "Will the payment system or service operate on an electronic system or platform?",
+    show: (activities) => hasFormAActivities(activities),
   },
-  { key: "outsourcing", label: "Will you outsource any part of your operations to a third party?" },
+  {
+    key: "outsourcing",
+    label: "Will any material activity be outsourced to a third party?",
+    show: (activities) => hasFormAActivities(activities),
+  },
   {
     key: "payment_system_participation",
-    label: "Will you participate in any other payment system operated by someone else?",
+    label: "Will the applicant participate in another domestic or foreign payment system?",
+    show: (activities) => hasFormAActivities(activities),
   },
-  { key: "agents", label: "Will you use merchants or agents to deliver your service?" },
-  { key: "existing_psp_pso_licence", label: "Do you already hold an existing PSP or PSO licence?" },
-  { key: "foreign_licences", label: "Do you hold any payment-related licences in other countries?" },
+  {
+    key: "agents",
+    label: "Will the business model use agents?",
+    show: (activities) => hasFormAActivities(activities) || hasInstrumentActivities(activities),
+  },
+  {
+    key: "foreign_licences",
+    label: "Does the applicant hold a similar licence in another country?",
+    show: (activities) => hasFormAActivities(activities),
+  },
 ];
 
 // tin_tax (P07/P08... P07 specifically, plus B09) has two variants depending
@@ -266,11 +514,6 @@ function computeReady(
 // Facts helpers -- derive typed values out of the application's `facts` jsonb
 // ---------------------------------------------------------------------------
 
-function readCategories(facts: Record<string, unknown>): Category[] {
-  const raw = Array.isArray(facts.categories) ? (facts.categories as unknown[]) : [];
-  return raw.filter((c): c is Category => c === "pso" || c === "psp" || c === "instrument");
-}
-
 function readStringFact(facts: Record<string, unknown>, key: string): string | null {
   const v = facts[key];
   return typeof v === "string" ? v : null;
@@ -281,29 +524,67 @@ function readBoolFact(facts: Record<string, unknown>, key: string): boolean | nu
   return typeof v === "boolean" ? v : null;
 }
 
+function readActivities(facts: Record<string, unknown>): ActivityKey[] {
+  const raw = Array.isArray(facts.activities) ? (facts.activities as unknown[]) : [];
+  const valid = new Set<string>(ACTIVITY_OPTIONS.map((a) => a.key));
+  return raw.filter((a): a is ActivityKey => typeof a === "string" && valid.has(a));
+}
+
+// Verbatim port of the prototype's selectedFeeRows() activity -> class_key
+// mapping (prototype lines 2166-2187), expressed against our DB's class_key
+// values instead of its in-memory FEES rows.
+function classKeyForActivity(key: ActivityKey, fundsTransferTier: string, emiTier: string): string | null {
+  switch (key) {
+    case "funds_transfer":
+      return fundsTransferTier ? FUNDS_TRANSFER_CLASS_KEY[fundsTransferTier] ?? null : null;
+    case "clearing":
+      return "pso_clearing_switch";
+    case "settlement":
+      return "pso_settlement";
+    case "third_party":
+      return "pso_third_party";
+    case "emi":
+      return emiTier ? EMI_CLASS_KEY[emiTier] ?? null : null;
+    case "psp_tokens":
+    case "psp_other":
+      return "psp_other";
+    case "payment_cards":
+    case "electronic_devices":
+    case "paper_instruments":
+      return "instrument";
+    default:
+      return null;
+  }
+}
+
+// Dedupes on class_key exactly like the prototype's selectedFeeRows()
+// pushUnique -- e.g. psp_tokens + psp_other both selected still yields a
+// single "psp_other" assigned class, and any combination of the three
+// instrument activities yields a single "instrument" assigned class.
 function deriveAssignedClasses(facts: Record<string, unknown>): AssignedClass[] {
-  const categories = readCategories(facts);
+  const activities = readActivities(facts);
+  const fundsTransferTier = readStringFact(facts, "fundsTransferTier") ?? "";
+  const emiTier = readStringFact(facts, "emiTier") ?? "";
   const out: AssignedClass[] = [];
-  if (categories.includes("pso")) {
-    const key = readStringFact(facts, "psoClassKey");
-    if (key) out.push({ category: "pso", classKey: key });
-  }
-  if (categories.includes("psp")) {
-    const key = readStringFact(facts, "pspClassKey");
-    if (key) out.push({ category: "psp", classKey: key });
-  }
-  if (categories.includes("instrument")) {
-    out.push({ category: "instrument", classKey: "instrument" });
-  }
+  const seen = new Set<string>();
+  activities.forEach((key) => {
+    const def = ACTIVITY_OPTIONS.find((a) => a.key === key);
+    if (!def) return;
+    const classKey = classKeyForActivity(key, fundsTransferTier, emiTier);
+    if (!classKey || seen.has(classKey)) return;
+    seen.add(classKey);
+    out.push({ category: def.category, classKey });
+  });
   return out;
 }
 
 function deriveChosenRoutes(facts: Record<string, unknown>): Set<string> {
-  const categories = readCategories(facts);
+  const activities = readActivities(facts);
   const routes = new Set<string>();
-  if (categories.includes("pso")) routes.add("pso");
-  if (categories.includes("instrument")) routes.add("instrument");
-  if (categories.includes("psp") && readBoolFact(facts, "pspIsEmiIssuer") === true) routes.add("emi");
+  const hasCategory = (cat: Category) => activities.some((a) => ACTIVITY_OPTIONS.find((d) => d.key === a)?.category === cat);
+  if (hasCategory("pso")) routes.add("pso");
+  if (hasCategory("instrument")) routes.add("instrument");
+  if (activities.includes("emi")) routes.add("emi");
   return routes;
 }
 
@@ -566,6 +847,7 @@ export default function PaymentsWizardClient({
   }
 
   const facts = useMemo(() => application?.facts ?? {}, [application]);
+  const activities = useMemo(() => readActivities(facts), [facts]);
   const assignedClasses = useMemo(() => deriveAssignedClasses(facts), [facts]);
   const chosenRoutes = useMemo(() => deriveChosenRoutes(facts), [facts]);
   const factAnswers = useMemo(() => {
@@ -575,6 +857,13 @@ export default function PaymentsWizardClient({
     });
     return out;
   }, [facts]);
+  // Only the questions whose show() currently evaluates true need an answer
+  // to proceed -- mirrors the prototype's unresolvedQuestions() (lines
+  // 2306-2308), which only ever checks FACT_QUESTIONS.filter(q => q.show()).
+  const visibleFactQuestions = useMemo(
+    () => FACT_QUESTIONS.filter((q) => q.show(activities, factAnswers)),
+    [activities, factAnswers]
+  );
 
   const visibleTemplates = useMemo(() => {
     return templates.filter((t) => {
@@ -617,7 +906,7 @@ export default function PaymentsWizardClient({
 
   const readyCount = visibleTemplates.filter((t) => statusFor(t.external_id) === "ready").length;
   const allReady = visibleTemplates.length > 0 && readyCount === visibleTemplates.length;
-  const allFactsAnswered = FACT_QUESTIONS.every((q) => typeof factAnswers[q.key] === "boolean");
+  const allFactsAnswered = visibleFactQuestions.every((q) => typeof factAnswers[q.key] === "boolean");
 
   const templatesById = useMemo(() => {
     const out: Record<string, LicenceApplicationTemplate> = {};
@@ -748,7 +1037,7 @@ export default function PaymentsWizardClient({
   }
 
   if (screen === "landing") {
-    const canResume = application !== null && readCategories(facts).length > 0 && allFactsAnswered;
+    const canResume = application !== null && readActivities(facts).length > 0 && allFactsAnswered;
     return (
       <LandingScreen
         canResume={canResume}
@@ -761,7 +1050,6 @@ export default function PaymentsWizardClient({
   if (screen === "classify") {
     return (
       <ClassifyScreen
-        wizardClasses={wizardClasses}
         initialFacts={facts}
         creating={creatingApplication}
         errorMsg={errorMsg}
@@ -799,7 +1087,9 @@ export default function PaymentsWizardClient({
   if (screen === "result") {
     return (
       <ResultScreen
-        assignedClasses={assignedClasses}
+        activities={readActivities(facts)}
+        fundsTransferTier={readStringFact(facts, "fundsTransferTier") ?? ""}
+        emiTier={readStringFact(facts, "emiTier") ?? ""}
         wizardClassesByKey={wizardClassesByKey}
         feeTiers={feeTiers}
         onChangeSelections={() => setScreen("classify")}
@@ -811,6 +1101,7 @@ export default function PaymentsWizardClient({
   if (screen === "facts") {
     return (
       <FactsScreen
+        activities={activities}
         factAnswers={factAnswers}
         allAnswered={allFactsAnswered}
         errorMsg={errorMsg}
@@ -1357,19 +1648,101 @@ function SandboxScreen({ onBack, onExpert }: { onBack: () => void; onExpert: () 
   );
 }
 
+// Per-class_key display label for the itemized fee breakdown table -- exact
+// port of the prototype's resultFeeClassLabel() (lines 2233-2259), rewritten
+// against class_key instead of the in-memory FEES row's category/class text.
+function resultFeeClassLabel(
+  classKey: string,
+  activities: ActivityKey[],
+  fundsTransferTier: string,
+  emiTier: string,
+  wizardClassesByKey: Record<string, LicenceApplicationWizardClass>
+): string {
+  if (classKey === "pso_clearing_switch") return "Clearing System / Switch";
+  if (classKey === "pso_settlement") return "Settlement System";
+  if (classKey === "pso_third_party") return "Third-Party System";
+  if (classKey.startsWith("pso_funds_transfer_")) {
+    return classificationLabel("funds_transfer", fundsTransferTier, emiTier) || "Funds Transfer System";
+  }
+  if (classKey.startsWith("psp_emi_")) {
+    const name = classificationLabel("emi", fundsTransferTier, emiTier) || "Electronic Money Issuer";
+    const band = (wizardClassesByKey[classKey]?.description ?? "").replace(/^(Large|Medium|Small):\s*/, "");
+    return band ? `${name} · ${band}` : name;
+  }
+  if (classKey === "psp_other") {
+    const psp: string[] = [];
+    if (activities.includes("psp_tokens")) psp.push("Payment Services including Tokens");
+    if (activities.includes("psp_other")) psp.push("Any other Payment Service Provider");
+    return psp.length ? psp.join(" · ") : "Payment Service Provider";
+  }
+  if (classKey === "instrument") {
+    const instruments: string[] = [];
+    if (activities.includes("payment_cards")) instruments.push("Payment Cards");
+    if (activities.includes("electronic_devices")) instruments.push("Electronic Devices");
+    if (activities.includes("paper_instruments")) instruments.push("Paper-Based Instruments");
+    return instruments.length ? instruments.join(" · ") : "Issuer of a Payment Instrument";
+  }
+  return wizardClassesByKey[classKey]?.label ?? classKey;
+}
+
+const RESULT_GROUPS: { key: Category; title: string }[] = [
+  { key: "pso", title: "Payment System Operator" },
+  { key: "psp", title: "Payment Service Provider" },
+  { key: "instrument", title: "Issuer of a Payment Instrument" },
+];
+
+// Exact port of the prototype's renderLicenceResult() + renderResultCosts()
+// (lines 2200-2286): groups selected activities by category in pso -> psp ->
+// instrument order, shows "Licence N" headers only when more than one
+// category is active, "Class:"/"Classes:" singular/plural per group, then a
+// 4-stat fee summary (application/licensing/annual summed, minimum capital is
+// the MAX across selected classes -- never summed) with an itemized
+// per-class breakdown table shown only when more than one class is selected.
 function ResultScreen({
-  assignedClasses,
+  activities,
+  fundsTransferTier,
+  emiTier,
   wizardClassesByKey,
   feeTiers,
   onChangeSelections,
   onContinue,
 }: {
-  assignedClasses: AssignedClass[];
+  activities: ActivityKey[];
+  fundsTransferTier: string;
+  emiTier: string;
   wizardClassesByKey: Record<string, LicenceApplicationWizardClass>;
   feeTiers: LicenceApplicationFeeTier[];
   onChangeSelections: () => void;
   onContinue: () => void;
 }) {
+  const selectedDefs = ACTIVITY_OPTIONS.filter((def) => activities.includes(def.key));
+
+  const assignedClasses: AssignedClass[] = [];
+  const seen = new Set<string>();
+  activities.forEach((key) => {
+    const def = ACTIVITY_OPTIONS.find((d) => d.key === key);
+    if (!def) return;
+    const classKey = classKeyForActivity(key, fundsTransferTier, emiTier);
+    if (!classKey || seen.has(classKey)) return;
+    seen.add(classKey);
+    assignedClasses.push({ category: def.category, classKey });
+  });
+
+  function feeAmount(classKey: string, feeType: "application" | "licensing" | "annual"): number {
+    return Number(feeTiers.find((f) => f.class_key === classKey && f.fee_type === feeType)?.amount ?? 0);
+  }
+
+  const applicationFee = assignedClasses.reduce((sum, ac) => sum + feeAmount(ac.classKey, "application"), 0);
+  const licensingFee = assignedClasses.reduce((sum, ac) => sum + feeAmount(ac.classKey, "licensing"), 0);
+  const annualFee = assignedClasses.reduce((sum, ac) => sum + feeAmount(ac.classKey, "annual"), 0);
+  const minCapital = assignedClasses.length
+    ? Math.max(...assignedClasses.map((ac) => Number(wizardClassesByKey[ac.classKey]?.min_capital ?? 0)))
+    : 0;
+  const showBreakdown = assignedClasses.length > 1;
+
+  const activeGroups = RESULT_GROUPS.filter((group) => selectedDefs.some((d) => d.category === group.key));
+  const showLicenceNumbers = activeGroups.length > 1;
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <button type="button" className="btn btn-ghost btn-sm" onClick={onChangeSelections}>
@@ -1385,40 +1758,113 @@ function ResultScreen({
         These are the licence categories and classes that apply to the activities you selected.
       </p>
 
-      <div className="space-y-3 mt-6">
-        {assignedClasses.length === 0 && (
+      <div className="space-y-6 mt-6">
+        {activeGroups.length === 0 && (
           <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
             No licence class selected yet.
           </p>
         )}
-        {assignedClasses.map((ac) => {
-          const cls = wizardClassesByKey[ac.classKey];
-          const rows = feeTiers.filter((f) => f.class_key === ac.classKey);
+        {activeGroups.map((group, index) => {
+          const defs = selectedDefs.filter((d) => d.category === group.key);
+          const classLabel = defs.length > 1 ? "Classes:" : "Class:";
           return (
-            <div key={`${ac.category}-${ac.classKey}`} className="card p-5">
-              <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
-                {CATEGORY_LABELS[ac.category]}
-              </div>
-              <div className="font-semibold mt-1">{cls?.label ?? ac.classKey}</div>
-              {cls?.description && (
-                <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-                  {cls.description}
-                </p>
-              )}
-              {rows.length > 0 && (
-                <div className="mt-3 space-y-1">
-                  {rows.map((r) => (
-                    <div key={r.id} className="flex justify-between text-sm">
-                      <span style={{ color: "var(--color-text-muted)" }}>{FEE_TYPE_LABELS[r.fee_type] ?? r.fee_type}</span>
-                      <span className="font-medium">{formatUGX(Number(r.amount))}</span>
-                    </div>
-                  ))}
+            <div key={group.key} className="card p-5">
+              {showLicenceNumbers && (
+                <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-accent)" }}>
+                  Licence {index + 1}
                 </div>
               )}
+              <div className="font-semibold mt-1" style={{ fontFamily: "var(--font-serif)" }}>
+                {group.title}
+              </div>
+              <div className="mt-3 text-sm flex flex-wrap items-baseline gap-x-2">
+                <span className="font-semibold" style={{ color: "var(--color-text-muted)" }}>
+                  {classLabel}
+                </span>
+                {defs.map((def, i) => {
+                  const label = classificationLabel(def.key as "funds_transfer" | "emi", fundsTransferTier, emiTier) || def.title;
+                  const detail =
+                    def.key === "funds_transfer" || def.key === "emi"
+                      ? classificationDetail(def.key, fundsTransferTier, emiTier)
+                      : "";
+                  return (
+                    <span key={def.key}>
+                      {i > 0 && <span style={{ color: "var(--color-border)" }}>·</span>}{" "}
+                      <span>{label}</span>
+                      {detail && (
+                        <span className="ml-1" style={{ color: "var(--color-text-muted)" }}>
+                          ({detail})
+                        </span>
+                      )}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           );
         })}
       </div>
+
+      {assignedClasses.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
+            Fees and minimum capital
+          </h3>
+          <p className="mt-1 text-sm" style={{ color: "var(--color-text-muted)" }}>
+            Based on the licence classes and applicable classifications or value bands you selected.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+            {(
+              [
+                { label: "Application fee", value: applicationFee, note: "Non-refundable" },
+                { label: "Licence fee", value: licensingFee, note: "Payable if licence is granted" },
+                { label: "Annual fee", value: annualFee, note: "Recurring licence cost" },
+                { label: "Minimum capital", value: minCapital, note: "Highest applicable threshold" },
+              ] as { label: string; value: number; note: string }[]
+            ).map((stat) => (
+              <div key={stat.label} className="card p-3">
+                <div className="text-xs font-semibold" style={{ color: "var(--color-text-muted)" }}>
+                  {stat.label}
+                </div>
+                <div className="text-base font-semibold mt-1">{formatUGX(stat.value)}</div>
+                <div className="text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>
+                  {stat.note}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {showBreakdown && (
+            <div className="mt-4" style={{ overflowX: "auto" }}>
+              <table className="data">
+                <thead>
+                  <tr>
+                    <th>Class</th>
+                    <th>Application</th>
+                    <th>Licence</th>
+                    <th>Annual</th>
+                    <th>Minimum capital</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {assignedClasses.map((ac) => (
+                    <tr key={ac.classKey}>
+                      <td>
+                        <strong>{resultFeeClassLabel(ac.classKey, activities, fundsTransferTier, emiTier, wizardClassesByKey)}</strong>
+                      </td>
+                      <td>{formatUGX(feeAmount(ac.classKey, "application"))}</td>
+                      <td>{formatUGX(feeAmount(ac.classKey, "licensing"))}</td>
+                      <td>{formatUGX(feeAmount(ac.classKey, "annual"))}</td>
+                      <td>{formatUGX(Number(wizardClassesByKey[ac.classKey]?.min_capital ?? 0))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mt-8 flex items-center gap-3">
         <button className="btn btn-primary" type="button" onClick={onContinue}>
@@ -1433,67 +1879,60 @@ function ResultScreen({
 }
 
 // ---------------------------------------------------------------------------
-// Classify screen (step 1: category multi-select, step 2: per-category refinement)
+// Classify screen -- exact port of the prototype's screen-wizard (lines
+// 1129-1169 for markup, 2065-2150 for behaviour): a flat, fully multi-select
+// grid of 10 business activities (CLASS_OPTIONS/ACTIVITY_OPTIONS), each with
+// a click-to-toggle info popover, with two activities (Funds Transfer System,
+// Electronic Money Issuer) triggering an inline follow-up value-band question
+// rendered between the "activity isn't listed" card and the continue button
+// -- same order as the prototype's #sub-questions placement. "See my licence"
+// stays disabled until every triggered sub-question is answered, matching
+// validateWizard().
 // ---------------------------------------------------------------------------
 
 function ClassifyScreen({
-  wizardClasses,
   initialFacts,
   creating,
   errorMsg,
   onContinue,
   onUnlisted,
 }: {
-  wizardClasses: LicenceApplicationWizardClass[];
   initialFacts: Record<string, unknown>;
   creating: boolean;
   errorMsg: string | null;
   onContinue: (facts: Record<string, unknown>) => void;
   onUnlisted: () => void;
 }) {
-  const [categories, setCategories] = useState<Set<Category>>(() => new Set(readCategories(initialFacts)));
-  const [psoClassKey, setPsoClassKey] = useState<string | null>(readStringFact(initialFacts, "psoClassKey"));
-  const [pspIsEmiIssuer, setPspIsEmiIssuer] = useState<boolean | null>(readBoolFact(initialFacts, "pspIsEmiIssuer"));
-  const [pspClassKey, setPspClassKey] = useState<string | null>(readStringFact(initialFacts, "pspClassKey"));
+  const [activities, setActivities] = useState<Set<ActivityKey>>(() => new Set(readActivities(initialFacts)));
+  const [fundsTransferTier, setFundsTransferTier] = useState<string>(readStringFact(initialFacts, "fundsTransferTier") ?? "");
+  const [emiTier, setEmiTier] = useState<string>(readStringFact(initialFacts, "emiTier") ?? "");
+  const [openInfoKey, setOpenInfoKey] = useState<ActivityKey | null>(null);
 
-  const psoClasses = useMemo(
-    () => wizardClasses.filter((c) => c.fee_class_label === "PSO" && c.class_key.startsWith("pso_")),
-    [wizardClasses]
-  );
-  const pspEmiClasses = useMemo(() => wizardClasses.filter((c) => c.class_key.startsWith("psp_emi_")), [wizardClasses]);
-  const pspOtherClass = useMemo(() => wizardClasses.find((c) => c.class_key === "psp_other") ?? null, [wizardClasses]);
-  const instrumentClass = useMemo(() => wizardClasses.find((c) => c.class_key === "instrument") ?? null, [wizardClasses]);
-
-  function toggleCategory(cat: Category) {
-    setCategories((prev) => {
+  function toggleActivity(key: ActivityKey) {
+    setActivities((prev) => {
       const next = new Set(prev);
-      if (next.has(cat)) {
-        next.delete(cat);
-        if (cat === "pso") setPsoClassKey(null);
-        if (cat === "psp") {
-          setPspIsEmiIssuer(null);
-          setPspClassKey(null);
-        }
+      if (next.has(key)) {
+        next.delete(key);
+        if (key === "funds_transfer") setFundsTransferTier("");
+        if (key === "emi") setEmiTier("");
       } else {
-        next.add(cat);
+        next.add(key);
       }
       return next;
     });
   }
 
-  const psoOk = !categories.has("pso") || !!psoClassKey;
-  const pspOk =
-    !categories.has("psp") || pspIsEmiIssuer === false || (pspIsEmiIssuer === true && !!pspClassKey);
-  const canContinue = categories.size > 0 && psoOk && pspOk;
+  const canContinue =
+    activities.size > 0 &&
+    (!activities.has("funds_transfer") || !!fundsTransferTier) &&
+    (!activities.has("emi") || !!emiTier);
 
   function handleContinue() {
     if (!canContinue) return;
-    const finalPspClassKey = categories.has("psp") ? (pspIsEmiIssuer ? pspClassKey : "psp_other") : null;
     onContinue({
-      categories: Array.from(categories),
-      psoClassKey: categories.has("pso") ? psoClassKey : null,
-      pspIsEmiIssuer: categories.has("psp") ? pspIsEmiIssuer : null,
-      pspClassKey: finalPspClassKey,
+      activities: Array.from(activities),
+      fundsTransferTier: activities.has("funds_transfer") ? fundsTransferTier : null,
+      emiTier: activities.has("emi") ? emiTier : null,
     });
   }
 
@@ -1503,12 +1942,10 @@ function ClassifyScreen({
         Bank of Uganda · Payments
       </div>
       <h1 className="text-3xl font-semibold mt-2" style={{ fontFamily: "var(--font-serif)" }}>
-        What kind of Payments licence(s) are you applying for?
+        What does your business do?
       </h1>
-      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
-        No account is needed to start. Your progress is saved in this browser as you go, so you can close this tab
-        and come back to it later on the same device. You can select more than one category if you&apos;re applying
-        for combined licences.
+      <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        Select all that apply.
       </p>
 
       {errorMsg && (
@@ -1517,135 +1954,123 @@ function ClassifyScreen({
         </div>
       )}
 
-      <div className="space-y-4 mt-8">
-        {(["pso", "psp", "instrument"] as Category[]).map((cat) => (
-          <div key={cat} className="card p-5">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="mt-1"
-                checked={categories.has(cat)}
-                onChange={() => toggleCategory(cat)}
-              />
-              <span className="font-semibold">{CATEGORY_LABELS[cat]}</span>
-            </label>
-
-            {cat === "pso" && categories.has("pso") && (
-              <div className="mt-4 pl-7 space-y-2">
-                <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                  Which PSO class describes your system?
-                </p>
-                {psoClasses.map((c) => (
-                  <label key={c.class_key} className="flex items-start gap-2 rounded-lg border p-2.5 cursor-pointer" style={{ borderColor: "var(--color-border)" }}>
-                    <input
-                      type="radio"
-                      name="psoClass"
-                      className="mt-1"
-                      checked={psoClassKey === c.class_key}
-                      onChange={() => setPsoClassKey(c.class_key)}
-                    />
-                    <span>
-                      <span className="block font-medium text-sm">{c.label}</span>
-                      {c.description && (
-                        <span className="block text-sm" style={{ color: "var(--color-text-muted)" }}>
-                          {c.description}
-                        </span>
-                      )}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
-
-            {cat === "psp" && categories.has("psp") && (
-              <div className="mt-4 pl-7 space-y-3">
-                <p className="text-sm">Will this business issue electronic money (e-money)?</p>
-                <div className="flex gap-2">
-                  {[
-                    { label: "Yes", value: true },
-                    { label: "No", value: false },
-                  ].map((opt) => (
-                    <button
-                      key={String(opt.value)}
-                      type="button"
-                      className={`btn btn-sm ${pspIsEmiIssuer === opt.value ? "btn-primary" : "btn-ghost"}`}
-                      onClick={() => {
-                        setPspIsEmiIssuer(opt.value);
-                        setPspClassKey(opt.value ? null : "psp_other");
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-                {pspIsEmiIssuer === true && (
-                  <div className="space-y-2">
-                    <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                      Which trust-account value band applies?
-                    </p>
-                    {pspEmiClasses.map((c) => (
-                      <label key={c.class_key} className="flex items-start gap-2 rounded-lg border p-2.5 cursor-pointer" style={{ borderColor: "var(--color-border)" }}>
-                        <input
-                          type="radio"
-                          name="pspEmiClass"
-                          className="mt-1"
-                          checked={pspClassKey === c.class_key}
-                          onChange={() => setPspClassKey(c.class_key)}
-                        />
-                        <span>
-                          <span className="block font-medium text-sm">{c.label}</span>
-                          {c.description && (
-                            <span className="block text-sm" style={{ color: "var(--color-text-muted)" }}>
-                              {c.description}
-                            </span>
-                          )}
-                        </span>
-                      </label>
-                    ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+        {ACTIVITY_OPTIONS.map((def) => {
+          const checked = activities.has(def.key);
+          return (
+            <div
+              key={def.key}
+              className="card p-4 relative cursor-pointer"
+              style={checked ? { borderColor: "var(--color-primary)", background: "#f4f8f5" } : undefined}
+              onClick={() => toggleActivity(def.key)}
+            >
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={checked}
+                  aria-label={def.title}
+                  onChange={() => toggleActivity(def.key)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div className="flex-1">
+                  <div className="font-semibold text-sm">{def.title}</div>
+                  <div className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+                    {def.activity}
                   </div>
-                )}
-                {pspIsEmiIssuer === false && pspOtherClass && (
-                  <div className="rounded-lg border p-2.5" style={{ borderColor: "var(--color-border)" }}>
-                    <span className="block font-medium text-sm">{pspOtherClass.label}</span>
-                    {pspOtherClass.description && (
-                      <span className="block text-sm" style={{ color: "var(--color-text-muted)" }}>
-                        {pspOtherClass.description}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {cat === "instrument" && categories.has("instrument") && instrumentClass && (
-              <div className="mt-4 pl-7">
-                <div className="rounded-lg border p-2.5" style={{ borderColor: "var(--color-border)" }}>
-                  <span className="block font-medium text-sm">{instrumentClass.label}</span>
-                  {instrumentClass.description && (
-                    <span className="block text-sm" style={{ color: "var(--color-text-muted)" }}>
-                      {instrumentClass.description}
-                    </span>
-                  )}
                 </div>
+                <button
+                  type="button"
+                  className="rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{
+                    width: 20,
+                    height: 20,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    border: "1px solid var(--color-border)",
+                    color: "var(--color-text-muted)",
+                  }}
+                  aria-label={`About ${def.title}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpenInfoKey((k) => (k === def.key ? null : def.key));
+                  }}
+                >
+                  i
+                </button>
               </div>
-            )}
-          </div>
-        ))}
+              {openInfoKey === def.key && (
+                <div
+                  className="mt-3 text-xs rounded-lg p-3"
+                  style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", color: "var(--color-text-muted)" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <strong className="block mb-1" style={{ color: "var(--color-text)" }}>
+                    {def.title}
+                  </strong>
+                  {def.info}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      <button className="btn btn-primary mt-6" type="button" disabled={!canContinue || creating} onClick={handleContinue}>
-        {creating ? "Starting…" : "See my licence →"}
-      </button>
-
-      <div className="mt-8 card p-4">
+      <div className="mt-6 card p-4">
         <p className="text-sm font-medium">My activity isn&apos;t listed / I&apos;m not sure</p>
         <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
-          Get help identifying the right pathway before you select anything above.
+          Get help identifying the right pathway.
         </p>
         <button type="button" className="btn btn-ghost btn-sm mt-2" onClick={onUnlisted}>
           Get help →
         </button>
       </div>
+
+      {(activities.has("funds_transfer") || activities.has("emi")) && (
+        <div className="space-y-4 mt-6">
+          {activities.has("funds_transfer") && (
+            <div className="card p-4">
+              <h5 className="text-sm font-semibold">
+                What monthly transaction value do you expect for your Funds Transfer System?
+              </h5>
+              <p className="text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>
+                We&apos;ll use this to determine the applicable Funds Transfer System classification.
+              </p>
+              <select
+                className="input mt-3"
+                value={fundsTransferTier}
+                onChange={(e) => setFundsTransferTier(e.target.value)}
+              >
+                {FUNDS_TRANSFER_TIER_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {activities.has("emi") && (
+            <div className="card p-4">
+              <h5 className="text-sm font-semibold">What total value do you expect to hold in your trust account?</h5>
+              <p className="text-xs mt-1" style={{ color: "var(--color-text-muted)" }}>
+                We&apos;ll use this to determine the applicable Electronic Money Issuer classification and value band.
+              </p>
+              <select className="input mt-3" value={emiTier} onChange={(e) => setEmiTier(e.target.value)}>
+                {EMI_TIER_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      )}
+
+      <button className="btn btn-primary mt-6" type="button" disabled={!canContinue || creating} onClick={handleContinue}>
+        {creating ? "Starting…" : "See my licence →"}
+      </button>
     </div>
   );
 }
@@ -1655,6 +2080,7 @@ function ClassifyScreen({
 // ---------------------------------------------------------------------------
 
 function FactsScreen({
+  activities,
   factAnswers,
   allAnswered,
   errorMsg,
@@ -1662,6 +2088,7 @@ function FactsScreen({
   onBack,
   onContinue,
 }: {
+  activities: ActivityKey[];
   factAnswers: Record<string, boolean | undefined>;
   allAnswered: boolean;
   errorMsg: string | null;
@@ -1669,6 +2096,11 @@ function FactsScreen({
   onBack: () => void;
   onContinue: () => void;
 }) {
+  // Re-evaluated on every render against the live activities/answers, so
+  // existing_psp_pso_licence appears or disappears the moment fi_mdi is
+  // answered -- same conditional behaviour as the prototype's show() checks.
+  const visibleQuestions = FACT_QUESTIONS.filter((q) => q.show(activities, factAnswers));
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
@@ -1691,7 +2123,7 @@ function FactsScreen({
       )}
 
       <div className="space-y-3 mt-6">
-        {FACT_QUESTIONS.map((q) => (
+        {visibleQuestions.map((q) => (
           <div key={q.key} className="rounded-lg border p-3" style={{ borderColor: "var(--color-border)" }}>
             <p className="text-sm">{q.label}</p>
             <div className="flex gap-2 mt-2">
