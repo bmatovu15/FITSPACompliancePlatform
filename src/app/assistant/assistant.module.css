@@ -1,0 +1,179 @@
+.asRoot {
+  --as-ink: #111111;
+  --as-muted: #6f737a;
+  --as-line: #e8e8e8;
+  --as-line2: #d0d0d0;
+  --as-soft: #fafafa;
+  font-family: "Montserrat", sans-serif;
+  background: #fff;
+  color: var(--as-ink);
+  min-height: 100vh;
+}
+.asRoot * {
+  box-sizing: border-box;
+}
+
+.main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 64px 42px 100px;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #7b8087;
+  margin-bottom: 15px;
+}
+.title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+.dek {
+  margin: 14px 0 0;
+  color: var(--as-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 62ch;
+}
+
+/* ---- conversation ---- */
+.thread {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.row {
+  display: flex;
+}
+.rowUser {
+  justify-content: flex-end;
+}
+.rowAssistant {
+  justify-content: flex-start;
+}
+.bubble {
+  max-width: 85%;
+  white-space: pre-wrap;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: left;
+}
+.bubbleUser {
+  background: #111;
+  color: #fff;
+}
+.bubbleAssistant {
+  background: var(--as-soft);
+  color: var(--as-ink);
+  border: 1px solid var(--as-line);
+}
+/* Web-sourced fallback answers (FITSPA has no indexed document for the
+   question's regulator yet, so the assistant answered from a scoped search
+   of that regulator's own official website instead). Deliberately styled
+   to look distinctly different from a normal document-grounded answer --
+   amber/outlined rather than the plain bubble -- so a member can never
+   mistake a web result for a FITSPA-vetted document. */
+.webNotice {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border: 1px solid #c8922a;
+  border-radius: 999px;
+  background: #fdf3e2;
+  color: #8a5a00;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.webSources {
+  border-top-color: #e8c98a;
+}
+
+.sources {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--as-line2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sourceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--as-muted);
+}
+.sourceLink {
+  color: #111;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.thinking {
+  font-size: 13px;
+  color: var(--as-muted);
+}
+
+/* ---- composer ---- */
+.composer {
+  margin-top: 28px;
+  display: flex;
+  gap: 8px;
+}
+.input {
+  flex: 1;
+  width: 100%;
+  border: 1px solid var(--as-line2);
+  border-radius: 3px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 14px;
+  background: #fff;
+  color: #111;
+}
+.input:focus {
+  outline: none;
+  border-color: #111;
+}
+.btn {
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  border-radius: 3px;
+  padding: 12px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover {
+  background: #2b2b2b;
+}
+.btn:disabled {
+  background: #d9d9d9;
+  border-color: #d9d9d9;
+  color: #888;
+  cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+  .main {
+    padding: 44px 18px 80px;
+  }
+  .title {
+    font-size: 28px;
+  }
+  .bubble {
+    max-width: 92%;
+  }
+}

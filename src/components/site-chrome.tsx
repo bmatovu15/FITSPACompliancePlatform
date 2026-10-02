@@ -14,9 +14,11 @@ import { usePathname } from "next/navigation";
 // the standard nav and "Search a member" -- on the signup page. /lookup,
 // /login and /search joined in this round for the same reason, now that
 // they share BeaconNav instead of each carrying their own copy of the
-// masthead. /dashboard and /admin are intentionally excluded: they keep
-// this legacy authenticated chrome (sign-out, admin links) rather than the
-// public Beacon shell.
+// masthead. /assistant joined in the same round too, so the AI Assistant
+// page no longer swaps to a separate legacy header when you navigate to it
+// from the Beacon nav. /dashboard and /admin are intentionally excluded:
+// they keep this legacy authenticated chrome (sign-out, admin links) rather
+// than the public Beacon shell.
 function isBeaconShellRoute(pathname: string) {
   return (
     pathname === "/" ||
@@ -25,7 +27,8 @@ function isBeaconShellRoute(pathname: string) {
     pathname.startsWith("/signup") ||
     pathname.startsWith("/lookup") ||
     pathname.startsWith("/login") ||
-    pathname.startsWith("/search")
+    pathname.startsWith("/search") ||
+    pathname.startsWith("/assistant")
   );
 }
 

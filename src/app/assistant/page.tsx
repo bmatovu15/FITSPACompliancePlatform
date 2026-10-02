@@ -2,9 +2,18 @@
 
 import { useState } from "react";
 import { SUPABASE_URL } from "@/lib/public-config";
+import BeaconNav from "@/components/beacon-nav";
+import styles from "./assistant.module.css";
 
 type Source = { title: string; regulator: string | null; storage_path: string | null; doc_kind: string };
-type Message = { role: "user" | "assistant"; text: string; sources?: Source[] };
+type WebSource = { title: string; link: string };
+type Message = {
+  role: "user" | "assistant";
+  text: string;
+  sources?: Source[];
+  sourceType?: "documents" | "web";
+  webSources?: WebSource[];
+};
 
 export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>([
@@ -30,62 +39,96 @@ export default function AssistantPage() {
         body: JSON.stringify({ question }),
       });
       const json = await res.json();
-      setMessages((m) => [...m, { role: "assistant", text: json.answer, sources: json.sources }]);
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          text: json.answer,
+          sources: json.sources,
+          sourceType: json.sourceType,
+          webSources: json.webSources,
+        },
+      ]);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>AI compliance assistant</h1>
-      <p className="mt-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
-        Grounded in FITSPA's indexed regulator documents only — it will say so if something isn't covered
-        rather than guessing.
-      </p>
+    <div className={styles.asRoot}>
+      <BeaconNav active="assistant" />
+      <main className={styles.main}>
+        <p className={styles.eyebrow}>Compliance assistant</p>
+        <h1 className={styles.title}>AI compliance assistant</h1>
+        <p className={styles.dek}>
+          Grounded in FITSPA&rsquo;s indexed regulator documents first &mdash; it will say so if something
+          isn&rsquo;t covered. For regulators FITSPA hasn&rsquo;t indexed documents for yet, it may
+          fall back to a scoped search of that regulator&rsquo;s own official website, always
+          clearly labelled as a web result rather than a FITSPA-vetted document.
+        </p>
 
-      <div className="mt-6 space-y-4">
-        {messages.map((m, i) => (
-          <div key={i} className={m.role === "user" ? "text-right" : ""}>
-            <div
-              className="inline-block max-w-[85%] whitespace-pre-wrap rounded-lg p-3 text-sm text-left"
-              style={{
-                background: m.role === "user" ? "var(--color-primary)" : "var(--color-surface)",
-                color: m.role === "user" ? "white" : "var(--color-text)",
-                border: m.role === "assistant" ? "1px solid var(--color-border)" : undefined,
-              }}
-            >
-              {m.text}
-              {m.sources && m.sources.length > 0 && (
-                <div className="mt-3 space-y-1 border-t pt-2" style={{ borderColor: "var(--color-border)" }}>
-                  {m.sources.map((s, j) => (
-                    <div key={j} className="flex items-center justify-between gap-2 text-xs" style={{ color: "var(--color-text-muted)" }}>
-                      <span>{s.title} {s.regulator ? `(${s.regulator})` : ""}</span>
-                      {s.storage_path && (
-                        <a className="underline" target="_blank" rel="noreferrer" href={`${base}/storage/v1/object/public/regulatory-library/${s.storage_path}`}>
+        <div className={styles.thread}>
+          {messages.map((m, i) => (
+            <div key={i} className={`${styles.row} ${m.role === "user" ? styles.rowUser : styles.rowAssistant}`}>
+              <div className={`${styles.bubble} ${m.role === "user" ? styles.bubbleUser : styles.bubbleAssistant}`}>
+                {m.sourceType === "web" && (
+                  <div className={styles.webNotice}>
+                    Web result &mdash; not one of FITSPA&rsquo;s indexed documents
+                  </div>
+                )}
+                {m.text}
+                {m.sources && m.sources.length > 0 && (
+                  <div className={styles.sources}>
+                    {m.sources.map((s, j) => (
+                      <div key={j} className={styles.sourceRow}>
+                        <span>
+                          {s.title} {s.regulator ? `(${s.regulator})` : ""}
+                        </span>
+                        {s.storage_path && (
+                          <a
+                            className={styles.sourceLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            href={`${base}/storage/v1/object/public/regulatory-library/${s.storage_path}`}
+                          >
+                            Open
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {m.webSources && m.webSources.length > 0 && (
+                  <div className={`${styles.sources} ${styles.webSources}`}>
+                    {m.webSources.map((s, j) => (
+                      <div key={j} className={styles.sourceRow}>
+                        <span>{s.title}</span>
+                        <a className={styles.sourceLink} target="_blank" rel="noreferrer" href={s.link}>
                           Open
                         </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-        {loading && <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>Thinking…</p>}
-      </div>
+          ))}
+          {loading && <p className={styles.thinking}>Thinking&hellip;</p>}
+        </div>
 
-      <div className="mt-6 flex gap-2">
-        <input
-          className="input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && send()}
-          placeholder="e.g. What are BOU's capital requirements for a PSP licence?"
-        />
-        <button className="btn btn-primary" onClick={send} disabled={loading}>Ask</button>
-      </div>
+        <div className={styles.composer}>
+          <input
+            className={styles.input}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="e.g. What are BOU's capital requirements for a PSP licence?"
+          />
+          <button className={styles.btn} onClick={send} disabled={loading}>
+            Ask
+          </button>
+        </div>
+      </main>
     </div>
   );
 }
