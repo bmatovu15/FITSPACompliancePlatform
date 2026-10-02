@@ -285,6 +285,35 @@ function classificationDetail(key: "funds_transfer" | "emi", fundsTransferTier: 
   return "";
 }
 
+// Fallback copy of licence_application_wizard_classes for application_key =
+// 'payments_nps', confirmed byte-for-byte against Supabase (label,
+// description, fee_class_label, min_capital for all 14 class_key rows). The
+// live DB fetch on the server component has been observed intermittently
+// returning 0 rows in production even though the table holds all 14 and
+// answers correctly over a direct REST call -- when that happens, the
+// min_capital figures (and a few label fallbacks) would otherwise silently
+// show as UGX 0 / raw class_key strings. wizardClassesByKey below merges
+// this in underneath whatever the live fetch actually returned, so the
+// numbers the applicant sees are always correct regardless of that fetch's
+// health. This is reference data, not applicant data -- safe to keep in
+// sync by hand alongside the migration that seeds the table.
+const WIZARD_CLASS_SEED: Record<string, { label: string; description: string; fee_class_label: string; min_capital: number }> = {
+  pso_funds_transfer_large: { label: "PSO — Funds transfer system", description: "Large: monthly transaction value > UGX 100bn", fee_class_label: "PSO", min_capital: 1000000000 },
+  pso_funds_transfer_medium: { label: "PSO — Funds transfer system", description: "Medium: > UGX 1bn and <= UGX 100bn per month", fee_class_label: "PSO", min_capital: 500000000 },
+  pso_funds_transfer_small: { label: "PSO — Funds transfer system", description: "Small: <= UGX 1bn per month", fee_class_label: "PSO", min_capital: 100000000 },
+  pso_clearing_switch: { label: "PSO — Clearing system or switch", description: "No transaction-value band", fee_class_label: "PSO", min_capital: 500000000 },
+  pso_settlement: { label: "PSO — Settlement system", description: "No transaction-value band", fee_class_label: "PSO", min_capital: 250000000 },
+  pso_third_party: { label: "PSO — Third-party system", description: "Aggregator, integrator or gateway", fee_class_label: "PSO", min_capital: 100000000 },
+  psp_emi_large: { label: "PSP — Electronic-money issuer", description: "Large: total trust-account value > UGX 100bn", fee_class_label: "PSP", min_capital: 10000000000 },
+  psp_emi_medium_100bn: { label: "PSP — Electronic-money issuer", description: "Medium: > UGX 50bn and <= UGX 100bn", fee_class_label: "PSP", min_capital: 5000000000 },
+  psp_emi_medium_50bn: { label: "PSP — Electronic-money issuer", description: "Medium: > UGX 5bn and <= UGX 50bn", fee_class_label: "PSP", min_capital: 2000000000 },
+  psp_emi_medium_5bn: { label: "PSP — Electronic-money issuer", description: "Medium: > UGX 500m and <= UGX 5bn", fee_class_label: "PSP", min_capital: 1000000000 },
+  psp_emi_small_500m: { label: "PSP — Electronic-money issuer", description: "Small: > UGX 250m and <= UGX 500m", fee_class_label: "PSP", min_capital: 250000000 },
+  psp_emi_small_250m: { label: "PSP — Electronic-money issuer", description: "Small: <= UGX 250m", fee_class_label: "PSP", min_capital: 100000000 },
+  psp_other: { label: "PSP — Any other PSP", description: "Includes payment services that do not issue electronic money", fee_class_label: "PSP", min_capital: 100000000 },
+  instrument: { label: "Payment instrument issuer — Payment cards, electronic devices or paper instruments", description: "All classes in amended schedules", fee_class_label: "Payment instrument issuer", min_capital: 0 },
+};
+
 // hasFormA()/hasInstrument() -- exact port of the prototype's own helpers
 // (lines 2289-2291), rewritten against the saved `activities` list instead of
 // the live wizard checkbox state.
@@ -892,13 +921,31 @@ export default function PaymentsWizardClient({
     return map;
   }, [visibleTemplates]);
 
+  // Seeded from WIZARD_CLASS_SEED first, then overwritten by whatever the
+  // live DB fetch actually returned -- so a live row always wins when
+  // present, and a class_key the live fetch is missing (see that constant's
+  // comment) still resolves to correct reference data instead of undefined.
   const wizardClassesByKey = useMemo(() => {
     const out: Record<string, LicenceApplicationWizardClass> = {};
+    Object.entries(WIZARD_CLASS_SEED).forEach(([classKey, seed]) => {
+      out[classKey] = {
+        id: classKey,
+        application_key: applicationKey,
+        class_key: classKey,
+        label: seed.label,
+        description: seed.description,
+        sort_order: 0,
+        fee_class_label: seed.fee_class_label,
+        min_capital: seed.min_capital,
+        leads_to: {},
+        created_at: "",
+      };
+    });
     wizardClasses.forEach((c) => {
       out[c.class_key] = c;
     });
     return out;
-  }, [wizardClasses]);
+  }, [wizardClasses, applicationKey]);
 
   function statusFor(externalId: string): ItemStatus {
     return itemStates[externalId]?.status ?? "not_started";
