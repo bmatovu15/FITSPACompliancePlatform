@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
 import styles from "./payments-workspace.module.css";
 import type {
@@ -48,7 +48,15 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 type ItemStatus = "not_started" | "in_progress" | "ready";
-type Screen = "loading" | "classify" | "facts" | "wizard" | "submitted";
+// "landing" / "unlisted" / "expert" / "sandbox" / "result" are the
+// pre-workspace "assessment" front door from the Beacon prototype
+// (screen-landing / screen-unlisted / screen-expert / screen-sandbox /
+// screen-result) that the earlier Beacon-migration rounds never carried
+// over -- they jumped straight from the Apply hub into "classify". See
+// strategy/deployment-status.md's "Assessment front door" round for the
+// full audit. Order: landing -> classify -> (unlisted -> expert | sandbox,
+// optional detour) -> result -> facts -> wizard -> submitted.
+type Screen = "loading" | "landing" | "classify" | "unlisted" | "expert" | "sandbox" | "result" | "facts" | "wizard" | "submitted";
 type WorkspaceTab = "checklist" | "documents" | "review";
 type StatusFilter = "all" | "remaining" | "done";
 // The single slide-in workspace drawer serves three purposes, matching the
@@ -352,10 +360,14 @@ export default function PaymentsWizardClient({
     setFiles(byItem);
     if (appRow.status === "submitted") {
       setScreen("submitted");
-    } else if (readCategories(appRow.facts).length > 0) {
-      setScreen("wizard");
     } else {
-      setScreen("classify");
+      // Always land on the landing screen first -- matches the prototype's
+      // own behaviour (screen-landing is always shown; a "Resume my
+      // checklist" button appears on it only once a pathway is fully set,
+      // i.e. categories chosen AND every fact answered). A partially-started
+      // visitor re-enters at "Start the assessment", pre-filled from their
+      // saved facts.
+      setScreen("landing");
     }
   }
 
@@ -367,7 +379,7 @@ export default function PaymentsWizardClient({
       id = null;
     }
     if (!id) {
-      setScreen("classify");
+      setScreen("landing");
       return;
     }
     const { data, error } = await supabase.from("member_licence_applications").select("*").eq("id", id).maybeSingle();
@@ -377,7 +389,7 @@ export default function PaymentsWizardClient({
       } catch {
         // ignore
       }
-      setScreen("classify");
+      setScreen("landing");
       return;
     }
     await loadApplicationData(data as MemberLicenceApplication);
@@ -420,11 +432,11 @@ export default function PaymentsWizardClient({
       setApplication(data as MemberLicenceApplication);
       setItemStates({});
       setFiles({});
-      setScreen("facts");
+      setScreen("result");
       return;
     }
     await persistFacts(draftFacts, application);
-    setScreen("facts");
+    setScreen("result");
   }
 
   async function persistFacts(patch: Record<string, unknown>, appOverride?: MemberLicenceApplication) {
@@ -453,7 +465,7 @@ export default function PaymentsWizardClient({
     setStatusFilter("all");
     setSearchTerm("");
     setActiveDrawer(null);
-    setScreen("classify");
+    setScreen("landing");
   }
 
   async function saveItem(externalId: string, patch: { answers: Record<string, unknown>; status: ItemStatus }) {
@@ -735,6 +747,17 @@ export default function PaymentsWizardClient({
     );
   }
 
+  if (screen === "landing") {
+    const canResume = application !== null && readCategories(facts).length > 0 && allFactsAnswered;
+    return (
+      <LandingScreen
+        canResume={canResume}
+        onStart={() => setScreen("classify")}
+        onResume={() => setScreen("wizard")}
+      />
+    );
+  }
+
   if (screen === "classify") {
     return (
       <ClassifyScreen
@@ -743,6 +766,44 @@ export default function PaymentsWizardClient({
         creating={creatingApplication}
         errorMsg={errorMsg}
         onContinue={handleClassifyContinue}
+        onUnlisted={() => setScreen("unlisted")}
+      />
+    );
+  }
+
+  if (screen === "unlisted") {
+    return (
+      <UnlistedScreen
+        onBack={() => setScreen("classify")}
+        onExpert={() => setScreen("expert")}
+        onSandbox={() => setScreen("sandbox")}
+      />
+    );
+  }
+
+  if (screen === "expert") {
+    return (
+      <ExpertBookingScreen
+        sourceModule="apply"
+        contextKey="payments-application"
+        onBack={() => setScreen("unlisted")}
+        onReturn={() => setScreen("classify")}
+      />
+    );
+  }
+
+  if (screen === "sandbox") {
+    return <SandboxScreen onBack={() => setScreen("unlisted")} onExpert={() => setScreen("expert")} />;
+  }
+
+  if (screen === "result") {
+    return (
+      <ResultScreen
+        assignedClasses={assignedClasses}
+        wizardClassesByKey={wizardClassesByKey}
+        feeTiers={feeTiers}
+        onChangeSelections={() => setScreen("classify")}
+        onContinue={() => setScreen(allFactsAnswered ? "wizard" : "facts")}
       />
     );
   }
@@ -754,7 +815,7 @@ export default function PaymentsWizardClient({
         allAnswered={allFactsAnswered}
         errorMsg={errorMsg}
         onToggle={(key, value) => persistFacts({ [key]: value })}
-        onBack={() => setScreen("classify")}
+        onBack={() => setScreen("result")}
         onContinue={() => setScreen("wizard")}
       />
     );
@@ -1011,6 +1072,367 @@ export default function PaymentsWizardClient({
 }
 
 // ---------------------------------------------------------------------------
+// Assessment front door (screen-landing / screen-unlisted / screen-expert /
+// screen-sandbox / screen-result in the Beacon prototype). These five
+// screens sit in front of the classification + checklist workspace below --
+// see the Screen type's comment for the full flow order. ExpertBookingScreen
+// is written so Digital Lending and Insurance can reuse the exact same
+// component (just passing their own sourceModule/contextKey); the other four
+// are specific to this file but follow an identical pattern so the Digital
+// Lending and Insurance wizard clients can mirror them 1:1.
+// ---------------------------------------------------------------------------
+
+function LandingScreen({
+  canResume,
+  onStart,
+  onResume,
+}: {
+  canResume: boolean;
+  onStart: () => void;
+  onResume: () => void;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+      <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
+        Bank of Uganda · Payments
+      </div>
+      <h1 className="text-3xl font-semibold mt-3" style={{ fontFamily: "var(--font-serif)" }}>
+        Know what you need for your licence application.
+      </h1>
+      <p className="mt-3 text-sm max-w-xl mx-auto" style={{ color: "var(--color-text-muted)" }}>
+        Tell us what your business plans to do, and we&apos;ll show you the licence requirements that apply. No
+        account is needed to start, and your progress is saved in this browser as you go.
+      </p>
+      <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
+        <button className="btn btn-primary" type="button" onClick={onStart}>
+          Start the assessment →
+        </button>
+        {canResume && (
+          <button className="btn btn-ghost" type="button" onClick={onResume}>
+            Resume my checklist
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function UnlistedScreen({
+  onBack,
+  onExpert,
+  onSandbox,
+  sandboxLabel = "None of these activities describe my product",
+  sandboxCopy = "My product or service appears different from the listed licence classes.",
+}: {
+  onBack: () => void;
+  onExpert: () => void;
+  onSandbox: () => void;
+  sandboxLabel?: string;
+  sandboxCopy?: string;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
+        ← Back to assessment
+      </button>
+      <h1 className="text-3xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+        What would you like help with?
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        Choose the option that best describes why your activity isn&apos;t listed.
+      </p>
+      <div className="space-y-3 mt-6">
+        <button type="button" className="card p-5 text-left w-full" onClick={onExpert}>
+          <span className="block font-semibold">I&apos;m not sure which option applies</span>
+          <span className="block text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+            My business may fit one of the listed licence classes, but I need help identifying the right one.
+          </span>
+        </button>
+        <button type="button" className="card p-5 text-left w-full" onClick={onSandbox}>
+          <span className="block font-semibold">{sandboxLabel}</span>
+          <span className="block text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+            {sandboxCopy}
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Reused as-is by Digital Lending and Insurance -- only sourceModule/
+// contextKey change. Posts a real row to expert_support_requests
+// (request_type: "consultation_booking") via /api/expert-support; the
+// prototype's own screen-expert only ever wrote to localStorage with a
+// comment saying "In the live product, the request would be sent to the
+// expert team" -- this is that real send.
+function ExpertBookingScreen({
+  sourceModule,
+  contextKey,
+  onBack,
+  onReturn,
+}: {
+  sourceModule: "apply" | "comply";
+  contextKey: string;
+  onBack: () => void;
+  onReturn: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [business, setBusiness] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [product, setProduct] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const tomorrow = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  }, []);
+
+  const canSubmit = name.trim() && business.trim() && email.trim() && date && time && product.trim();
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/expert-support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceModule,
+          contextKey,
+          requestType: "consultation_booking",
+          contactName: name.trim(),
+          contactEmail: email.trim(),
+          contactPhone: phone.trim(),
+          businessName: business.trim(),
+          preferredDate: date,
+          preferredTime: time,
+          message: product.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error("request failed");
+      setSent(true);
+    } catch {
+      setError("We couldn't send that request. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (sent) {
+    const when = date && time ? ` for ${new Date(date).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })} at ${time}` : "";
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <div className="badge badge-green mx-auto" style={{ display: "inline-flex" }}>
+          Request captured
+        </div>
+        <h2 className="text-2xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+          Consultation request captured
+        </h2>
+        <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+          Your request{when} has been sent to FITSPA&apos;s Expert Support team. They&apos;ll use your product
+          description to prepare for the classification discussion and will reach out to confirm.
+        </p>
+        <button className="btn btn-primary mt-6" type="button" onClick={onReturn}>
+          Return to assessment →
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
+        ← Back
+      </button>
+      <h1 className="text-3xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+        Speak to an expert
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        If you&apos;re unsure which licence class applies to your business, request a short session to review your
+        product and regulatory pathway.
+      </p>
+
+      {error && (
+        <div className="badge badge-red mt-4" style={{ display: "block", padding: "0.5rem 0.75rem", borderRadius: "0.5rem" }}>
+          {error}
+        </div>
+      )}
+
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="text-sm">
+            Full name
+            <input className="input mt-1 w-full" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          </label>
+          <label className="text-sm">
+            Business / company
+            <input className="input mt-1 w-full" type="text" value={business} onChange={(e) => setBusiness(e.target.value)} required />
+          </label>
+          <label className="text-sm">
+            Email
+            <input className="input mt-1 w-full" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </label>
+          <label className="text-sm">
+            Phone number
+            <input className="input mt-1 w-full" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </label>
+          <label className="text-sm">
+            Preferred date
+            <input
+              className="input mt-1 w-full"
+              type="date"
+              min={tomorrow}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
+          </label>
+          <label className="text-sm">
+            Preferred time
+            <select className="input mt-1 w-full" value={time} onChange={(e) => setTime(e.target.value)} required>
+              <option value="">Select a time…</option>
+              <option>9:00 AM</option>
+              <option>11:00 AM</option>
+              <option>2:00 PM</option>
+              <option>4:00 PM</option>
+            </select>
+          </label>
+        </div>
+        <label className="text-sm block">
+          Briefly describe what your product does
+          <textarea
+            className="input mt-1 w-full"
+            rows={4}
+            value={product}
+            onChange={(e) => setProduct(e.target.value)}
+            placeholder="What does the product do, who uses it, and how does money move?"
+            required
+          />
+        </label>
+        <button className="btn btn-primary" type="submit" disabled={!canSubmit || sending}>
+          {sending ? "Sending…" : "Request a session →"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function SandboxScreen({ onBack, onExpert }: { onBack: () => void; onExpert: () => void }) {
+  const [showNote, setShowNote] = useState(false);
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
+        ← Back
+      </button>
+      <h1 className="text-3xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+        Explore the Regulatory Sandbox
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        If your product does not fit the listed licence classes, the Bank of Uganda&apos;s NPS Regulatory Sandbox may
+        be a pathway to explore. It provides a controlled environment for eligible innovative payment products,
+        services, business models or delivery mechanisms to be tested under regulatory oversight.
+      </p>
+      <div className="mt-8 flex items-center gap-3 flex-wrap">
+        <button className="btn btn-primary" type="button" onClick={() => setShowNote(true)}>
+          Build my sandbox checklist →
+        </button>
+        <button className="btn btn-ghost" type="button" onClick={onExpert}>
+          Speak to an expert
+        </button>
+      </div>
+      {showNote && (
+        <p className="text-xs mt-4" style={{ color: "var(--color-text-muted)" }}>
+          The sandbox checklist is the next module to be built.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ResultScreen({
+  assignedClasses,
+  wizardClassesByKey,
+  feeTiers,
+  onChangeSelections,
+  onContinue,
+}: {
+  assignedClasses: AssignedClass[];
+  wizardClassesByKey: Record<string, LicenceApplicationWizardClass>;
+  feeTiers: LicenceApplicationFeeTier[];
+  onChangeSelections: () => void;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onChangeSelections}>
+        ← Change selections
+      </button>
+      <div className="text-xs font-semibold uppercase tracking-wide mt-4" style={{ color: "var(--color-text-muted)" }}>
+        Based on your selections
+      </div>
+      <h1 className="text-3xl font-semibold mt-2" style={{ fontFamily: "var(--font-serif)" }}>
+        Your licence application
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        These are the licence categories and classes that apply to the activities you selected.
+      </p>
+
+      <div className="space-y-3 mt-6">
+        {assignedClasses.length === 0 && (
+          <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+            No licence class selected yet.
+          </p>
+        )}
+        {assignedClasses.map((ac) => {
+          const cls = wizardClassesByKey[ac.classKey];
+          const rows = feeTiers.filter((f) => f.class_key === ac.classKey);
+          return (
+            <div key={`${ac.category}-${ac.classKey}`} className="card p-5">
+              <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
+                {CATEGORY_LABELS[ac.category]}
+              </div>
+              <div className="font-semibold mt-1">{cls?.label ?? ac.classKey}</div>
+              {cls?.description && (
+                <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+                  {cls.description}
+                </p>
+              )}
+              {rows.length > 0 && (
+                <div className="mt-3 space-y-1">
+                  {rows.map((r) => (
+                    <div key={r.id} className="flex justify-between text-sm">
+                      <span style={{ color: "var(--color-text-muted)" }}>{FEE_TYPE_LABELS[r.fee_type] ?? r.fee_type}</span>
+                      <span className="font-medium">{formatUGX(Number(r.amount))}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-8 flex items-center gap-3">
+        <button className="btn btn-primary" type="button" onClick={onContinue}>
+          Build my checklist →
+        </button>
+        <button className="btn btn-ghost" type="button" onClick={onChangeSelections}>
+          Change selections
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Classify screen (step 1: category multi-select, step 2: per-category refinement)
 // ---------------------------------------------------------------------------
 
@@ -1020,12 +1442,14 @@ function ClassifyScreen({
   creating,
   errorMsg,
   onContinue,
+  onUnlisted,
 }: {
   wizardClasses: LicenceApplicationWizardClass[];
   initialFacts: Record<string, unknown>;
   creating: boolean;
   errorMsg: string | null;
   onContinue: (facts: Record<string, unknown>) => void;
+  onUnlisted: () => void;
 }) {
   const [categories, setCategories] = useState<Set<Category>>(() => new Set(readCategories(initialFacts)));
   const [psoClassKey, setPsoClassKey] = useState<string | null>(readStringFact(initialFacts, "psoClassKey"));
@@ -1210,16 +1634,18 @@ function ClassifyScreen({
       </div>
 
       <button className="btn btn-primary mt-6" type="button" disabled={!canContinue || creating} onClick={handleContinue}>
-        {creating ? "Starting…" : "Continue →"}
+        {creating ? "Starting…" : "See my licence →"}
       </button>
 
-      <p className="text-xs mt-8" style={{ color: "var(--color-text-muted)" }}>
-        Not sure which category applies to you? Visit the{" "}
-        <a href="/apply" className="underline" style={{ color: "var(--color-primary)" }}>
-          Apply hub
-        </a>{" "}
-        and speak to an expert before you start.
-      </p>
+      <div className="mt-8 card p-4">
+        <p className="text-sm font-medium">My activity isn&apos;t listed / I&apos;m not sure</p>
+        <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+          Get help identifying the right pathway before you select anything above.
+        </p>
+        <button type="button" className="btn btn-ghost btn-sm mt-2" onClick={onUnlisted}>
+          Get help →
+        </button>
+      </div>
     </div>
   );
 }

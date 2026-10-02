@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, type ReactNode } from "react";
+import { useMemo, useState, useEffect, type FormEvent, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
 import styles from "./digital-lending-workspace.module.css";
 import type {
@@ -45,7 +45,16 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 type ItemStatus = "not_started" | "in_progress" | "ready";
-type Screen = "loading" | "route" | "wizard" | "submitted";
+// "landing" / "unlisted" / "expert" / "sandbox" / "result" are the
+// pre-workspace "assessment" front door ported from the Beacon prototype's
+// Payments module (screen-landing / screen-unlisted / screen-expert /
+// screen-sandbox / screen-result) -- see payments-wizard-client.tsx's Screen
+// type comment for the full rationale. Digital Lending has no separate
+// "facts" gating step, so the order here is simpler: landing -> route ->
+// (unlisted -> expert | sandbox, optional detour) -> result -> wizard.
+// "sandbox" here is MRD's own equivalent, not BOU's NPS Regulatory Sandbox --
+// see SandboxScreen's copy below.
+type Screen = "loading" | "landing" | "route" | "unlisted" | "expert" | "sandbox" | "result" | "wizard" | "submitted";
 
 type PersonRow = { rowId: string; name: string; role: string; nationalId: string; address: string };
 
@@ -200,6 +209,12 @@ export default function DigitalLendingWizardClient({
   const [creatingRoute, setCreatingRoute] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Route chosen on the "route" screen but not yet committed to the
+  // database -- the new "result" confirmation screen sits between picking a
+  // route and actually creating the application (mirrors Payments'
+  // classify-then-result flow; previously chooseRoute() created the
+  // application immediately on the route card's own click).
+  const [pendingRouteKey, setPendingRouteKey] = useState<string | null>(null);
 
   async function loadApplicationData(appRow: MemberLicenceApplication) {
     setApplication(appRow);
@@ -226,7 +241,7 @@ export default function DigitalLendingWizardClient({
       id = null;
     }
     if (!id) {
-      setScreen("route");
+      setScreen("landing");
       return;
     }
     const { data, error } = await supabase.from("member_licence_applications").select("*").eq("id", id).maybeSingle();
@@ -236,10 +251,15 @@ export default function DigitalLendingWizardClient({
       } catch {
         // ignore
       }
-      setScreen("route");
+      setScreen("landing");
       return;
     }
+    // loadApplicationData always sends an existing application straight to
+    // "wizard"/"submitted" -- override that here so a fresh page load always
+    // shows the landing front door first (matching the prototype), with
+    // "Resume my checklist" taking the visitor straight to their workspace.
     await loadApplicationData(data as MemberLicenceApplication);
+    setScreen((s) => (s === "wizard" ? "landing" : s));
   }
 
   // Kick off resume() from a macrotask rather than calling it bare -- keeps
@@ -253,12 +273,22 @@ export default function DigitalLendingWizardClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function chooseRoute(classKey: string) {
+  // Selecting a route card no longer creates the application immediately --
+  // it just holds the choice and shows the new "result" confirmation screen
+  // (fee + route summary) first. The application is only actually created
+  // when the visitor confirms via confirmRoute() below.
+  function selectRoute(classKey: string) {
+    setPendingRouteKey(classKey);
+    setScreen("result");
+  }
+
+  async function confirmRoute() {
+    if (!pendingRouteKey) return;
     setErrorMsg(null);
-    setCreatingRoute(classKey);
+    setCreatingRoute(pendingRouteKey);
     const { data, error } = await supabase
       .from("member_licence_applications")
-      .insert({ member_id: null, application_key: applicationKey, class_key: classKey, status: "draft" })
+      .insert({ member_id: null, application_key: applicationKey, class_key: pendingRouteKey, status: "draft" })
       .select("*")
       .single();
     setCreatingRoute(null);
@@ -288,7 +318,8 @@ export default function DigitalLendingWizardClient({
     setActiveTab("application");
     setDrawer(null);
     setActivePhase("business");
-    setScreen("route");
+    setPendingRouteKey(null);
+    setScreen("landing");
   }
 
   async function saveItem(externalId: string, patch: { answers: Record<string, unknown>; status: ItemStatus }) {
@@ -516,6 +547,16 @@ export default function DigitalLendingWizardClient({
     );
   }
 
+  if (screen === "landing") {
+    return (
+      <LandingScreen
+        canResume={application !== null}
+        onStart={() => setScreen("route")}
+        onResume={() => setScreen("wizard")}
+      />
+    );
+  }
+
   if (screen === "route") {
     return (
       <RoutePicker
@@ -523,7 +564,51 @@ export default function DigitalLendingWizardClient({
         feeTiers={feeTiers}
         creatingRoute={creatingRoute}
         errorMsg={errorMsg}
-        onChoose={chooseRoute}
+        onChoose={selectRoute}
+        onUnlisted={() => setScreen("unlisted")}
+      />
+    );
+  }
+
+  if (screen === "unlisted") {
+    return (
+      <UnlistedScreen
+        onBack={() => setScreen("route")}
+        onExpert={() => setScreen("expert")}
+        onSandbox={() => setScreen("sandbox")}
+      />
+    );
+  }
+
+  if (screen === "expert") {
+    return (
+      <ExpertBookingScreen
+        sourceModule="apply"
+        contextKey="digital-lending-application"
+        onBack={() => setScreen("unlisted")}
+        onReturn={() => setScreen("route")}
+      />
+    );
+  }
+
+  if (screen === "sandbox") {
+    return <SandboxScreen onBack={() => setScreen("unlisted")} onExpert={() => setScreen("expert")} />;
+  }
+
+  if (screen === "result") {
+    const cls = wizardClasses.find((c) => c.class_key === pendingRouteKey) ?? null;
+    const fee = feeTiers.find((f) => f.class_key === pendingRouteKey && f.fee_type === "application") ?? null;
+    return (
+      <ResultScreen
+        routeLabel={cls?.label ?? pendingRouteKey ?? ""}
+        routeDescription={cls?.description ?? null}
+        feeAmount={fee ? Number(fee.amount) : null}
+        creating={creatingRoute !== null}
+        onChangeSelections={() => {
+          setPendingRouteKey(null);
+          setScreen("route");
+        }}
+        onContinue={confirmRoute}
       />
     );
   }
@@ -870,6 +955,343 @@ export default function DigitalLendingWizardClient({
 }
 
 // ---------------------------------------------------------------------------
+// Assessment front door (screen-landing / screen-unlisted / screen-expert /
+// screen-sandbox / screen-result in the Beacon prototype) -- see
+// payments-wizard-client.tsx's identical set of components for the full
+// rationale and the Screen type's comment above for the flow order.
+// ---------------------------------------------------------------------------
+
+function LandingScreen({
+  canResume,
+  onStart,
+  onResume,
+}: {
+  canResume: boolean;
+  onStart: () => void;
+  onResume: () => void;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+      <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
+        MRD-MoFPED · Digital Lending
+      </div>
+      <h1 className="text-3xl font-semibold mt-3" style={{ fontFamily: "var(--font-serif)" }}>
+        Know what you need for your licence application.
+      </h1>
+      <p className="mt-3 text-sm max-w-xl mx-auto" style={{ color: "var(--color-text-muted)" }}>
+        Tell us what your business plans to do, and we&apos;ll show you the licence requirements that apply. No
+        account is needed to start, and your progress is saved in this browser as you go.
+      </p>
+      <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
+        <button className="btn btn-primary" type="button" onClick={onStart}>
+          Start the assessment →
+        </button>
+        {canResume && (
+          <button className="btn btn-ghost" type="button" onClick={onResume}>
+            Resume my checklist
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function UnlistedScreen({
+  onBack,
+  onExpert,
+  onSandbox,
+}: {
+  onBack: () => void;
+  onExpert: () => void;
+  onSandbox: () => void;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
+        ← Back to assessment
+      </button>
+      <h1 className="text-3xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+        What would you like help with?
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        Choose the option that best describes why your activity isn&apos;t listed.
+      </p>
+      <div className="space-y-3 mt-6">
+        <button type="button" className="card p-5 text-left w-full" onClick={onExpert}>
+          <span className="block font-semibold">I&apos;m not sure which option applies</span>
+          <span className="block text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+            My business may fit Money Lender or NDTMFI, but I need help identifying the right one.
+          </span>
+        </button>
+        <button type="button" className="card p-5 text-left w-full" onClick={onSandbox}>
+          <span className="block font-semibold">None of these routes describe my business</span>
+          <span className="block text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+            My lending product or model appears different from the listed routes.
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Identical component to the one in payments-wizard-client.tsx -- posts a
+// real row to expert_support_requests (request_type: "consultation_booking")
+// via /api/expert-support.
+function ExpertBookingScreen({
+  sourceModule,
+  contextKey,
+  onBack,
+  onReturn,
+}: {
+  sourceModule: "apply" | "comply";
+  contextKey: string;
+  onBack: () => void;
+  onReturn: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [business, setBusiness] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [product, setProduct] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const tomorrow = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  }, []);
+
+  const canSubmit = name.trim() && business.trim() && email.trim() && date && time && product.trim();
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setSending(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/expert-support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceModule,
+          contextKey,
+          requestType: "consultation_booking",
+          contactName: name.trim(),
+          contactEmail: email.trim(),
+          contactPhone: phone.trim(),
+          businessName: business.trim(),
+          preferredDate: date,
+          preferredTime: time,
+          message: product.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error("request failed");
+      setSent(true);
+    } catch {
+      setError("We couldn't send that request. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (sent) {
+    const when = date && time ? ` for ${new Date(date).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })} at ${time}` : "";
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <div className="badge badge-green mx-auto" style={{ display: "inline-flex" }}>
+          Request captured
+        </div>
+        <h2 className="text-2xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+          Consultation request captured
+        </h2>
+        <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+          Your request{when} has been sent to FITSPA&apos;s Expert Support team. They&apos;ll use your product
+          description to prepare for the classification discussion and will reach out to confirm.
+        </p>
+        <button className="btn btn-primary mt-6" type="button" onClick={onReturn}>
+          Return to assessment →
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
+        ← Back
+      </button>
+      <h1 className="text-3xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+        Speak to an expert
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        If you&apos;re unsure which route applies to your business, request a short session to review your product
+        and regulatory pathway.
+      </p>
+
+      {error && (
+        <div className="badge badge-red mt-4" style={{ display: "block", padding: "0.5rem 0.75rem", borderRadius: "0.5rem" }}>
+          {error}
+        </div>
+      )}
+
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="text-sm">
+            Full name
+            <input className="input mt-1 w-full" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          </label>
+          <label className="text-sm">
+            Business / company
+            <input className="input mt-1 w-full" type="text" value={business} onChange={(e) => setBusiness(e.target.value)} required />
+          </label>
+          <label className="text-sm">
+            Email
+            <input className="input mt-1 w-full" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </label>
+          <label className="text-sm">
+            Phone number
+            <input className="input mt-1 w-full" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </label>
+          <label className="text-sm">
+            Preferred date
+            <input
+              className="input mt-1 w-full"
+              type="date"
+              min={tomorrow}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
+          </label>
+          <label className="text-sm">
+            Preferred time
+            <select className="input mt-1 w-full" value={time} onChange={(e) => setTime(e.target.value)} required>
+              <option value="">Select a time…</option>
+              <option>9:00 AM</option>
+              <option>11:00 AM</option>
+              <option>2:00 PM</option>
+              <option>4:00 PM</option>
+            </select>
+          </label>
+        </div>
+        <label className="text-sm block">
+          Briefly describe what your product does
+          <textarea
+            className="input mt-1 w-full"
+            rows={4}
+            value={product}
+            onChange={(e) => setProduct(e.target.value)}
+            placeholder="What does the product do, who uses it, and how does money move?"
+            required
+          />
+        </label>
+        <button className="btn btn-primary" type="submit" disabled={!canSubmit || sending}>
+          {sending ? "Sending…" : "Request a session →"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// MRD has no published regulatory-sandbox framework the way BOU's NPS
+// Regulatory Sandbox is a specific, named legal instrument (see
+// payments-wizard-client.tsx's SandboxScreen) -- per your confirmed choice,
+// this is framed honestly as a bespoke-review pathway rather than inventing
+// a named MRD program that doesn't exist.
+function SandboxScreen({ onBack, onExpert }: { onBack: () => void; onExpert: () => void }) {
+  const [showNote, setShowNote] = useState(false);
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}>
+        ← Back
+      </button>
+      <h1 className="text-3xl font-semibold mt-4" style={{ fontFamily: "var(--font-serif)" }}>
+        Explore an alternative pathway
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        If your lending product or business model doesn&apos;t fit the Money Lender or NDTMFI routes, FITSPA can
+        review your specific case directly with MRD rather than fitting you into a standard checklist.
+      </p>
+      <div className="mt-8 flex items-center gap-3 flex-wrap">
+        <button className="btn btn-primary" type="button" onClick={() => setShowNote(true)}>
+          Build my alternative checklist →
+        </button>
+        <button className="btn btn-ghost" type="button" onClick={onExpert}>
+          Speak to an expert
+        </button>
+      </div>
+      {showNote && (
+        <p className="text-xs mt-4" style={{ color: "var(--color-text-muted)" }}>
+          A tailored checklist for alternative arrangements is the next module to be built -- speak to an expert in
+          the meantime.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ResultScreen({
+  routeLabel,
+  routeDescription,
+  feeAmount,
+  creating,
+  onChangeSelections,
+  onContinue,
+}: {
+  routeLabel: string;
+  routeDescription: string | null;
+  feeAmount: number | null;
+  creating: boolean;
+  onChangeSelections: () => void;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onChangeSelections}>
+        ← Change selections
+      </button>
+      <div className="text-xs font-semibold uppercase tracking-wide mt-4" style={{ color: "var(--color-text-muted)" }}>
+        Based on your selection
+      </div>
+      <h1 className="text-3xl font-semibold mt-2" style={{ fontFamily: "var(--font-serif)" }}>
+        Your licence application
+      </h1>
+      <p className="mt-3 text-sm" style={{ color: "var(--color-text-muted)" }}>
+        This is the route that applies to the activity you selected.
+      </p>
+
+      <div className="card p-5 mt-6">
+        <div className="font-semibold">{routeLabel}</div>
+        {routeDescription && (
+          <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+            {routeDescription}
+          </p>
+        )}
+        {feeAmount !== null && (
+          <div className="flex justify-between text-sm mt-3">
+            <span style={{ color: "var(--color-text-muted)" }}>Application fee</span>
+            <span className="font-medium">UGX {feeAmount.toLocaleString()}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 flex items-center gap-3">
+        <button className="btn btn-primary" type="button" disabled={creating} onClick={onContinue}>
+          {creating ? "Starting…" : "Build my checklist →"}
+        </button>
+        <button className="btn btn-ghost" type="button" onClick={onChangeSelections}>
+          Change selections
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Route picker
 // ---------------------------------------------------------------------------
 
@@ -879,12 +1301,14 @@ function RoutePicker({
   creatingRoute,
   errorMsg,
   onChoose,
+  onUnlisted,
 }: {
   wizardClasses: LicenceApplicationWizardClass[];
   feeTiers: LicenceApplicationFeeTier[];
   creatingRoute: string | null;
   errorMsg: string | null;
   onChoose: (classKey: string) => void;
+  onUnlisted: () => void;
 }) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -927,20 +1351,22 @@ function RoutePicker({
                 disabled={creatingRoute !== null}
                 onClick={() => onChoose(c.class_key)}
               >
-                {creatingRoute === c.class_key ? "Starting…" : `Start as ${c.label} →`}
+                See my licence →
               </button>
             </div>
           );
         })}
       </div>
 
-      <p className="text-xs mt-8" style={{ color: "var(--color-text-muted)" }}>
-        Not sure which route applies to you? Visit the{" "}
-        <a href="/apply" className="underline" style={{ color: "var(--color-primary)" }}>
-          Apply hub
-        </a>{" "}
-        and speak to an expert before you start.
-      </p>
+      <div className="mt-8 card p-4">
+        <p className="text-sm font-medium">My activity isn&apos;t listed / I&apos;m not sure</p>
+        <p className="text-sm mt-1" style={{ color: "var(--color-text-muted)" }}>
+          Get help identifying the right route before you select anything above.
+        </p>
+        <button type="button" className="btn btn-ghost btn-sm mt-2" onClick={onUnlisted}>
+          Get help →
+        </button>
+      </div>
     </div>
   );
 }

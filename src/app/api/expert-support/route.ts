@@ -9,9 +9,29 @@ import { createClient } from "@/lib/supabase/server";
 // `expert_support_requests` table (Admin → Expert Requests queue + email
 // notification are Phase 5 work; the row lands regardless so nothing sent
 // through Beacon between now and then is lost).
+//
+// Also backs the dedicated consultation-booking screen in each Apply flow's
+// front-door assessment (landing -> wizard -> "activity isn't listed" triage
+// -> speak to an expert). That screen's own template (`screen-expert`) only
+// ever wrote to localStorage (`nps_expert_request_v1`) with a comment saying
+// "In the live product, the request would be sent to the expert team" --
+// this route is that real send. requestType defaults to "question" so every
+// existing ad-hoc panel keeps behaving exactly as before; the booking screen
+// passes requestType: "consultation_booking" plus the extra fields below.
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { sourceModule, contextKey, contactName, contactEmail, message } = body ?? {};
+  const {
+    sourceModule,
+    contextKey,
+    contactName,
+    contactEmail,
+    message,
+    requestType,
+    businessName,
+    contactPhone,
+    preferredDate,
+    preferredTime,
+  } = body ?? {};
 
   if (sourceModule !== "apply" && sourceModule !== "comply") {
     return NextResponse.json({ error: "sourceModule must be 'apply' or 'comply'" }, { status: 400 });
@@ -19,6 +39,7 @@ export async function POST(req: NextRequest) {
   if (!message || typeof message !== "string" || !message.trim()) {
     return NextResponse.json({ error: "message required" }, { status: 400 });
   }
+  const resolvedRequestType = requestType === "consultation_booking" ? "consultation_booking" : "question";
 
   const supabase = await createClient();
   const {
@@ -36,7 +57,12 @@ export async function POST(req: NextRequest) {
     context_key: typeof contextKey === "string" ? contextKey : "general",
     contact_name: typeof contactName === "string" ? contactName : null,
     contact_email: typeof contactEmail === "string" ? contactEmail : null,
+    contact_phone: typeof contactPhone === "string" && contactPhone.trim() ? contactPhone.trim() : null,
     message: message.trim(),
+    request_type: resolvedRequestType,
+    business_name: typeof businessName === "string" && businessName.trim() ? businessName.trim() : null,
+    preferred_date: typeof preferredDate === "string" && preferredDate.trim() ? preferredDate.trim() : null,
+    preferred_time: typeof preferredTime === "string" && preferredTime.trim() ? preferredTime.trim() : null,
   });
 
   if (error) {
