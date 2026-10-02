@@ -26,20 +26,21 @@ export const OFFICIAL_REGULATOR_DOMAINS: Record<string, string[]> = {
 };
 
 // Which regulators FITSPA actually has indexed documents for today (BOU,
-// MRD, IRA) vs. the 7 with none (everything else above). Checked live
-// post-deploy, 2026-10-02: search_document_chunks's loose "any word
-// matches" fallback pass (src/lib/ingest.ts's comment on
-// expandQueryForSearch explains why that pass exists) will return SOME
-// chunks for almost any realistic question against FITSPA's 500+-chunk
-// corpus, even when none of them are actually about the regulator being
-// asked about -- e.g. "What is the TIN registration process at URA?"
-// returned 10 BOU/MRD/IRA chunks matched only on generic words like
-// "registration" and "process". So "zero chunks retrieved" alone is NOT a
-// reliable signal that a question isn't about one of the uncovered
-// regulators -- route.ts also calls detectUncoveredRegulatorTrigger()
-// below and prefers the web fallback whenever a question explicitly names
-// one of the 7 uncovered regulators, regardless of what the full-text
-// search's loose pass happened to match on.
+// MRD, IRA) vs. the 7 with none (everything else above). Historical context
+// for why UNCOVERED_REGULATOR_TRIGGERS/detectUncoveredRegulatorTrigger()
+// below exist: search_document_chunks's loose "any word matches" fallback
+// pass (src/lib/ingest.ts's comment on expandQueryForSearch explains why
+// that pass exists) returns SOME chunks for almost any realistic question
+// against FITSPA's 500+-chunk corpus, even when none of them are actually
+// about the regulator being asked about -- e.g. "What is the TIN
+// registration process at URA?" returned 10 BOU/MRD/IRA chunks matched only
+// on generic words like "registration" and "process". That made "zero
+// chunks retrieved" unreliable as the sole signal for when to run a web
+// search, back when web search only ran as a last-resort fallback.
+// detectUncoveredRegulatorTrigger() (below) was the fix for that. As of the
+// combined-answer mode, route.ts runs the web search on every question
+// regardless, so this detector is no longer load-bearing for that decision
+// -- see its own comment below.
 const UNCOVERED_REGULATOR_TRIGGERS: Record<string, string[]> = {
   "Capital Markets Authority (CMA)": ["cma", "capital markets authority"],
   "Financial Intelligence Authority (FIA)": ["fia", "financial intelligence authority"],
@@ -59,6 +60,17 @@ const UNCOVERED_REGULATOR_TRIGGERS: Record<string, string[]> = {
   "Uganda Revenue Authority (URA)": ["ura", "revenue authority", "tax identification number"],
 };
 
+// NOT CURRENTLY USED by src/app/api/assistant/route.ts. This existed to
+// decide WHETHER to run the web fallback at all, back when it only ran as a
+// last resort (zero document chunks retrieved). As of the combined-answer
+// mode (route.ts now runs searchRegulatorWeb on every question, in
+// parallel with document retrieval, and lets askAssistantCombined's LLM
+// call in src/lib/ingest.ts decide which material actually answers the
+// question), that gating decision isn't needed any more -- every question
+// already gets a web search. Left in place, still exported and still
+// correct, in case a future mode wants to trigger web search selectively
+// again without re-deriving this logic from scratch.
+//
 // Returns the display name of the uncovered regulator a question explicitly
 // names (by acronym or full name), or null if none matched. Single-word
 // triggers (acronyms) match as a whole word only, same approach as
@@ -146,6 +158,13 @@ function hostnameOf(link: string): string {
   }
 }
 
+// NOT CURRENTLY USED by src/app/api/assistant/route.ts -- superseded by
+// askAssistantCombined() in src/lib/ingest.ts, which handles documents and
+// web results together in one LLM call so the AI can pick the best of both
+// rather than being locked into a web-only answer once this function is
+// reached. Left in place (still correct) in case a future web-only code
+// path needs it again.
+//
 // Mirrors askAssistant()/localSearchAnswer() in src/lib/ingest.ts, but for
 // web results instead of indexed document chunks -- same "no synthesis
 // available, show the raw best match plainly labelled" honesty when there

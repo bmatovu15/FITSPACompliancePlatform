@@ -11,7 +11,7 @@ type Message = {
   role: "user" | "assistant";
   text: string;
   sources?: Source[];
-  sourceType?: "documents" | "web";
+  sourceType?: "documents" | "web" | "mixed" | "none";
   webSources?: WebSource[];
 };
 
@@ -19,7 +19,7 @@ export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      text: "Ask me about a regulator requirement, obligation, or form — I'll answer only from documents FITSPA has indexed and cite my sources.",
+      text: "Ask me about a regulator requirement, obligation, or form — I'll check FITSPA's indexed documents and official regulator websites, and cite exactly where the answer came from.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -61,19 +61,22 @@ export default function AssistantPage() {
         <p className={styles.eyebrow}>Compliance assistant</p>
         <h1 className={styles.title}>AI compliance assistant</h1>
         <p className={styles.dek}>
-          Grounded in FITSPA&rsquo;s indexed regulator documents first &mdash; it will say so if something
-          isn&rsquo;t covered. For regulators FITSPA hasn&rsquo;t indexed documents for yet, it may
-          fall back to a scoped search of that regulator&rsquo;s own official website, always
-          clearly labelled as a web result rather than a FITSPA-vetted document.
+          Checks FITSPA&rsquo;s indexed regulator documents and a scoped search of official
+          regulator websites together, and gives you whichever actually answers your question
+          &mdash; FITSPA&rsquo;s own vetted documents take priority whenever they cover it. Every
+          answer is clearly labelled by where it came from, and it will say so plainly if nothing
+          covers the question at all.
         </p>
 
         <div className={styles.thread}>
           {messages.map((m, i) => (
             <div key={i} className={`${styles.row} ${m.role === "user" ? styles.rowUser : styles.rowAssistant}`}>
               <div className={`${styles.bubble} ${m.role === "user" ? styles.bubbleUser : styles.bubbleAssistant}`}>
-                {m.sourceType === "web" && (
+                {(m.sourceType === "web" || m.sourceType === "mixed") && (
                   <div className={styles.webNotice}>
-                    Web result &mdash; not one of FITSPA&rsquo;s indexed documents
+                    {m.sourceType === "web"
+                      ? "Web result — not one of FITSPA’s indexed documents"
+                      : "Partly based on a regulator website — see which parts below"}
                   </div>
                 )}
                 {m.text}

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { askAssistant, expandQueryForSearch } from "@/lib/ingest";
+import { askAssistantCombined, expandQueryForSearch } from "@/lib/ingest";
 import { OPENROUTER_API_KEY, OPENROUTER_MODEL, GOOGLE_CSE_API_KEY, GOOGLE_CSE_ID } from "@/lib/server-config";
-import { searchRegulatorWeb, askAssistantFromWeb, detectUncoveredRegulatorTrigger } from "@/lib/web-search";
+import { searchRegulatorWeb, type WebResult } from "@/lib/web-search";
 
 type SearchChunkRow = {
   content: string;
@@ -28,35 +28,85 @@ export async function POST(req: NextRequest) {
   // candidate set still gives the LLM enough context once a genuinely
   // relevant chunk is a few ranks down rather than #1.
   const searchQuery = expandQueryForSearch(question);
-  const { data: chunks, error } = await supabase.rpc("search_document_chunks", { q: searchQuery, limit_n: 10 });
 
-  const usableChunks = ((chunks ?? []) as SearchChunkRow[]).map((c) => ({
+  // Every question now searches FITSPA's indexed documents AND the scoped
+  // regulator-website search IN PARALLEL (your explicit choice: let the AI
+  // pick the best of both, rather than only falling back to the web when
+  // document retrieval comes up empty). Run together with Promise.all so
+  // this doesn't cost extra latency over the old either/or design. Note:
+  // this does mean every question now spends one Google Custom Search call
+  // (100/day free quota) even when FITSPA's documents already answer it
+  // well -- see strategy/ai-assistant-architecture.md for the quota
+  // discussion. searchRegulatorWeb() already returns null gracefully if
+  // GOOGLE_CSE_API_KEY/GOOGLE_CSE_ID aren't configured or the quota is
+  // exhausted, in which case this is a no-op and the assistant behaves
+  // exactly as it did on documents alone.
+  const [{ data: chunks, error }, webResults] = await Promise.all([
+    supabase.rpc("search_document_chunks", { q: searchQuery, limit_n: 10 }),
+    searchRegulatorWeb({ apiKey: GOOGLE_CSE_API_KEY, searchEngineId: GOOGLE_CSE_ID, query: question }),
+  ]);
+
+  const allChunks = (chunks ?? []) as SearchChunkRow[];
+  const usableChunks = allChunks.map((c) => ({
     content: c.content,
     doc_title: c.doc_title,
     regulator_name: c.regulator_name,
   }));
+  const usableWebResults: WebResult[] = webResults ?? [];
 
-  const answer = await askAssistant({
+  const answer = await askAssistantCombined({
     apiKey: OPENROUTER_API_KEY,
     model: OPENROUTER_MODEL,
     question,
     chunks: usableChunks,
+    webResults: usableWebResults,
   });
 
-  const allChunks = (chunks ?? []) as SearchChunkRow[];
-  // Surface only the sources the answer actually cites (parsed from its
-  // "[Source N]" markers), not every candidate chunk retrieval happened to
-  // pull in -- returning all 10 candidates as "sources" under a two-
-  // sentence answer read as noisy and made the assistant look like it was
-  // hedging across many documents instead of giving one precise, grounded
-  // answer. Falls back to every retrieved chunk only if the answer cited
-  // none (e.g. a "not covered" response still worth showing what was
-  // searched) or isn't in the expected "[Source N]" form (the local,
-  // no-LLM fallback already cites exactly its one excerpt as "Source 1").
-  const citedIndexes = new Set(
+  // Figure out which kind(s) of material the answer actually drew on by
+  // parsing its own citation markers -- [Source N] for FITSPA's indexed
+  // documents, [Web N] for the regulator-website results (see
+  // askAssistantCombined's prompt in src/lib/ingest.ts, which requires this
+  // citation convention). This is what lets the UI label an answer
+  // "documents", "web", or "mixed" accurately, and show only the sources it
+  // actually cited rather than every candidate retrieval happened to pull
+  // in -- returning all 10 document candidates and 5 web candidates under a
+  // two-sentence answer would read as noisy, hedging-across-many-sources
+  // clutter instead of one precise, grounded answer.
+  const citedDocIndexes = new Set(
     Array.from(answer.matchAll(/\[Source (\d+)\]/g)).map((m) => parseInt(m[1], 10) - 1)
   );
-  const citedChunks = citedIndexes.size > 0 ? allChunks.filter((_, i) => citedIndexes.has(i)) : allChunks;
+  const citedWebIndexes = new Set(
+    Array.from(answer.matchAll(/\[Web (\d+)\]/g)).map((m) => parseInt(m[1], 10) - 1)
+  );
+  const hasDocCitations = citedDocIndexes.size > 0;
+  const hasWebCitations = citedWebIndexes.size > 0;
+
+  // sourceType drives the UI: a "mixed" answer shows both the normal
+  // document-source list and the amber "web result" notice/list side by
+  // side, so a member can always tell exactly which parts of an answer are
+  // FITSPA-vetted and which came from the open web -- never silently
+  // blended. When the answer has no parseable [Source N]/[Web N] markers at
+  // all (the raw-excerpt fallback used when the AI summariser is
+  // unavailable, or a genuine "not covered" response), fall back to
+  // whatever was actually retrieved so the member can still see what was
+  // searched, preferring documents since that's what the fallback itself
+  // prefers (see rawExcerptFallback in src/lib/ingest.ts).
+  let sourceType: "documents" | "web" | "mixed" | "none";
+  if (hasDocCitations && hasWebCitations) sourceType = "mixed";
+  else if (hasDocCitations) sourceType = "documents";
+  else if (hasWebCitations) sourceType = "web";
+  else sourceType = allChunks.length > 0 ? "documents" : usableWebResults.length > 0 ? "web" : "none";
+
+  const citedChunks = hasDocCitations
+    ? allChunks.filter((_, i) => citedDocIndexes.has(i))
+    : sourceType === "documents"
+      ? allChunks
+      : [];
+  const citedWebResults = hasWebCitations
+    ? usableWebResults.filter((_, i) => citedWebIndexes.has(i))
+    : sourceType === "web"
+      ? usableWebResults
+      : [];
 
   const sources = citedChunks.map((c) => ({
     title: c.doc_title,
@@ -64,63 +114,7 @@ export async function POST(req: NextRequest) {
     storage_path: c.storage_path,
     doc_kind: c.doc_kind,
   }));
+  const webSources = citedWebResults.map((r) => ({ title: r.title, link: r.link }));
 
-  // Scoped web-search fallback. Two trigger conditions, both needed because
-  // of something confirmed live post-deploy: search_document_chunks's loose
-  // "any word matches" fallback pass (see expandQueryForSearch's comment in
-  // src/lib/ingest.ts) will return SOME chunks for almost any realistic
-  // question against FITSPA's 500+-chunk corpus, even when none of them
-  // are actually about the regulator being asked about -- e.g. "What is
-  // the TIN registration process at URA?" matched 10 BOU/MRD/IRA chunks on
-  // generic words like "registration", none of them about URA at all. So
-  // "zero chunks retrieved" alone badly under-triggers this fallback for
-  // real questions about the 7 regulators with no indexed documents (CMA,
-  // FIA, NITA-U, PDPO, UCC, URSB, URA -- see
-  // strategy/ai-assistant-architecture.md §2/§6 in the project).
-  //
-  // 1. usableChunks.length === 0 -- retrieval found literally nothing
-  //    (askAssistant() above already returned its fixed "I couldn't find
-  //    anything..." message in that case).
-  // 2. detectUncoveredRegulatorTrigger(question) matches -- the question
-  //    explicitly names one of the 7 uncovered regulators by acronym or
-  //    name. When this matches, the web fallback is PREFERRED over
-  //    whatever document chunks were retrieved, since we know with
-  //    certainty those chunks aren't really about the regulator asked
-  //    about, however they happened to match on generic words.
-  //
-  // Neither condition touches the well-covered BOU/MRD/IRA document-
-  // grounded path for a question that doesn't name one of the 7 uncovered
-  // regulators -- that path (the answer/sources computed above) is
-  // completely unaffected and returned unchanged. searchRegulatorWeb()
-  // restricts results to a hand-verified allowlist of official regulator
-  // domains (never a general web search) and returns null if
-  // GOOGLE_CSE_API_KEY/GOOGLE_CSE_ID aren't configured, in which case this
-  // whole block is a no-op and the original document-grounded answer/
-  // sources above are returned unchanged.
-  const uncoveredRegulator = detectUncoveredRegulatorTrigger(question);
-  if (usableChunks.length === 0 || uncoveredRegulator) {
-    const webResults = await searchRegulatorWeb({
-      apiKey: GOOGLE_CSE_API_KEY,
-      searchEngineId: GOOGLE_CSE_ID,
-      query: question,
-    });
-    if (webResults && webResults.length > 0) {
-      const webAnswer = await askAssistantFromWeb({
-        apiKey: OPENROUTER_API_KEY,
-        model: OPENROUTER_MODEL,
-        question,
-        results: webResults,
-      });
-      if (webAnswer) {
-        return NextResponse.json({
-          answer: webAnswer,
-          sources: [],
-          sourceType: "web",
-          webSources: webResults.map((r) => ({ title: r.title, link: r.link })),
-        });
-      }
-    }
-  }
-
-  return NextResponse.json({ answer, sources, sourceType: "documents", error: error?.message });
+  return NextResponse.json({ answer, sources, sourceType, webSources, error: error?.message });
 }
