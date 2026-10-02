@@ -17,12 +17,20 @@
 // step -- so leaving this unset doesn't break anything, it only means
 // those two AI-assisted features stay off until a real key is configured.
 export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
-// Defaults to Thinking Machines' Inkling (free) -- a free-to-use model on
-// OpenRouter (openrouter.ai/thinkingmachines/inkling:free) with a 1M-token
-// context window, explicitly intended by its provider for RAG/agentic/
-// tool-use workloads, which is exactly this app's use case. Override with
-// the OPENROUTER_MODEL env var to switch models without a code change.
-export const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "thinkingmachines/inkling:free";
+// Previously defaulted to Thinking Machines' Inkling (free). Confirmed live,
+// 2026-10-02, via Vercel's runtime logs (the assistant call's logged error
+// body -- see the bodyText logging added alongside this change) that
+// OpenRouter rejects that model with HTTP 403 for a plain server-side API
+// call: "thinkingmachines/inkling:free is only available on agentic
+// harnesses... routing_funnel step: Gate Free Endpoints by Agentic Harness".
+// That is, OpenRouter restricts this specific free model to requests coming
+// from recognised coding-agent/IDE integrations -- not something a normal
+// Next.js API route can satisfy, and not a key or billing problem. Switched
+// to Meta's Llama 3.3 70B Instruct (free) instead: a mature, widely-used,
+// general-purpose instruct model with a 131K-token context window and no
+// such usage gating, well suited to this app's RAG/Q&A workload. Override
+// with the OPENROUTER_MODEL env var to switch models without a code change.
+export const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free";
 
 // Scoped regulator-website search (src/lib/web-search.ts), used by the AI
 // Assistant ONLY as a fallback when FITSPA's indexed documents return zero
