@@ -31,13 +31,39 @@ export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
 // such usage gating, well suited to this app's RAG/Q&A workload. Override
 // with the OPENROUTER_MODEL env var to switch models without a code change.
 export const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free";
+// A resilience net around OPENROUTER_MODEL, tried in order only when it
+// specifically fails with a model-availability-shaped error (HTTP 403,
+// 404, or 429 -- see askAssistantCombined's retry loop in
+// src/lib/ingest.ts). Confirmed live, 2026-10-02: even
+// meta-llama/llama-3.3-70b-instruct:free -- a mature, widely-used model
+// with no known usage restriction -- returned HTTP 404 ("This model is
+// unavailable for free. The paid version is available now...") on a
+// perfectly ordinary request, with no change on our end between a working
+// call and a failing one. OpenRouter's free tier is, in practice, subject
+// to provider-side capacity limits that have nothing to do with the key,
+// the account, or this app's code -- so rather than trust any single free
+// model to always be up, this list gives the assistant somewhere else to
+// go before falling all the way back to a raw document/web excerpt.
+// Override with the OPENROUTER_FALLBACK_MODELS env var (comma-separated)
+// to change the list without a code change; leave it unset for the
+// built-in default below.
+export const OPENROUTER_FALLBACK_MODELS = (
+  process.env.OPENROUTER_FALLBACK_MODELS || "openai/gpt-oss-120b:free,nvidia/nemotron-3-ultra-550b-a55b:free"
+)
+  .split(",")
+  .map((m) => m.trim())
+  .filter(Boolean);
 
-// Scoped regulator-website search (src/lib/web-search.ts), used by the AI
-// Assistant ONLY as a fallback when FITSPA's indexed documents return zero
-// matches for a question. Both must be set together or the feature stays
-// off (searchRegulatorWeb() returns null and the assistant keeps its
-// existing "not covered" behaviour) -- so, like OPENROUTER_API_KEY, leaving
-// these unset breaks nothing, it just means that fallback isn't active yet.
+// Scoped regulator-website search (src/lib/web-search.ts). Runs on EVERY
+// assistant question, in parallel with document retrieval, as of the
+// combined-answer mode (see askAssistantCombined in src/lib/ingest.ts and
+// src/app/api/assistant/route.ts) -- not only as a last-resort fallback
+// the way it originally shipped. Both of the following must be set
+// together or the feature stays off (searchRegulatorWeb() returns null and
+// the assistant answers from documents alone, exactly as it did before
+// this was configured) -- so, like OPENROUTER_API_KEY, leaving these unset
+// breaks nothing, it just means this half of the combined answer isn't
+// active yet.
 //
 // GOOGLE_CSE_API_KEY: an API key for Google's Custom Search JSON API,
 // created in Google Cloud Console (APIs & Services -> Credentials) with the

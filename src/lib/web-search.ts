@@ -125,7 +125,15 @@ export async function searchRegulatorWeb(opts: {
     url.searchParams.set("num", "5");
     const res = await fetch(url.toString());
     if (!res.ok) {
-      console.error("regulator web search failed with status", res.status);
+      // Logs the response body too, not just the status -- same reasoning
+      // as the OpenRouter call's bodyText logging in src/lib/ingest.ts:
+      // Google's error payload (error.message / error.status) is what
+      // actually explains a 403 here (API not enabled on the Cloud
+      // project, key restrictions, daily quota exhausted, billing not
+      // enabled, etc), and guessing between those from the status code
+      // alone wastes a round trip.
+      const bodyText = await res.text().catch(() => "");
+      console.error("regulator web search failed with status", res.status, bodyText);
       return null;
     }
     const json = await res.json();

@@ -308,12 +308,12 @@ This is a raw web search result, not a written answer, and it is not one of FITS
 // stylistic.
 export async function askAssistantCombined(opts: {
   apiKey: string;
-  model: string;
+  models: string[];
   question: string;
   chunks: { content: string; doc_title: string; regulator_name: string | null }[];
   webResults: WebResult[];
 }): Promise<string> {
-  const { apiKey, model, question, chunks, webResults } = opts;
+  const { apiKey, models, question, chunks, webResults } = opts;
 
   if (chunks.length === 0 && webResults.length === 0) {
     return "I couldn't find anything in FITSPA's indexed regulator documents or on the regulator websites that answers this. Please rephrase, or contact FITSPA directly for a tailored answer.";
@@ -350,27 +350,52 @@ ${webContext ? `REGULATOR WEBSITE RESULTS:\n${webContext}` : "REGULATOR WEBSITE 
 
 QUESTION: ${question}`;
 
-  try {
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.1 }),
-    });
-    if (!res.ok) {
-      const bodyText = await res.text().catch(() => "");
-      console.error("assistant call failed with status", res.status, bodyText);
-      const reason = res.status === 402 ? "the AI service's usage credit is exhausted" : "the AI service returned an error";
-      return rawExcerptFallback(chunks, webResults, reason);
+  // Tries each model in `models` in order (index 0 is the configured
+  // OPENROUTER_MODEL; the rest are OPENROUTER_FALLBACK_MODELS -- see
+  // src/lib/server-config.ts), stopping at the first one that actually
+  // answers. Confirmed live, 2026-10-02: OpenRouter's free-tier models are
+  // commonly capacity-constrained under load, not just gated by account
+  // config -- meta-llama/llama-3.3-70b-instruct:free returned "This model
+  // is unavailable for free. The paid version is available now..." (HTTP
+  // 404) on a plain live test, with nothing wrong on our end. Rather than
+  // chase a single "right" free model, this tries a short list of other
+  // mature, general-purpose free models whenever the current one
+  // specifically looks unavailable (403/404/429). A real, non-availability
+  // error (401 bad key, 402 no credit, network failure) is NOT retried
+  // against the rest of the list -- that's an account-level problem a
+  // different model can't fix, so it stops immediately and falls through to
+  // the raw-excerpt fallback instead of wasting more calls.
+  let lastStatus = 0;
+  for (const model of models) {
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.1 }),
+      });
+      if (!res.ok) {
+        const bodyText = await res.text().catch(() => "");
+        console.error("assistant call failed with status", model, res.status, bodyText);
+        lastStatus = res.status;
+        if (res.status === 403 || res.status === 404 || res.status === 429) continue; // try the next model
+        break; // account/billing-level error -- no point trying other models
+      }
+      const json = await res.json();
+      const content = json?.choices?.[0]?.message?.content;
+      if (!content) {
+        console.error("assistant call returned no content", model, res.status, JSON.stringify(json));
+        lastStatus = res.status;
+        continue; // try the next model
+      }
+      return content;
+    } catch (e) {
+      console.error("assistant call failed", model, e);
+      lastStatus = -1;
+      // A network-level failure isn't necessarily model-specific (OpenRouter
+      // routes different models to different upstream providers) -- worth
+      // trying the next model rather than giving up immediately.
     }
-    const json = await res.json();
-    const content = json?.choices?.[0]?.message?.content;
-    if (!content) {
-      console.error("assistant call returned no content", res.status, JSON.stringify(json));
-      return rawExcerptFallback(chunks, webResults, "the AI service returned an empty response");
-    }
-    return content;
-  } catch (e) {
-    console.error("assistant call failed", e);
-    return rawExcerptFallback(chunks, webResults, "the AI service is temporarily unreachable");
   }
+  const reason = lastStatus === 402 ? "the AI service's usage credit is exhausted" : "the AI service returned an error";
+  return rawExcerptFallback(chunks, webResults, reason);
 }

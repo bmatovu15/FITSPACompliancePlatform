@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { askAssistantCombined, expandQueryForSearch } from "@/lib/ingest";
-import { OPENROUTER_API_KEY, OPENROUTER_MODEL, GOOGLE_CSE_API_KEY, GOOGLE_CSE_ID } from "@/lib/server-config";
+import {
+  OPENROUTER_API_KEY,
+  OPENROUTER_MODEL,
+  OPENROUTER_FALLBACK_MODELS,
+  GOOGLE_CSE_API_KEY,
+  GOOGLE_CSE_ID,
+} from "@/lib/server-config";
 import { searchRegulatorWeb, type WebResult } from "@/lib/web-search";
 
 type SearchChunkRow = {
@@ -56,7 +62,7 @@ export async function POST(req: NextRequest) {
 
   const answer = await askAssistantCombined({
     apiKey: OPENROUTER_API_KEY,
-    model: OPENROUTER_MODEL,
+    models: [OPENROUTER_MODEL, ...OPENROUTER_FALLBACK_MODELS],
     question,
     chunks: usableChunks,
     webResults: usableWebResults,
