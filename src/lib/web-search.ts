@@ -1,14 +1,14 @@
-// Scoped, regulator-only web search -- used ONLY as a fallback when
-// FITSPA's own indexed documents return zero matches for a question (see
-// src/app/api/assistant/route.ts: this only fires when usableChunks.length
-// === 0). This is deliberately NOT a general web search: results are
-// restricted to a hand-verified allowlist of official Ugandan regulator
-// domains below, and every answer built from it is labelled as web-sourced
-// and kept visually separate from FITSPA's own document-grounded answers
-// (see assistant.module.css's .webNotice / page.tsx's sourceType handling)
-// -- never silently blended, so a member can always tell an answer came
-// from an uploaded, FITSPA-vetted document versus the open web. Full
-// reasoning: strategy/ai-assistant-architecture.md §6 in the project.
+// Scoped, regulator-only web search -- used as a fallback when FITSPA's own
+// indexed documents don't really cover a question (see
+// src/app/api/assistant/route.ts for the two trigger conditions). This is
+// deliberately NOT a general web search: results are restricted to a
+// hand-verified allowlist of official Ugandan regulator domains below, and
+// every answer built from it is labelled as web-sourced and kept visually
+// separate from FITSPA's own document-grounded answers (see
+// assistant.module.css's .webNotice / page.tsx's sourceType handling) --
+// never silently blended, so a member can always tell an answer came from
+// an uploaded, FITSPA-vetted document versus the open web. Full reasoning:
+// strategy/ai-assistant-architecture.md §6 in the project.
 //
 // Domains verified individually (web search, 2026-10-02) against each
 // regulator's actual official site -- not guessed:
@@ -24,6 +24,58 @@ export const OFFICIAL_REGULATOR_DOMAINS: Record<string, string[]> = {
   "Uganda Registration Services Bureau (URSB)": ["ursb.go.ug"],
   "Uganda Revenue Authority (URA)": ["ura.go.ug"],
 };
+
+// Which regulators FITSPA actually has indexed documents for today (BOU,
+// MRD, IRA) vs. the 7 with none (everything else above). Checked live
+// post-deploy, 2026-10-02: search_document_chunks's loose "any word
+// matches" fallback pass (src/lib/ingest.ts's comment on
+// expandQueryForSearch explains why that pass exists) will return SOME
+// chunks for almost any realistic question against FITSPA's 500+-chunk
+// corpus, even when none of them are actually about the regulator being
+// asked about -- e.g. "What is the TIN registration process at URA?"
+// returned 10 BOU/MRD/IRA chunks matched only on generic words like
+// "registration" and "process". So "zero chunks retrieved" alone is NOT a
+// reliable signal that a question isn't about one of the uncovered
+// regulators -- route.ts also calls detectUncoveredRegulatorTrigger()
+// below and prefers the web fallback whenever a question explicitly names
+// one of the 7 uncovered regulators, regardless of what the full-text
+// search's loose pass happened to match on.
+const UNCOVERED_REGULATOR_TRIGGERS: Record<string, string[]> = {
+  "Capital Markets Authority (CMA)": ["cma", "capital markets authority"],
+  "Financial Intelligence Authority (FIA)": ["fia", "financial intelligence authority"],
+  "National IT Authority – Uganda (NITA-U)": [
+    "nita-u",
+    "nitau",
+    "nita",
+    "national information technology authority",
+  ],
+  "National Personal Data Protection Office (PDPO)": [
+    "pdpo",
+    "data protection office",
+    "personal data protection",
+  ],
+  "Uganda Communications Commission (UCC)": ["ucc", "communications commission"],
+  "Uganda Registration Services Bureau (URSB)": ["ursb", "registration services bureau"],
+  "Uganda Revenue Authority (URA)": ["ura", "revenue authority", "tax identification number"],
+};
+
+// Returns the display name of the uncovered regulator a question explicitly
+// names (by acronym or full name), or null if none matched. Single-word
+// triggers (acronyms) match as a whole word only, same approach as
+// expandQueryForSearch in src/lib/ingest.ts; multi-word triggers match as a
+// literal substring.
+export function detectUncoveredRegulatorTrigger(question: string): string | null {
+  const q = question.toLowerCase();
+  const words = new Set(q.match(/[a-z0-9-]+/g) ?? []);
+  for (const [regulator, triggers] of Object.entries(UNCOVERED_REGULATOR_TRIGGERS)) {
+    for (const trigger of triggers) {
+      if (trigger.includes(" ") ? q.includes(trigger) : words.has(trigger)) {
+        return regulator;
+      }
+    }
+  }
+  return null;
+}
 
 const ALL_ALLOWED_HOSTS = Array.from(new Set(Object.values(OFFICIAL_REGULATOR_DOMAINS).flat()));
 

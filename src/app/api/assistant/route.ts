@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { askAssistant, expandQueryForSearch } from "@/lib/ingest";
 import { OPENROUTER_API_KEY, OPENROUTER_MODEL, GOOGLE_CSE_API_KEY, GOOGLE_CSE_ID } from "@/lib/server-config";
-import { searchRegulatorWeb, askAssistantFromWeb } from "@/lib/web-search";
+import { searchRegulatorWeb, askAssistantFromWeb, detectUncoveredRegulatorTrigger } from "@/lib/web-search";
 
 type SearchChunkRow = {
   content: string;
@@ -65,21 +65,40 @@ export async function POST(req: NextRequest) {
     doc_kind: c.doc_kind,
   }));
 
-  // Scoped web-search fallback: FITSPA's indexed documents found literally
-  // nothing for this question (usableChunks.length === 0 -- askAssistant()
-  // above already returned its fixed "I couldn't find anything..." message
-  // in that case). Several regulators (CMA, FIA, NITA-U, PDPO, UCC, URSB,
-  // URA, as of this round) have zero uploaded documents, so this is a real,
-  // common case, not an edge case -- see
-  // strategy/ai-assistant-architecture.md §2/§6 in the project for the full
-  // reasoning. This only ever triggers on a genuinely empty retrieval, so
-  // the well-covered BOU/MRD/IRA document-grounded path above is completely
-  // unaffected and unchanged. searchRegulatorWeb() restricts results to a
-  // hand-verified allowlist of official regulator domains (never a general
-  // web search) and returns null if GOOGLE_CSE_API_KEY/GOOGLE_CSE_ID aren't
-  // configured, in which case this block is a no-op and the original
-  // "not covered" answer/sources above are returned unchanged.
-  if (usableChunks.length === 0) {
+  // Scoped web-search fallback. Two trigger conditions, both needed because
+  // of something confirmed live post-deploy: search_document_chunks's loose
+  // "any word matches" fallback pass (see expandQueryForSearch's comment in
+  // src/lib/ingest.ts) will return SOME chunks for almost any realistic
+  // question against FITSPA's 500+-chunk corpus, even when none of them
+  // are actually about the regulator being asked about -- e.g. "What is
+  // the TIN registration process at URA?" matched 10 BOU/MRD/IRA chunks on
+  // generic words like "registration", none of them about URA at all. So
+  // "zero chunks retrieved" alone badly under-triggers this fallback for
+  // real questions about the 7 regulators with no indexed documents (CMA,
+  // FIA, NITA-U, PDPO, UCC, URSB, URA -- see
+  // strategy/ai-assistant-architecture.md §2/§6 in the project).
+  //
+  // 1. usableChunks.length === 0 -- retrieval found literally nothing
+  //    (askAssistant() above already returned its fixed "I couldn't find
+  //    anything..." message in that case).
+  // 2. detectUncoveredRegulatorTrigger(question) matches -- the question
+  //    explicitly names one of the 7 uncovered regulators by acronym or
+  //    name. When this matches, the web fallback is PREFERRED over
+  //    whatever document chunks were retrieved, since we know with
+  //    certainty those chunks aren't really about the regulator asked
+  //    about, however they happened to match on generic words.
+  //
+  // Neither condition touches the well-covered BOU/MRD/IRA document-
+  // grounded path for a question that doesn't name one of the 7 uncovered
+  // regulators -- that path (the answer/sources computed above) is
+  // completely unaffected and returned unchanged. searchRegulatorWeb()
+  // restricts results to a hand-verified allowlist of official regulator
+  // domains (never a general web search) and returns null if
+  // GOOGLE_CSE_API_KEY/GOOGLE_CSE_ID aren't configured, in which case this
+  // whole block is a no-op and the original document-grounded answer/
+  // sources above are returned unchanged.
+  const uncoveredRegulator = detectUncoveredRegulatorTrigger(question);
+  if (usableChunks.length === 0 || uncoveredRegulator) {
     const webResults = await searchRegulatorWeb({
       apiKey: GOOGLE_CSE_API_KEY,
       searchEngineId: GOOGLE_CSE_ID,
