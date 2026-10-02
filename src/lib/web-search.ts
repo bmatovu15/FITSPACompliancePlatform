@@ -194,7 +194,8 @@ QUESTION: ${question}`;
       body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], temperature: 0.1 }),
     });
     if (!res.ok) {
-      console.error("web-assistant call failed with status", res.status);
+      const bodyText = await res.text().catch(() => "");
+      console.error("web-assistant call failed with status", res.status, bodyText);
       const best = results[0];
       return `FITSPA's indexed documents don't cover this, and the AI summariser returned an error -- so here is the closest-matching result from the official ${hostnameOf(best.link)} website, unedited:
 

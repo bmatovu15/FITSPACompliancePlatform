@@ -237,11 +237,14 @@ QUESTION: ${question}`;
     if (!res.ok) {
       // Covers the 402 "insufficient credits" case (and any other non-2xx
       // response) -- fall back to the local index instead of surfacing raw
-      // billing errors to end users. Logs the real status for diagnosis
-      // (check Vercel runtime logs for "assistant call failed with
-      // status") but shows end users a plain-language reason instead of a
-      // raw HTTP code.
-      console.error("assistant call failed with status", res.status);
+      // billing errors to end users. Logs the real status AND response body
+      // for diagnosis (check Vercel runtime logs for "assistant call failed
+      // with status") but shows end users a plain-language reason instead
+      // of a raw HTTP code. The body is what actually explains a 403 (key
+      // restriction, data-policy/free-model opt-in, moderation, etc) --
+      // OpenRouter's error payload has a human-readable "message" field.
+      const bodyText = await res.text().catch(() => "");
+      console.error("assistant call failed with status", res.status, bodyText);
       const reason = res.status === 402 ? "the AI service's usage credit is exhausted" : "the AI service returned an error";
       return localSearchAnswer(chunks, reason);
     }
