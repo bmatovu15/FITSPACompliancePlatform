@@ -25,6 +25,8 @@ import {
   obligationApplies,
   profileSummaryText,
   validateProfile,
+  profileIssues,
+  type ProfileIssue,
   coverageWarning,
   parseISODate,
   todayDate,
@@ -114,6 +116,42 @@ function controlStateKey(cs: ControlStateFields): string {
 // ---------------------------------------------------------------------------
 // Small shared pieces
 // ---------------------------------------------------------------------------
+
+function ProfileIssueList({ issues, onGoToStep1 }: { issues: ProfileIssue[]; onGoToStep1?: () => void }) {
+  return (
+    <div
+      role="alert"
+      style={{
+        marginTop: 14,
+        padding: "12px 16px",
+        border: "1px solid #e3b4b4",
+        background: "#fdf4f4",
+        borderRadius: 10,
+        fontSize: 13,
+        color: "#5a1d1d",
+      }}
+    >
+      <strong style={{ display: "block", marginBottom: 6 }}>A few answers are still needed before we can build your workspace:</strong>
+      <ul style={{ margin: 0, paddingLeft: 18 }}>
+        {issues.map((i) => (
+          <li key={i.message}>
+            {i.message}
+            {i.step === 1 && onGoToStep1 ? " (step 1)" : ""}
+          </li>
+        ))}
+      </ul>
+      {onGoToStep1 && issues.some((i) => i.step === 1) ? (
+        <button
+          type="button"
+          onClick={onGoToStep1}
+          style={{ marginTop: 8, background: "none", border: 0, padding: 0, textDecoration: "underline", cursor: "pointer", fontWeight: 600, color: "inherit" }}
+        >
+          ← Go back to step 1
+        </button>
+      ) : null}
+    </div>
+  );
+}
 
 function OptionGroup({ value, onSelect }: { value: string; onSelect: (val: string) => void }) {
   return (
@@ -331,6 +369,11 @@ export default function PaymentsComplianceClient({
   const [draftProfile, setDraftProfile] = useState<ProfileFields>(profileFromRow(initialProfile));
   const [screen, setScreen] = useState<"wizard" | "app">(profileSet ? "app" : "wizard");
   const [wizardStep, setWizardStep] = useState<1 | 2>(1);
+  // Set once the member presses Continue / Generate with answers missing, so
+  // the wizard can say exactly what is missing rather than leaving the button
+  // dead; profileError carries a failed save back to the screen.
+  const [showProfileIssues, setShowProfileIssues] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
 
   const [taskStates, setTaskStates] = useState<Record<string, TaskStateFields>>(() =>
@@ -415,6 +458,7 @@ export default function PaymentsComplianceClient({
 
   async function saveProfile() {
     setSavingProfile(true);
+    setProfileError(null);
     // issue_date/fye_date/pdpo_expiry are `date` columns used only by the
     // Digital Lending profile; ProfileFields keeps them as "" for Payments,
     // and Postgres rejects "" for a date column, so coerce blanks to null.
@@ -434,6 +478,7 @@ export default function PaymentsComplianceClient({
     setSavingProfile(false);
     if (error) {
       console.error("Failed to save profile", error);
+      setProfileError("We couldn't save your profile just now. Please check your connection and try again.");
       return;
     }
     setAppliedProfile(draftProfile);
@@ -650,10 +695,23 @@ export default function PaymentsComplianceClient({
 
               <div className={styles["pc-setup-actions"]}>
                 <span className={styles["pc-setup-helper"]}>You can change these later from inside the workspace.</span>
-                <button className={`${styles["pc-btn"]} ${styles.primary}`} onClick={() => setWizardStep(2)}>
+                <button
+                  className={`${styles["pc-btn"]} ${styles.primary}`}
+                  onClick={() => {
+                    if (profileIssues(draftProfile, catalogKey).some((i) => i.step === 1)) {
+                      setShowProfileIssues(true);
+                      return;
+                    }
+                    setShowProfileIssues(false);
+                    setWizardStep(2);
+                  }}
+                >
                   Continue →
                 </button>
               </div>
+              {showProfileIssues && profileIssues(draftProfile, catalogKey).some((i) => i.step === 1) ? (
+                <ProfileIssueList issues={profileIssues(draftProfile, catalogKey).filter((i) => i.step === 1)} />
+              ) : null}
             </>
           ) : (
             <>
@@ -692,12 +750,32 @@ export default function PaymentsComplianceClient({
                 </span>
                 <button
                   className={`${styles["pc-btn"]} ${styles.primary}`}
-                  disabled={!validateProfile(draftProfile, catalogKey) || savingProfile}
-                  onClick={saveProfile}
+                  disabled={savingProfile}
+                  onClick={() => {
+                    if (!validateProfile(draftProfile, catalogKey)) {
+                      setShowProfileIssues(true);
+                      return;
+                    }
+                    setShowProfileIssues(false);
+                    saveProfile();
+                  }}
                 >
                   {savingProfile ? "Saving…" : "Generate my compliance workspace →"}
                 </button>
               </div>
+              {showProfileIssues && !validateProfile(draftProfile, catalogKey) ? (
+                <ProfileIssueList
+                  issues={profileIssues(draftProfile, catalogKey)}
+                  onGoToStep1={() => {
+                    setWizardStep(1);
+                  }}
+                />
+              ) : null}
+              {profileError ? (
+                <p role="alert" style={{ color: "#a32020", fontSize: 13, marginTop: 12 }}>
+                  {profileError}
+                </p>
+              ) : null}
             </>
           )}
         </main>

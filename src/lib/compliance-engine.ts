@@ -283,42 +283,61 @@ export function profileSummaryText(p: ProfileFields, catalogKey: string): string
   return parts.join("  ·  ") || "No profile set";
 }
 
-export function validateProfile(p: ProfileFields, catalogKey: string): boolean {
+export type ProfileIssue = { step: 1 | 2; message: string };
+
+/**
+ * Everything still missing from a profile, in plain language, for the setup
+ * wizards to show instead of leaving a button silently disabled. `step` says
+ * which wizard step the missing answer lives on (Payments only has two).
+ * validateProfile() below is simply "no issues".
+ */
+export function profileIssues(p: ProfileFields, catalogKey: string): ProfileIssue[] {
+  const issues: ProfileIssue[] = [];
+  const need = (ok: boolean, step: 1 | 2, message: string) => {
+    if (!ok) issues.push({ step, message });
+  };
   if (catalogKey === INSURANCE_CATALOG_KEY) {
-    if (!p.route) return false;
+    need(!!p.route, 1, "Choose your insurance route");
     // Life-vs-non-life only matters (and is only asked) for the Insurer and
     // Broker routes -- Agent and HMO are single-track in the source
     // guidelines, so no business_line answer is required for them.
-    if ((p.route === "insurer" || p.route === "broker") && !p.business_line) return false;
-    return true;
+    need(!((p.route === "insurer" || p.route === "broker") && !p.business_line), 1, "Choose life or non-life business");
+    return issues;
   }
   if (catalogKey === DIGITAL_LENDING_CATALOG_KEY) {
-    return (
-      !!p.money_lender &&
-      !!p.ndt_mfi &&
-      !!p.personal_data &&
-      !!p.collateral &&
-      !!p.recovery_agents &&
-      !!p.fitspa_subscriber
-    );
+    need(!!p.money_lender, 1, "Answer: money lender");
+    need(!!p.ndt_mfi, 1, "Answer: non-deposit-taking MFI");
+    need(!!p.personal_data, 1, "Answer: personal data");
+    need(!!p.collateral, 1, "Answer: collateral");
+    need(!!p.recovery_agents, 1, "Answer: recovery agents");
+    need(!!p.fitspa_subscriber, 1, "Answer: FITSPA subscriber");
+    return issues;
   }
   // Beacon Phase 2: at least one of PSO/PSP/Instrument must be answered Yes —
   // combined licences are allowed, but the member must hold at least one.
-  const anyCategory = p.is_pso === "Yes" || p.is_psp === "Yes" || p.is_instrument === "Yes";
-  let ok =
-    !!p.is_pso &&
-    !!p.is_psp &&
-    !!p.is_instrument &&
-    anyCategory &&
-    !!p.emi &&
-    !!p.cards &&
-    !!p.agent &&
-    !!p.sfi &&
-    !!p.participant;
-  if (p.is_pso === "Yes" && !p.pso_class) ok = false;
-  if (p.pso_class === "funds_transfer" && !p.pso_band) ok = false;
-  if (p.emi === "Yes" && !p.emi_band) ok = false;
-  return ok;
+  need(!!p.is_pso, 1, "Answer “Payment system operator (PSO)?”");
+  need(!!p.is_psp, 1, "Answer “Payment service provider (PSP)?”");
+  need(!!p.is_instrument, 1, "Answer “Issuer of a payment instrument?”");
+  if (p.is_pso && p.is_psp && p.is_instrument) {
+    need(
+      p.is_pso === "Yes" || p.is_psp === "Yes" || p.is_instrument === "Yes",
+      1,
+      "Answer Yes to at least one of PSO, PSP or payment-instrument issuer — you must hold at least one licence type"
+    );
+  }
+  need(!(p.is_pso === "Yes" && !p.pso_class), 1, "Choose your PSO class");
+  need(!(p.pso_class === "funds_transfer" && !p.pso_band), 1, "Choose your funds-transfer volume band");
+  need(!!p.emi, 1, "Answer “Electronic-money issuer (EMI)?”");
+  need(!(p.emi === "Yes" && !p.emi_band), 1, "Choose your EMI trust-account value band");
+  need(!!p.sfi, 2, "Answer “Also a financial institution or microfinance deposit-taking institution?”");
+  need(!!p.agent, 2, "Answer “Do you use agents to provide payment services?”");
+  need(!!p.cards, 2, "Answer “Do you issue stored-value or prepaid cards?”");
+  need(!!p.participant, 2, "Answer “Are you a participant in another payment system or settlement arrangement?”");
+  return issues;
+}
+
+export function validateProfile(p: ProfileFields, catalogKey: string): boolean {
+  return profileIssues(p, catalogKey).length === 0;
 }
 
 const COVERAGE_WARNINGS: Record<string, string> = {

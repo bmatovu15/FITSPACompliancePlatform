@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
 import styles from "./payments-workspace.module.css";
 import type {
@@ -30,6 +30,8 @@ import type {
 
 const STORAGE_KEY = "beaconPaymentsApplicationId";
 const BUCKET = "licence-application-files";
+// Reserved external_id for Documents-tab uploads that aren't tied to any one requirement.
+const GENERAL_DOC_ID = "_general";
 
 const PHASE_ORDER = ["company", "people", "business", "technology", "policies", "forms", "review"] as const;
 type Phase = (typeof PHASE_ORDER)[number];
@@ -653,6 +655,15 @@ export default function PaymentsWizardClient({
   const [activeDrawer, setActiveDrawer] = useState<DrawerState>(null);
   const [expertMessage, setExpertMessage] = useState("");
   const [expertSending, setExpertSending] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  // Latest itemStates/files for the explicit Save button, which has to read
+  // state that a blur-triggered autosave has only just written.
+  const itemStatesRef = useRef(itemStates);
+  const filesRef = useRef(files);
+  useEffect(() => {
+    itemStatesRef.current = itemStates;
+    filesRef.current = files;
+  }, [itemStates, files]);
 
   async function loadApplicationData(appRow: MemberLicenceApplication) {
     setApplication(appRow);
@@ -778,8 +789,8 @@ export default function PaymentsWizardClient({
     setScreen("landing");
   }
 
-  async function saveItem(externalId: string, patch: { answers: Record<string, unknown>; status: ItemStatus }) {
-    if (!application) return;
+  async function saveItem(externalId: string, patch: { answers: Record<string, unknown>; status: ItemStatus }): Promise<boolean> {
+    if (!application) return false;
     setItemStates((s) => ({
       ...s,
       [externalId]: {
@@ -801,15 +812,77 @@ export default function PaymentsWizardClient({
       .single();
     if (error) {
       console.error("Failed to save checklist item", error);
-      return;
+      return false;
     }
     if (data) setItemStates((s) => ({ ...s, [externalId]: data as MemberLicenceApplicationItemState }));
+    return true;
   }
 
   async function commitAnswers(template: LicenceApplicationTemplate, nextAnswers: Record<string, unknown>) {
     const itemFiles = files[template.external_id] ?? [];
     const status = computeStatus(template.drawer_type, template.external_id, nextAnswers, itemFiles);
     await saveItem(template.external_id, { answers: nextAnswers, status });
+  }
+
+  // Explicit "Save" for a requirement drawer. Every field in the drawers
+  // already auto-saves on blur/change; this button makes that explicit: it
+  // blurs the focused field first (so a half-typed value is committed), then
+  // re-writes the item's current answers and recomputed status, and only
+  // reports "Saved" once the database write has actually succeeded.
+  async function saveRequirement(externalId: string) {
+    const template = templatesById[externalId];
+    if (!template) return;
+    setSaveStatus("saving");
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    // Let the blur-triggered autosave (if any) run and land in state/ref.
+    await new Promise((r) => setTimeout(r, 120));
+    const answers = itemStatesRef.current[externalId]?.answers ?? {};
+    const itemFiles = filesRef.current[externalId] ?? [];
+    const status = computeStatus(template.drawer_type, template.external_id, answers, itemFiles);
+    const ok = await saveItem(externalId, { answers, status });
+    setSaveStatus(ok ? "saved" : "error");
+    if (ok) setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 3000);
+  }
+
+  // Documents-tab upload: a general supporting document that isn't tied to
+  // any single requirement. Stored in the same bucket/table as requirement
+  // files under the reserved external_id GENERAL_DOC_ID so it resumes with
+  // the application and shows up in the Documents tab and file count.
+  async function handleGeneralUpload(file: File): Promise<boolean> {
+    if (!application) return false;
+    const slot = "Additional document";
+    const existing = (files[GENERAL_DOC_ID] ?? []).filter((f) => f.file_name === file.name);
+    const nextVersion = existing.length ? Math.max(...existing.map((f) => f.version)) + 1 : 1;
+    const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+    const path = `${application.id}/${GENERAL_DOC_ID}/${Date.now()}-v${nextVersion}-${safeName}`;
+    const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
+    if (uploadError) {
+      console.error("Failed to upload general document", uploadError);
+      setErrorMsg("That file couldn't be uploaded. Please try again.");
+      return false;
+    }
+    const { data, error } = await supabase
+      .from("member_licence_application_files")
+      .insert({
+        application_id: application.id,
+        external_id: GENERAL_DOC_ID,
+        slot,
+        file_name: file.name,
+        storage_path: path,
+        version: nextVersion,
+      })
+      .select("*")
+      .single();
+    if (error || !data) {
+      console.error("Failed to record general document", error);
+      setErrorMsg("That file uploaded, but we couldn't record it. Please try again.");
+      return false;
+    }
+    setErrorMsg(null);
+    setFiles((s) => ({ ...s, [GENERAL_DOC_ID]: [...(s[GENERAL_DOC_ID] ?? []), data as MemberLicenceApplicationFile] }));
+    return true;
   }
 
   async function handleUpload(template: LicenceApplicationTemplate, slot: string, file: File): Promise<boolean> {
@@ -986,7 +1059,10 @@ export default function PaymentsWizardClient({
     const rows: (MemberLicenceApplicationFile & { title: string })[] = [];
     Object.keys(files).forEach((externalId) => {
       (files[externalId] ?? []).forEach((f) => {
-        rows.push({ ...f, title: templatesById[externalId]?.title ?? externalId });
+        rows.push({
+          ...f,
+          title: externalId === GENERAL_DOC_ID ? "General document" : templatesById[externalId]?.title ?? externalId,
+        });
       });
     });
     return rows.sort((a, b) => (b.uploaded_at ?? "").localeCompare(a.uploaded_at ?? ""));
@@ -996,6 +1072,7 @@ export default function PaymentsWizardClient({
 
   function closeDrawer() {
     setActiveDrawer(null);
+    setSaveStatus("idle");
   }
 
   function openGuidanceDrawer(externalId: string) {
@@ -1003,6 +1080,7 @@ export default function PaymentsWizardClient({
   }
 
   function openRequirementDrawer(externalId: string) {
+    setSaveStatus("idle");
     setActiveDrawer({ kind: "requirement", externalId });
   }
 
@@ -1363,7 +1441,13 @@ export default function PaymentsWizardClient({
       )}
 
       {activeTab === "documents" && (
-        <DocumentsTab rows={allFileRows} onOpenRequirement={openRequirementFromRail} />
+        <DocumentsTab
+          rows={allFileRows}
+          onOpenRequirement={openRequirementFromRail}
+          onUpload={handleGeneralUpload}
+          onViewFile={viewFile}
+          errorMsg={errorMsg}
+        />
       )}
 
       {activeTab === "review" && applicationReview && (
@@ -1385,6 +1469,8 @@ export default function PaymentsWizardClient({
           itemStates={itemStates}
           files={files}
           onSaveAnswers={commitAnswers}
+          onSaveRequirement={saveRequirement}
+          saveStatus={saveStatus}
           onUpload={handleUpload}
           onViewFile={viewFile}
           assignedClasses={assignedClasses}
@@ -2673,6 +2759,8 @@ function WorkspaceDrawer({
   itemStates,
   files,
   onSaveAnswers,
+  onSaveRequirement,
+  saveStatus,
   onUpload,
   onViewFile,
   assignedClasses,
@@ -2695,6 +2783,8 @@ function WorkspaceDrawer({
   itemStates: Record<string, MemberLicenceApplicationItemState>;
   files: Record<string, MemberLicenceApplicationFile[]>;
   onSaveAnswers: (template: LicenceApplicationTemplate, answers: Record<string, unknown>) => void;
+  onSaveRequirement: (externalId: string) => void;
+  saveStatus: "idle" | "saving" | "saved" | "error";
   onUpload: (template: LicenceApplicationTemplate, slot: string, file: File) => Promise<boolean>;
   onViewFile: (f: MemberLicenceApplicationFile) => void;
   assignedClasses: AssignedClass[];
@@ -2789,6 +2879,35 @@ function WorkspaceDrawer({
           </button>
         </div>
         <div className={styles.drawerBody}>{body}</div>
+        {drawerState.kind === "requirement" && templatesById[drawerState.externalId] && (
+          <div className={styles.drawerFooter}>
+            <span
+              className={`${styles.saveStatus} ${saveStatus === "saved" ? styles.ok : ""} ${saveStatus === "error" ? styles.err : ""}`}
+              role="status"
+            >
+              {saveStatus === "saving"
+                ? "Saving…"
+                : saveStatus === "saved"
+                  ? "✓ Saved"
+                  : saveStatus === "error"
+                    ? "Couldn't save — please try again"
+                    : "Changes also save automatically as you go"}
+            </span>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button type="button" className={`${styles.workBtn} ${styles.subtle}`} onClick={onClose}>
+                Close
+              </button>
+              <button
+                type="button"
+                className={`${styles.workBtn} ${styles.primary}`}
+                disabled={saveStatus === "saving"}
+                onClick={() => onSaveRequirement(drawerState.externalId)}
+              >
+                {saveStatus === "saving" ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </div>
+        )}
       </aside>
     </>
   );
@@ -2803,16 +2922,62 @@ function WorkspaceDrawer({
 function DocumentsTab({
   rows,
   onOpenRequirement,
+  onUpload,
+  onViewFile,
+  errorMsg,
 }: {
   rows: (MemberLicenceApplicationFile & { title: string })[];
   onOpenRequirement: (externalId: string) => void;
+  onUpload: (file: File) => Promise<boolean>;
+  onViewFile: (f: MemberLicenceApplicationFile) => void;
+  errorMsg: string | null;
 }) {
+  const [busy, setBusy] = useState(false);
+  const [uploadedCount, setUploadedCount] = useState<number | null>(null);
+  async function handleFiles(list: FileList | null) {
+    if (!list || list.length === 0) return;
+    setBusy(true);
+    setUploadedCount(null);
+    let ok = 0;
+    for (const f of Array.from(list)) {
+      if (await onUpload(f)) ok += 1;
+    }
+    setBusy(false);
+    setUploadedCount(ok);
+  }
   return (
     <div className={styles.workspaceWide}>
-      <h2>Documents</h2>
-      <p className={styles.workspaceIntro}>
-        Your uploaded application documents appear here automatically. Replacing a file creates a new version.
-      </p>
+      <div className={styles.docsHead}>
+        <div>
+          <h2>Documents</h2>
+          <p className={styles.workspaceIntro} style={{ marginBottom: 8 }}>
+            Your uploaded application documents appear here automatically. Replacing a file creates a new version.
+          </p>
+        </div>
+        <div>
+          <label className={`${styles.workBtn} ${styles.primary}`} style={{ display: "inline-block", cursor: busy ? "wait" : "pointer" }}>
+            {busy ? "Uploading…" : "Upload documents"}
+            <input
+              type="file"
+              multiple
+              disabled={busy}
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const list = e.target.files;
+                void handleFiles(list).then(() => {
+                  e.target.value = "";
+                });
+              }}
+            />
+          </label>
+          <p className={styles.docsUploadNote}>
+            {uploadedCount !== null
+              ? `${uploadedCount} file${uploadedCount === 1 ? "" : "s"} uploaded`
+              : "Add any supporting document, even if it isn't tied to a single requirement."}
+          </p>
+        </div>
+      </div>
+      {errorMsg && <p className={styles.docsError}>{errorMsg}</p>}
       {rows.length === 0 ? (
         <div className={styles.emptyState}>No documents uploaded yet.</div>
       ) : (
@@ -2823,6 +2988,7 @@ function DocumentsTab({
               <th>Requirement</th>
               <th>Version</th>
               <th>Uploaded</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -2833,12 +2999,21 @@ function DocumentsTab({
                   <div className={styles.docSub}>{r.slot}</div>
                 </td>
                 <td>
-                  <button type="button" className={styles.railLink} onClick={() => onOpenRequirement(r.external_id)}>
-                    {r.title}
-                  </button>
+                  {r.external_id === GENERAL_DOC_ID ? (
+                    <span>{r.title}</span>
+                  ) : (
+                    <button type="button" className={styles.railLink} onClick={() => onOpenRequirement(r.external_id)}>
+                      {r.title}
+                    </button>
+                  )}
                 </td>
                 <td>v{r.version}</td>
                 <td>{(r.uploaded_at ?? "").slice(0, 10)}</td>
+                <td>
+                  <button type="button" className={styles.railLink} onClick={() => onViewFile(r)}>
+                    View
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

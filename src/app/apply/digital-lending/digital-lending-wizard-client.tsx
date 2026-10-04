@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, type FormEvent, type ReactNode } from "react";
+import { useMemo, useState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
 import styles from "./digital-lending-workspace.module.css";
 import type {
@@ -30,6 +30,7 @@ import type {
 
 const STORAGE_KEY = "beaconDigitalLendingApplicationId";
 const BUCKET = "licence-application-files";
+const GENERAL_DOC_ID = "_general";
 
 const PHASE_ORDER = ["business", "people", "products", "technology", "policies", "finalise"] as const;
 type Phase = (typeof PHASE_ORDER)[number];
@@ -208,6 +209,15 @@ export default function DigitalLendingWizardClient({
   const [drawer, setDrawer] = useState<DrawerState>(null);
   const [creatingRoute, setCreatingRoute] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  // Explicit "Save" button in each requirement drawer. Keyed by requirement so
+  // a status shown for one drawer never leaks into the next one that opens.
+  const [saveStatus, setSaveStatus] = useState<{ id: string; state: "saving" | "saved" | "error" } | null>(null);
+  const itemStatesRef = useRef(itemStates);
+  const filesRef = useRef(files);
+  useEffect(() => {
+    itemStatesRef.current = itemStates;
+    filesRef.current = files;
+  }, [itemStates, files]);
   const [submitting, setSubmitting] = useState(false);
   // Route chosen on the "route" screen but not yet committed to the
   // database -- the new "result" confirmation screen sits between picking a
@@ -322,8 +332,8 @@ export default function DigitalLendingWizardClient({
     setScreen("landing");
   }
 
-  async function saveItem(externalId: string, patch: { answers: Record<string, unknown>; status: ItemStatus }) {
-    if (!application) return;
+  async function saveItem(externalId: string, patch: { answers: Record<string, unknown>; status: ItemStatus }): Promise<boolean> {
+    if (!application) return false;
     setItemStates((s) => ({
       ...s,
       [externalId]: {
@@ -345,9 +355,10 @@ export default function DigitalLendingWizardClient({
       .single();
     if (error) {
       console.error("Failed to save checklist item", error);
-      return;
+      return false;
     }
     if (data) setItemStates((s) => ({ ...s, [externalId]: data as MemberLicenceApplicationItemState }));
+    return true;
   }
 
   async function commitAnswers(template: LicenceApplicationTemplate, nextAnswers: Record<string, unknown>) {
@@ -401,6 +412,63 @@ export default function DigitalLendingWizardClient({
       return;
     }
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  }
+
+  // Explicit Save for a requirement drawer. Inputs already autosave as they
+  // change; this flushes whatever is currently focused (a text field that has
+  // not blurred yet), re-reads the latest state and writes it, and only
+  // reports "Saved" once the database confirms it.
+  async function saveRequirement(template: LicenceApplicationTemplate) {
+    const id = template.external_id;
+    setSaveStatus({ id, state: "saving" });
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    await new Promise((r) => setTimeout(r, 120));
+    const answers = itemStatesRef.current[id]?.answers ?? {};
+    const itemFiles = filesRef.current[id] ?? [];
+    const status = computeStatus(template.drawer_type, answers, itemFiles, template.title === "Application fee");
+    const ok = await saveItem(id, { answers, status });
+    setSaveStatus({ id, state: ok ? "saved" : "error" });
+    if (ok) setTimeout(() => setSaveStatus((s) => (s && s.id === id && s.state === "saved" ? null : s)), 3000);
+  }
+
+  // Documents-tab upload: a file that is not tied to any one requirement.
+  // Stored under the reserved external_id "_general" in the same table and
+  // bucket as requirement files, so it shows up in the Documents table.
+  async function handleGeneralUpload(list: FileList | null) {
+    if (!application || !list || list.length === 0) return;
+    setErrorMsg(null);
+    for (const file of Array.from(list)) {
+      const existing = (filesRef.current[GENERAL_DOC_ID] ?? []).filter((f) => f.file_name === file.name);
+      const nextVersion = existing.length ? Math.max(...existing.map((f) => f.version)) + 1 : 1;
+      const safeName = file.name.replace(/[^A-Za-z0-9._-]+/g, "_");
+      const path = `${application.id}/${GENERAL_DOC_ID}/${Date.now()}-v${nextVersion}-${safeName}`;
+      const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
+      if (uploadError) {
+        console.error("Failed to upload file", uploadError);
+        setErrorMsg(`"${file.name}" couldn't be uploaded. Please try again.`);
+        continue;
+      }
+      const { data, error } = await supabase
+        .from("member_licence_application_files")
+        .insert({
+          application_id: application.id,
+          external_id: GENERAL_DOC_ID,
+          slot: "Additional document",
+          file_name: file.name,
+          storage_path: path,
+          version: nextVersion,
+        })
+        .select("*")
+        .single();
+      if (error || !data) {
+        console.error("Failed to record uploaded file", error);
+        setErrorMsg(`"${file.name}" uploaded, but we couldn't record it. Please try again.`);
+        continue;
+      }
+      const row = data as MemberLicenceApplicationFile;
+      filesRef.current = { ...filesRef.current, [GENERAL_DOC_ID]: [...(filesRef.current[GENERAL_DOC_ID] ?? []), row] };
+      setFiles((s) => ({ ...s, [GENERAL_DOC_ID]: [...(s[GENERAL_DOC_ID] ?? []), row] }));
+    }
   }
 
   const chosenRoute = application?.class_key ?? null;
@@ -464,7 +532,9 @@ export default function DigitalLendingWizardClient({
     const rows: { file: MemberLicenceApplicationFile; title: string; externalId: string }[] = [];
     Object.entries(files).forEach(([externalId, list]) => {
       const t = routeTemplates.find((tt) => tt.external_id === externalId);
-      (list ?? []).forEach((f) => rows.push({ file: f, title: t?.title ?? externalId, externalId }));
+      (list ?? []).forEach((f) =>
+        rows.push({ file: f, title: externalId === GENERAL_DOC_ID ? "General document" : t?.title ?? externalId, externalId })
+      );
     });
     rows.sort((a, b) => (b.file.uploaded_at ?? "").localeCompare(a.file.uploaded_at ?? ""));
     return rows;
@@ -632,6 +702,7 @@ export default function DigitalLendingWizardClient({
   let drawerEyebrow = "";
   let drawerTitle = "";
   let drawerBody: ReactNode = null;
+  const drawerSaveState = drawerTemplate && saveStatus && saveStatus.id === drawerTemplate.external_id ? saveStatus.state : null;
   const drawerHasRequirementContext = (drawer?.kind === "item" || drawer?.kind === "guide") && !!drawerTemplate;
 
   if (drawer?.kind === "item" && drawerTemplate) {
@@ -785,7 +856,29 @@ export default function DigitalLendingWizardClient({
           <section style={{ display: activeTab === "documents" ? "block" : "none" }}>
             <div className={styles["docs-head"]}>
               <h2>Documents</h2>
-              <p className={styles["workspace-intro"]}>Files added while preparing the application appear here automatically.</p>
+              <p className={styles["workspace-intro"]}>
+                Files added while preparing the application appear here automatically. You can also upload any supporting
+                document here, even if it isn&apos;t tied to a specific requirement.
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14, flexWrap: "wrap" }}>
+                <label className={styles["save-btn"]} style={{ cursor: "pointer", display: "inline-block" }}>
+                  Upload documents
+                  <input
+                    type="file"
+                    multiple
+                    style={{ display: "none" }}
+                    onChange={async (e) => {
+                      const input = e.currentTarget;
+                      await handleGeneralUpload(input.files);
+                      input.value = "";
+                    }}
+                  />
+                </label>
+                <span style={{ fontSize: 11, color: "#777" }}>
+                  {documentRows.length} document{documentRows.length === 1 ? "" : "s"} uploaded
+                </span>
+              </div>
+              {errorMsg ? <p style={{ fontSize: 11.5, color: "#a32020", margin: "10px 0 0" }}>{errorMsg}</p> : null}
             </div>
             {documentRows.length === 0 ? (
               <div className={styles.empty}>No documents have been added yet.</div>
@@ -810,17 +903,23 @@ export default function DigitalLendingWizardClient({
                       <td>{r.title}</td>
                       <td>v{r.file.version}</td>
                       <td>{(r.file.uploaded_at ?? "").slice(0, 10)}</td>
-                      <td>
-                        <button
-                          type="button"
-                          className={styles["open-req"]}
-                          onClick={() => {
-                            setActiveTab("application");
-                            setDrawer({ kind: "item", externalId: r.externalId });
-                          }}
-                        >
-                          Open requirement
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        <button type="button" className={styles["open-req"]} onClick={() => viewFile(r.file)}>
+                          View
                         </button>
+                        {r.externalId !== GENERAL_DOC_ID ? (
+                          <button
+                            type="button"
+                            className={styles["open-req"]}
+                            style={{ marginLeft: 12 }}
+                            onClick={() => {
+                              setActiveTab("application");
+                              setDrawer({ kind: "item", externalId: r.externalId });
+                            }}
+                          >
+                            Open requirement
+                          </button>
+                        ) : null}
                       </td>
                     </tr>
                   ))}
@@ -945,9 +1044,44 @@ export default function DigitalLendingWizardClient({
           ) : (
             <span />
           )}
-          <button type="button" className={styles["subtle-btn"]} onClick={() => setDrawer(null)}>
-            Close
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {drawer?.kind === "item" && drawerTemplate ? (
+              <>
+                <span
+                  role="status"
+                  style={{
+                    fontSize: 10.5,
+                    color:
+                      drawerSaveState === "error" ? "#a32020" : drawerSaveState === "saved" ? "#1f6b3a" : "#777",
+                    fontWeight: drawerSaveState === "saved" || drawerSaveState === "error" ? 700 : 400,
+                  }}
+                >
+                  {drawerSaveState === "saving"
+                    ? "Saving…"
+                    : drawerSaveState === "saved"
+                      ? "✓ Saved"
+                      : drawerSaveState === "error"
+                        ? "Couldn't save — please try again"
+                        : ""}
+                </span>
+                <button type="button" className={styles["subtle-btn"]} onClick={() => setDrawer(null)}>
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className={styles["save-btn"]}
+                  disabled={drawerSaveState === "saving"}
+                  onClick={() => saveRequirement(drawerTemplate)}
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <button type="button" className={styles["subtle-btn"]} onClick={() => setDrawer(null)}>
+                Close
+              </button>
+            )}
+          </div>
         </div>
       </aside>
     </div>
