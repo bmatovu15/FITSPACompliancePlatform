@@ -1,0 +1,26 @@
+-- PROPOSAL ONLY -- NOT APPLIED AUTOMATICALLY. Review before running.
+--
+-- Why: the policies on member_licence_applications / member_licence_application_item_state /
+-- member_licence_application_files and on the licence-application-files storage bucket allow any
+-- visitor to read and write every anonymous (member_id IS NULL) application, its answers and its
+-- files. The rebuilt Payments workspace now stores director / owner names, nationalities,
+-- identity documents, good-conduct certificates and source-of-funds evidence, so the
+-- "knowing the row id" scoping the code comments describe should be real.
+--
+-- Shape of the fix (a per-application capability secret checked in RLS):
+--
+-- alter table member_licence_applications
+--   add column if not exists access_token uuid not null default gen_random_uuid();
+--
+-- -- the client then sends the header  x-application-token: <access_token>  (supabase-js
+-- -- createClient(..., { global: { headers } })) once it has created / loaded its application;
+-- -- policy predicate for the parent table:
+-- --   member_id = current_member_id()
+-- --   or (member_id is null
+-- --       and access_token::text = (current_setting('request.headers', true)::json ->> 'x-application-token'))
+-- -- children (item_state, files): application_id in (select id from member_licence_applications where <predicate>)
+-- -- storage bucket policy: same predicate on (storage.foldername(name))[1]::uuid
+--
+-- Alternative: move anonymous reads/writes behind server routes using the service role and the
+-- row id + token. The existing policies must be dropped / replaced in the same migration
+-- (they are intentionally NOT altered by migrations 0201-0205).

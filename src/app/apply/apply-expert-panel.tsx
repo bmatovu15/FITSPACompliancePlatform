@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./apply-hub.module.css";
 
 // Ports the `ah-help` prompt + `ah-support-panel` toggle/form from the
@@ -23,10 +23,16 @@ export default function ApplyExpertPanel({
   const [question, setQuestion] = useState("");
   const [success, setSuccess] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const questionRef = useRef<HTMLTextAreaElement>(null);
 
   async function send() {
-    if (!question.trim()) return;
+    if (!question.trim()) {
+      questionRef.current?.focus();
+      return;
+    }
     setSending(true);
+    setError(null);
     try {
       const res = await fetch("/api/expert-support", {
         method: "POST",
@@ -39,7 +45,13 @@ export default function ApplyExpertPanel({
           message: question,
         }),
       });
-      if (res.ok) setSuccess(true);
+      if (res.ok) {
+        setSuccess(true);
+      } else {
+        setError("We couldn't send that question. Please try again.");
+      }
+    } catch {
+      setError("We couldn't send that question. Please try again.");
     } finally {
       setSending(false);
     }
@@ -57,6 +69,7 @@ export default function ApplyExpertPanel({
         </button>
       </div>
       <section
+        id="ah-support-panel"
         className={`${styles["ah-support-panel"]} ${open ? styles.open : ""}`}
         aria-live="polite"
       >
@@ -65,31 +78,38 @@ export default function ApplyExpertPanel({
         <div className={styles["ah-support-fields"]}>
           <label>
             Name
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            <input id="ah-support-name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label>
             Email
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input id="ah-support-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
         </div>
         <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#555", marginTop: 10 }}>
           Business / product
           <textarea
+            id="ah-support-question"
+            ref={questionRef}
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="What does your business do, and which licence pathway are you unsure about?"
           />
         </label>
         <div className={styles["ah-support-actions"]}>
-          <button type="button" onClick={send} disabled={sending}>
+          <button id="ah-support-send" type="button" onClick={send} disabled={sending}>
             {sending ? "Sending…" : "Send question"}
           </button>
-          <button className="secondary" type="button" onClick={() => setOpen(false)}>
+          <button id="ah-support-close" className={styles.secondary} type="button" onClick={() => setOpen(false)}>
             Close
           </button>
         </div>
+        {error && (
+          <div className={styles["ah-support-error"]} role="alert">
+            {error}
+          </div>
+        )}
         {success && (
-          <div className={styles["ah-support-success"]}>Question captured for Expert Support.</div>
+          <div id="ah-support-success" className={styles["ah-support-success"]}>Question captured for Expert Support.</div>
         )}
       </section>
     </>

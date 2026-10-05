@@ -1,9 +1,10 @@
 import Link from "next/link";
 import styles from "./apply-hub.module.css";
 import ApplyExpertPanel from "./apply-expert-panel";
+import { BRAND } from "@/lib/brand";
 
 export const metadata = {
-  title: "Apply | FITSPA Compliance Platform",
+  title: `Apply | ${BRAND}`,
   description: "Prepare and manage your Payments, Digital Lending, or Insurance licence application.",
 };
 
@@ -16,8 +17,8 @@ export default function ApplyHubPage() {
   return (
     <div className={styles.ahRoot}>
       <header className={styles["ah-nav"]}>
-        <Link className={styles["ah-brand"]} id="ah-brand-home" href="/" aria-label="FITSPA Compliance Platform home">
-          <span className={styles["ah-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
+        <Link className={styles["ah-brand"]} id="ah-brand-home" href="/" aria-label={`${BRAND} home`}>
+          <span className={styles["ah-brand-mark"]} aria-hidden="true"></span>{BRAND}
         </Link>
         <nav className={styles["ah-nav-links"]} aria-label="Primary">
           <button className={`${styles["ah-nav-link"]} ${styles.muted}`} type="button" disabled>
@@ -25,18 +26,13 @@ export default function ApplyHubPage() {
           </button>
           <span className={`${styles["ah-nav-link"]} ${styles.active}`}>Apply</span>
           <Link className={styles["ah-nav-link"]} href="/comply">Comply</Link>
-          <Link className={styles["ah-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <div className={styles["ah-nav-actions"]}>
-          <Link className={styles["ah-nav-search"]} href="/lookup">Search a member</Link>
-          <Link className={styles["ah-nav-register"]} href="/signup">Register</Link>
-          <Link className={styles["ah-nav-back"]} href="/">← Home</Link>
-        </div>
+        <Link className={styles["ah-home"]} id="ah-home" href="/">← Beacon home</Link>
       </header>
       <main className={styles["ah-main"]}>
         <div className={styles["ah-eyebrow"]}>Licence Application Manager</div>
         <h1 className={styles["ah-title"]}>What are you applying for?</h1>
-        <p className={styles["ah-dek"]}>Choose the licence application you want FITSPA Compliance Platform to help you prepare.</p>
+        <p className={styles["ah-dek"]}>Choose the licence application you want {BRAND} to help you prepare.</p>
 
         <div className={styles["ah-grid"]}>
           <article className={styles["ah-card"]}>

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import styles from "./comply-hub.module.css";
 import ComplyExpertPanel from "./comply-expert-panel";
+import { BRAND } from "@/lib/brand";
 
 export const metadata = {
-  title: "Comply | FITSPA Compliance Platform",
+  title: `Comply | ${BRAND}`,
   description: "Track and manage your ongoing Payments, Digital Lending or Insurance compliance obligations.",
 };
 
@@ -18,8 +19,8 @@ export default function ComplyHubPage() {
   return (
     <div className={styles.chRoot}>
       <header className={styles["ch-nav"]}>
-        <Link className={styles["ch-brand"]} id="ch-brand-home" href="/" aria-label="FITSPA Compliance Platform home">
-          <span className={styles["ch-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
+        <Link className={styles["ch-brand"]} id="ch-brand-home" href="/" aria-label={`${BRAND} home`}>
+          <span className={styles["ch-brand-mark"]} aria-hidden="true"></span>{BRAND}
         </Link>
         <nav className={styles["ch-nav-links"]} aria-label="Primary">
           <button className={`${styles["ch-nav-link"]} ${styles.muted}`} type="button" disabled>
@@ -27,18 +28,13 @@ export default function ComplyHubPage() {
           </button>
           <Link className={styles["ch-nav-link"]} href="/apply">Apply</Link>
           <span className={`${styles["ch-nav-link"]} ${styles.active}`}>Comply</span>
-          <Link className={styles["ch-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <div className={styles["ch-nav-actions"]}>
-          <Link className={styles["ch-nav-search"]} href="/lookup">Search a member</Link>
-          <Link className={styles["ch-nav-register"]} href="/signup">Register</Link>
-          <Link className={styles["ch-nav-back"]} href="/">← Home</Link>
-        </div>
+        <Link className={styles["ch-home"]} id="ch-home" href="/">← Beacon home</Link>
       </header>
       <main className={styles["ch-main"]}>
         <div className={styles["ch-eyebrow"]}>Compliance Assistant</div>
         <h1 className={styles["ch-title"]}>What do you need to stay compliant with?</h1>
-        <p className={styles["ch-dek"]}>Choose the licensed activity you want FITSPA Compliance Platform to help you manage.</p>
+        <p className={styles["ch-dek"]}>Choose the licensed activity you want {BRAND} to help you manage.</p>
         <div className={styles["ch-grid"]}>
           <article className={styles["ch-card"]}>
             <div className={styles["ch-card-kicker"]}>Bank of Uganda</div>

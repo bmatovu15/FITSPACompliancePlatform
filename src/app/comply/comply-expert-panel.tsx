@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./comply-hub.module.css";
 
 // Comply-hub twin of src/app/apply/apply-expert-panel.tsx -- same behaviour,
@@ -20,10 +20,16 @@ export default function ComplyExpertPanel({
   const [question, setQuestion] = useState("");
   const [success, setSuccess] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const questionRef = useRef<HTMLTextAreaElement>(null);
 
   async function send() {
-    if (!question.trim()) return;
+    if (!question.trim()) {
+      questionRef.current?.focus();
+      return;
+    }
     setSending(true);
+    setError(null);
     try {
       const res = await fetch("/api/expert-support", {
         method: "POST",
@@ -36,7 +42,13 @@ export default function ComplyExpertPanel({
           message: question,
         }),
       });
-      if (res.ok) setSuccess(true);
+      if (res.ok) {
+        setSuccess(true);
+      } else {
+        setError("We couldn't send that question. Please try again.");
+      }
+    } catch {
+      setError("We couldn't send that question. Please try again.");
     } finally {
       setSending(false);
     }
@@ -54,6 +66,7 @@ export default function ComplyExpertPanel({
         </button>
       </div>
       <section
+        id="ch-support-panel"
         className={`${styles["ch-support-panel"]} ${open ? styles.open : ""}`}
         aria-live="polite"
       >
@@ -62,31 +75,38 @@ export default function ComplyExpertPanel({
         <div className={styles["ch-support-fields"]}>
           <label>
             Name
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            <input id="ch-support-name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label>
             Email
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input id="ch-support-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
         </div>
         <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#555", marginTop: 10 }}>
           Business / product
           <textarea
+            id="ch-support-question"
+            ref={questionRef}
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="What does your business do, and which compliance pathway are you unsure about?"
           />
         </label>
         <div className={styles["ch-support-actions"]}>
-          <button type="button" onClick={send} disabled={sending}>
+          <button id="ch-support-send" type="button" onClick={send} disabled={sending}>
             {sending ? "Sending…" : "Send question"}
           </button>
-          <button className="secondary" type="button" onClick={() => setOpen(false)}>
+          <button id="ch-support-close" className={styles.secondary} type="button" onClick={() => setOpen(false)}>
             Close
           </button>
         </div>
+        {error && (
+          <div className={styles["ch-support-error"]} role="alert">
+            {error}
+          </div>
+        )}
         {success && (
-          <div className={styles["ch-support-success"]}>Question captured for Expert Support.</div>
+          <div id="ch-support-success" className={styles["ch-support-success"]}>Question captured for Expert Support.</div>
         )}
       </section>
     </>

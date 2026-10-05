@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./beacon-nav.module.css";
+import { BRAND } from "@/lib/brand";
 
 // Shared Beacon masthead, extracted from the near-identical su-nav / ah-nav /
 // ch-nav / dc-nav headers each Beacon-redesigned screen used to carry its
@@ -34,8 +35,8 @@ export default function BeaconNav({
 }) {
   return (
     <header className={styles.nav}>
-      <Link className={styles.brand} href="/" aria-label="FITSPA Compliance Platform home">
-        <span className={styles.brandMark} aria-hidden="true"></span>FITSPA Compliance Platform
+      <Link className={styles.brand} href="/" aria-label={`${BRAND} home`}>
+        <span className={styles.brandMark} aria-hidden="true"></span>{BRAND}
       </Link>
 
       <nav className={styles.navLinks} aria-label="Primary">
