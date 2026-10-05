@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./home.module.css";
+import { BRAND } from "@/lib/brand";
 
 // The Beacon platform landing screen (`screen-platform` in the uploaded
 // template), ported markup-for-markup per the Phase 1 plan in
@@ -13,7 +14,7 @@ export default function Home() {
     <div className={styles.bpRoot}>
       <header className={styles["bp-nav"]}>
         <div className={styles["bp-brand"]}>
-          <span className={styles["bp-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
+          <span className={styles["bp-brand-mark"]} aria-hidden="true"></span>{BRAND}
         </div>
         <nav className={styles["bp-nav-links"]} aria-label="Primary">
           <button className={`${styles["bp-nav-link"]} ${styles["bp-inactive"]}`} type="button" aria-disabled="true">
@@ -21,12 +22,8 @@ export default function Home() {
           </button>
           <Link className={styles["bp-nav-link"]} href="/apply">Apply</Link>
           <Link className={styles["bp-nav-link"]} href="/comply">Comply</Link>
-          <Link className={styles["bp-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <div className={styles["bp-nav-actions"]}>
-          <Link className={styles["bp-nav-search"]} href="/lookup">Search a member</Link>
-          <Link className={styles["bp-nav-register"]} href="/signup">Register</Link>
-        </div>
+        <div className={styles["bp-nav-spacer"]} aria-hidden="true"></div>
       </header>
 
       <section className={styles["bp-hero"]}>
@@ -38,7 +35,7 @@ export default function Home() {
           <Link className={styles["bp-primary"]} href="/apply">Start an application →</Link>
         </div>
 
-        <div className={styles["bp-visual"]} aria-label="FITSPA Compliance Platform application illustration">
+        <div className={styles["bp-visual"]} aria-label={`${BRAND} application illustration`}>
           <svg className={styles["bp-map"]} viewBox="0 0 500 560" role="img" aria-label="Uganda">
             <path d="M250 20 L304 43 L337 81 L377 90 L409 126 L433 165 L426 206 L454 245 L438 284 L453 322 L431 356 L420 401 L385 421 L375 465 L331 486 L294 516 L251 502 L213 522 L177 492 L136 480 L114 439 L81 421 L77 381 L45 347 L64 308 L46 270 L70 235 L67 193 L103 163 L112 121 L151 101 L177 62 L218 62 Z" />
             <text className={styles.country} x="267" y="180">UGANDA</text>
@@ -130,7 +127,7 @@ export default function Home() {
       </section>
 
       <footer className={styles["bp-footer"]}>
-        <strong>FITSPA Compliance Platform</strong>
+        <strong>{BRAND}</strong>
         <span>Fintech compliance, in one place.</span>
       </footer>
     </div>
