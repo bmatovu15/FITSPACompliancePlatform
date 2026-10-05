@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
     catalogKey,
     applicationKey,
     contextLabel,
+    applicationId,
+    externalId,
   } = body ?? {};
 
   if (sourceModule !== "apply" && sourceModule !== "comply") {
@@ -57,7 +59,7 @@ export async function POST(req: NextRequest) {
     memberId = member?.id ?? null;
   }
 
-  const { error } = await supabase.from("expert_support_requests").insert({
+  const row = {
     member_id: memberId,
     source_module: sourceModule,
     context_key: typeof contextKey === "string" ? contextKey : "general",
@@ -71,7 +73,20 @@ export async function POST(req: NextRequest) {
     business_name: typeof businessName === "string" && businessName.trim() ? businessName.trim() : null,
     preferred_date: typeof preferredDate === "string" && preferredDate.trim() ? preferredDate.trim() : null,
     preferred_time: typeof preferredTime === "string" && preferredTime.trim() ? preferredTime.trim() : null,
-  });
+  };
+
+  // Optional application / requirement link (Digital Lending Apply). These
+  // columns come from db/migrations/0105_*.sql; if they are not there yet the
+  // row is still stored without them so no expert request is ever lost.
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const link: Record<string, string> = {};
+  if (typeof applicationId === "string" && UUID.test(applicationId)) link.application_id = applicationId;
+  if (typeof externalId === "string" && externalId.trim()) link.external_id = externalId.trim().slice(0, 64);
+
+  let { error } = await supabase.from("expert_support_requests").insert({ ...row, ...link });
+  if (error && Object.keys(link).length > 0 && /application_id|external_id|column/i.test(`${error.message} ${error.code}`)) {
+    ({ error } = await supabase.from("expert_support_requests").insert(row));
+  }
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

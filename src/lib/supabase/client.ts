@@ -8,6 +8,15 @@ const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YmpxZXV4bXZ6YWFsb3NndG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzNjk2OTEsImV4cCI6MjEwMTk0NTY5MX0.HG5k5H6EYkvfl6Vrlnh8HUWDDC29ZnN4x0s87nEreVw";
 
-export function createClient() {
+export function createClient(opts?: { headers?: Record<string, string> }) {
+  // Optional extra request headers (e.g. the Digital Lending Apply flow's
+  // per-application capability token). Without them this is the shared
+  // singleton browser client, exactly as before.
+  if (opts?.headers) {
+    return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      isSingleton: false,
+      global: { headers: opts.headers },
+    });
+  }
   return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }

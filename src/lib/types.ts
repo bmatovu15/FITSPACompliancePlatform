@@ -622,6 +622,10 @@ export type LicenceApplicationTemplate = {
   guide_do: string | null;
   guide_evidence: string | null;
   applicability: Record<string, unknown>;
+  // Data schema that drives the requirement's drawer form and its "ready"
+  // rules (Digital Lending Apply; see apply/digital-lending/dl-schemas.ts).
+  // Empty/absent => the app falls back to its bundled schema.
+  form_schema?: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 };
@@ -636,6 +640,10 @@ export type LicenceApplicationWizardClass = {
   fee_class_label: string | null;
   min_capital: number | null;
   leads_to: Record<string, unknown>;
+  // Route-card content for the Digital Lending Apply route screen.
+  route_tag?: string | null;
+  card_title?: string | null;
+  card_blurb?: string | null;
   created_at: string;
 };
 
@@ -664,6 +672,12 @@ export type MemberLicenceApplication = {
   status: "draft" | "submitted" | "withdrawn";
   started_at: string;
   submitted_at: string | null;
+  // Set when the applicant records that they filed with the regulator
+  // (Digital Lending Apply "Record submission").
+  submission_date?: string | null;
+  submission_reference?: string | null;
+  // Optional per-application capability secret (see db/migrations/0199_*).
+  access_token?: string | null;
   updated_at: string;
 };
 
@@ -687,5 +701,27 @@ export type MemberLicenceApplicationFile = {
   file_name: string;
   storage_path: string;
   version: number;
+  // Human label of the upload slot ("Certificate of Incorporation").
+  label?: string | null;
   uploaded_at: string;
+};
+
+export type MemberLicenceApplicationReview = {
+  id: string;
+  application_id: string;
+  scope: string;
+  review_type: "interim" | "final" | "requirement";
+  external_id: string | null;
+  requested_progress: number | null;
+  status: string;
+  requested_at: string;
+};
+
+export type MemberLicenceApplicationRegulatorRequest = {
+  id: string;
+  application_id: string;
+  title: string;
+  due_date: string | null;
+  closed_at: string | null;
+  created_at: string;
 };
