@@ -1,121 +1,55 @@
-import Link from "next/link";
-import dcStyles from "./digital-lending-compliance.module.css";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/current-member";
 import { DIGITAL_LENDING_CATALOG_KEY } from "@/lib/compliance-engine";
 import DigitalLendingComplianceClient from "./digital-lending-compliance-client";
-import type {
-  ComplianceCalendarTask,
-  ComplianceControl,
-  ComplianceEvent,
-  ComplianceHoliday,
-  ComplianceReminderRule,
-  ComplianceWorkflowState,
-  MemberCalendarTaskState,
-  MemberComplianceProfile,
-  MemberControlState,
-  MemberLoggedEvent,
-  Obligation,
-  ComplianceCatalogFee,
-} from "@/lib/types";
+import type { LegacyProfileRow } from "@/lib/comply/digital-engine";
 
 export const metadata = {
   title: "Digital Lending Compliance | FITSPA Compliance Platform",
   description:
-    "Manage your ongoing Money Lender or NDTMFI digital lending compliance obligations — filing calendar, event-triggered clocks, continuous controls and fee schedule.",
+    "Manage your ongoing Money Lender or NDTMFI digital lending compliance obligations — dated occurrences, event-driven work, continuous controls and evidence.",
 };
 
-const CATALOG_KEY = DIGITAL_LENDING_CATALOG_KEY;
-
-// Beacon-styled replacement for the Digital Lending half of
-// /dashboard/compliance-pathway (see strategy/beacon-template-redesign-plan.md
-// and strategy/regulatory-onboarding-manual.md). Same Supabase-backed data
-// model and applicability engine (@/lib/compliance-engine), restyled to the
-// uploaded "Beacon — Digital Lending Compliance" prototype. This route is
-// digital-lending-only: no catalog switcher, no year switcher (the source
-// prototype's calendar has no year selector either -- it lists all dated
-// occurrences grouped by month).
+// Digital Lending Compliance workspace (Money Lender / NDTMFI, MRD-MoFPED).
+// A faithful port of the Beacon design prototype: the workspace is one state
+// document (profile -> generated dated occurrences, logged events, control
+// reviews, evidence, activity) persisted in public.member_comply_workspace
+// (module_key = 'digital_lending'); evidence files live in the private
+// compliance-evidence bucket. The module draws its own Beacon masthead
+// (landing / setup / workspace), so there is no site nav above it.
 export default async function DigitalLendingCompliancePage() {
   const member = await requireMember();
   const supabase = await createClient();
 
-  const [
-    { data: profile },
-    { data: calendarTasks },
-    { data: events },
-    { data: controls },
-    { data: workflowStates },
-    { data: reminderRules },
-    { data: holidays },
-    { data: obligations },
-    { data: catalogFees },
-    { data: taskStates },
-    { data: loggedEvents },
-    { data: controlStates },
-  ] = await Promise.all([
-    supabase
+  const { data: workspace } = await supabase
+    .from("member_comply_workspace")
+    .select("state")
+    .eq("member_id", member.id)
+    .eq("module_key", "digital_lending")
+    .maybeSingle();
+
+  // Members who used the previous tracker have an old member_compliance_profile
+  // row: when there is no workspace yet, use it to pre-fill the setup screen.
+  let legacyProfile: LegacyProfileRow | null = null;
+  if (!workspace) {
+    const { data } = await supabase
       .from("member_compliance_profile")
-      .select("*")
+      .select("route, money_lender, ndt_mfi, issue_date, fye_date, pdpo_status, pdpo_expiry, collateral, custody, recovery_agents, crossborder, advice, fitspa_subscriber")
       .eq("member_id", member.id)
-      .eq("catalog_key", CATALOG_KEY)
-      .maybeSingle(),
-    supabase
-      .from("compliance_calendar_tasks")
-      .select("*")
-      .eq("catalog_key", CATALOG_KEY)
-      .order("legal_due", { ascending: true, nullsFirst: false }),
-    supabase.from("compliance_events").select("*").eq("catalog_key", CATALOG_KEY),
-    supabase.from("compliance_controls").select("*").eq("catalog_key", CATALOG_KEY),
-    supabase.from("compliance_workflow_states").select("*").order("sort_order"),
-    supabase.from("compliance_reminder_rules").select("*").order("sort_order"),
-    supabase.from("compliance_holidays").select("*").order("holiday_date"),
-    supabase.from("obligations").select("*").eq("catalog_key", CATALOG_KEY),
-    supabase.from("compliance_catalog_fees").select("*").eq("catalog_key", CATALOG_KEY).order("sort_order"),
-    supabase.from("member_calendar_task_state").select("*").eq("member_id", member.id),
-    supabase
-      .from("member_logged_events")
-      .select("*")
-      .eq("member_id", member.id)
-      .order("created_at", { ascending: false }),
-    supabase.from("member_control_state").select("*").eq("member_id", member.id),
-  ]);
+      .eq("catalog_key", DIGITAL_LENDING_CATALOG_KEY)
+      .maybeSingle();
+    legacyProfile = (data as LegacyProfileRow | null) ?? null;
+  }
 
   return (
-    <div className={dcStyles.dcRoot} style={{ minHeight: "100vh", background: "#fff" }}>
-      <header className={dcStyles["dc-nav"]}>
-        <Link className={dcStyles["dc-brand"]} href="/" aria-label="FITSPA Compliance Platform home">
-          <span className={dcStyles["dc-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
-        </Link>
-        <nav className={dcStyles["dc-nav-links"]} aria-label="Primary">
-          <button className={`${dcStyles["dc-nav-link"]} ${dcStyles.muted}`} type="button" disabled>
-            Explore
-          </button>
-          <Link className={dcStyles["dc-nav-link"]} href="/apply">Apply</Link>
-          <Link className={`${dcStyles["dc-nav-link"]} ${dcStyles.active}`} href="/comply">Comply</Link>
-          <Link className={dcStyles["dc-nav-link"]} href="/assistant">AI Assistant</Link>
-        </nav>
-        <div className={dcStyles["dc-nav-actions"]}>
-          <Link className={dcStyles["dc-nav-search"]} href="/lookup">Search a member</Link>
-          <Link className={dcStyles["dc-nav-register"]} href="/signup">Register</Link>
-          <Link className={dcStyles["dc-nav-back"]} href="/comply">← Compliance</Link>
-        </div>
-      </header>
-      <DigitalLendingComplianceClient
-        memberId={member.id}
-        catalogKey={CATALOG_KEY}
-        initialProfile={(profile as MemberComplianceProfile | null) ?? null}
-        calendarTasks={(calendarTasks ?? []) as ComplianceCalendarTask[]}
-        events={(events ?? []) as ComplianceEvent[]}
-        controls={(controls ?? []) as ComplianceControl[]}
-        workflowStates={(workflowStates ?? []) as ComplianceWorkflowState[]}
-        reminderRules={(reminderRules ?? []) as ComplianceReminderRule[]}
-        holidays={(holidays ?? []) as ComplianceHoliday[]}
-        obligations={(obligations ?? []) as Obligation[]}
-        catalogFees={(catalogFees ?? []) as ComplianceCatalogFee[]}
-        initialTaskStates={(taskStates ?? []) as MemberCalendarTaskState[]}
-        initialLoggedEvents={(loggedEvents ?? []) as MemberLoggedEvent[]}
-        initialControlStates={(controlStates ?? []) as MemberControlState[]}
-      />
-    </div>
+    <DigitalLendingComplianceClient
+      memberId={member.id}
+      catalogKey={DIGITAL_LENDING_CATALOG_KEY}
+      initialState={workspace?.state ?? null}
+      legacyProfile={legacyProfile}
+      businessName={member.company_name}
+      contactName={member.signup_contact_name}
+      contactEmail={member.company_email}
+    />
   );
 }

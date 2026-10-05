@@ -1,0 +1,432 @@
+[
+ {
+  "id": "management",
+  "cat": "People & governance",
+  "title": "Director / management change",
+  "desc": "Proposed appointment or change in directors, management or MLCO.",
+  "ids": [
+   "LIC-07",
+   "LIC-06"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "personName",
+   "personRole"
+  ]
+ },
+ {
+  "id": "material",
+  "cat": "Licence & structure",
+  "title": "Material licence information changed",
+  "desc": "A material fact supplied during licensing has changed.",
+  "ids": [
+   "ML-01"
+  ],
+  "routes": [
+   "ml"
+  ],
+  "fields": [
+   "eventDate",
+   "details"
+  ]
+ },
+ {
+  "id": "openPlace",
+  "cat": "Places of business",
+  "title": "Open an additional place / branch",
+  "desc": "Open a new physical place, branch or outlet.",
+  "ids": [],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "placeName",
+   "address"
+  ]
+ },
+ {
+  "id": "relocate",
+  "cat": "Places of business",
+  "title": "Relocate a place of business",
+  "desc": "Move an existing office or branch.",
+  "ids": [],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "placeName",
+   "address"
+  ]
+ },
+ {
+  "id": "closePlace",
+  "cat": "Places of business",
+  "title": "Close a place of business",
+  "desc": "Close an existing branch or office.",
+  "ids": [
+   "NDT-09"
+  ],
+  "routes": [
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "placeName"
+  ]
+ },
+ {
+  "id": "corporate",
+  "cat": "Corporate transaction",
+  "title": "Amalgamation / transfer of assets or liabilities",
+  "desc": "Proposed merger, portfolio transfer or business transfer.",
+  "ids": [
+   "LIC-08"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "details"
+  ]
+ },
+ {
+  "id": "terms",
+  "cat": "Product & pricing",
+  "title": "Change rates, fees or customer terms",
+  "desc": "Change pricing, credit limits, fees or other customer terms.",
+  "ids": [
+   "PRC-08",
+   "CNS-08"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "details"
+  ]
+ },
+ {
+  "id": "productTech",
+  "cat": "Product & technology",
+  "title": "Launch or materially change a product / app / technology",
+  "desc": "New product, delivery mechanism or material technology change.",
+  "ids": [
+   "AML-05",
+   "TEC-01"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "details"
+  ]
+ },
+ {
+  "id": "recoveryAgent",
+  "cat": "Third parties",
+  "title": "Add or change a recovery agent / service provider",
+  "desc": "Engage or change a third-party recovery/service provider.",
+  "ids": [
+   "DBT-03",
+   "DBT-02"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "effectiveDate",
+   "providerName"
+  ]
+ },
+ {
+  "id": "complaint",
+  "cat": "Customer",
+  "title": "Customer complaint received",
+  "desc": "Log a complaint once; Beacon calculates the applicable response clock.",
+  "ids": [
+   "CNS-01",
+   "CNS-02",
+   "CNS-03"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "customerRef",
+   "details"
+  ]
+ },
+ {
+  "id": "breach",
+  "cat": "Privacy",
+  "title": "Personal-data breach",
+  "desc": "Unauthorised access or acquisition of personal data.",
+  "ids": [
+   "TEC-07"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "discoveryTime",
+   "details"
+  ]
+ },
+ {
+  "id": "access",
+  "cat": "Privacy",
+  "title": "Data-access request",
+  "desc": "A data subject has requested access to personal data.",
+  "ids": [
+   "TEC-08"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "customerRef"
+  ]
+ },
+ {
+  "id": "objection",
+  "cat": "Privacy",
+  "title": "Objection to harmful processing",
+  "desc": "A data subject has objected to processing causing harm/distress.",
+  "ids": [
+   "TEC-09"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "customerRef"
+  ]
+ },
+ {
+  "id": "assignment",
+  "cat": "Money Lender",
+  "title": "Debt assignment",
+  "desc": "A Money Lender has assigned a borrower debt.",
+  "ids": [
+   "ML-06"
+  ],
+  "routes": [
+   "ml"
+  ],
+  "fields": [
+   "eventDate",
+   "customerRef",
+   "details"
+  ]
+ },
+ {
+  "id": "collateralSale",
+  "cat": "Collateral",
+  "title": "Begin collateral enforcement / sale",
+  "desc": "Issue demand or begin a collateral enforcement process.",
+  "ids": [
+   "COL-02",
+   "COL-03"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "requires": "collateral",
+  "fields": [
+   "eventDate",
+   "customerRef",
+   "details"
+  ]
+ },
+ {
+  "id": "collateralLoss",
+  "cat": "Collateral",
+  "title": "Collateral lost / damaged in custody",
+  "desc": "Collateral held by a Money Lender is lost, damaged or destroyed.",
+  "ids": [
+   "ML-04"
+  ],
+  "routes": [
+   "ml"
+  ],
+  "requires": "custody",
+  "fields": [
+   "eventDate",
+   "customerRef",
+   "details"
+  ]
+ },
+ {
+  "id": "regulator",
+  "cat": "Regulator",
+  "title": "Letter, direction or inspection finding received",
+  "desc": "Create work from the actual regulator instruction and stated deadline.",
+  "ids": [
+   "LIC-03",
+   "LIC-14"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "regDue",
+   "details"
+  ]
+ },
+ {
+  "id": "inspectionNDT",
+  "cat": "Regulator",
+  "title": "NDTMFI inspection report received",
+  "desc": "Create the 30-day corrective-action workflow.",
+  "ids": [
+   "NDT-06"
+  ],
+  "routes": [
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "details"
+  ]
+ },
+ {
+  "id": "revocationML",
+  "cat": "Regulator",
+  "title": "Money Lender notice of intended revocation received",
+  "desc": "Critical 14-day response workflow.",
+  "ids": [
+   "ML-08"
+  ],
+  "routes": [
+   "ml"
+  ],
+  "fields": [
+   "eventDate",
+   "details"
+  ]
+ },
+ {
+  "id": "str",
+  "cat": "AML/CFT",
+  "title": "Suspicion formed",
+  "desc": "Start the STR clock from the date/time suspicion was formed.",
+  "ids": [
+   "AML-09"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "suspicionTime",
+   "caseRef"
+  ]
+ },
+ {
+  "id": "cash",
+  "cat": "AML/CFT",
+  "title": "Large cash / monetary transaction",
+  "desc": "Transaction meets the statutory reporting threshold.",
+  "ids": [
+   "AML-10"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "amount",
+   "regDue"
+  ]
+ },
+ {
+  "id": "sanctions",
+  "cat": "AML/CFT",
+  "title": "Sanctions screening match",
+  "desc": "Potential or confirmed targeted-financial-sanctions match.",
+  "ids": [
+   "AML-14"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "caseRef",
+   "details"
+  ]
+ },
+ {
+  "id": "funding",
+  "cat": "AML/CFT",
+  "title": "New material funding source",
+  "desc": "New lender funding source requires source-of-funds review.",
+  "ids": [
+   "AML-17"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "providerName",
+   "details"
+  ]
+ },
+ {
+  "id": "wire",
+  "cat": "AML/CFT",
+  "title": "International wire transfer in scope",
+  "desc": "The lender itself conducts a reportable international wire transfer.",
+  "ids": [
+   "AML-16"
+  ],
+  "routes": [
+   "ml",
+   "ndt"
+  ],
+  "fields": [
+   "eventDate",
+   "amount",
+   "regDue"
+  ]
+ }
+]

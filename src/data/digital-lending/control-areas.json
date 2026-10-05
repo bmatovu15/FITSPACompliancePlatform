@@ -1,0 +1,216 @@
+[
+ {
+  "title": "Licence perimeter & identity",
+  "ids": "LIC-01, LIC-02, LIC-04, LIC-05, LIC-13",
+  "maintains": "Current licence, product/funds-flow review, identity display evidence, office evidence.",
+  "idList": [
+   "LIC-01",
+   "LIC-02",
+   "LIC-04",
+   "LIC-05",
+   "LIC-13"
+  ]
+ },
+ {
+  "title": "Governance & fitness",
+  "ids": "LIC-06 plus route-specific governance controls",
+  "maintains": "Governance records, current persons, adverse-information review and linked event history.",
+  "idList": [
+   "LIC-06"
+  ]
+ },
+ {
+  "title": "NDT prudential portfolio",
+  "ids": "NDT-01, NDT-02, NDT-03, NDT-05, NDT-07",
+  "maintains": "Classification, accrued-interest controls, provisioning, write-offs and early-warning evidence.",
+  "idList": [
+   "NDT-01",
+   "NDT-02",
+   "NDT-03",
+   "NDT-05",
+   "NDT-07"
+  ]
+ },
+ {
+  "title": "Pricing & interest calculations",
+  "ids": "PRC-01–PRC-05, ML-07",
+  "maintains": "Pricing configuration, test cases, exception reports and approved product sheets.",
+  "idList": [
+   "PRC-01",
+   "PRC-02",
+   "PRC-03",
+   "PRC-04",
+   "PRC-05",
+   "ML-07"
+  ]
+ },
+ {
+  "title": "Price disclosure & publication",
+  "ids": "PRC-06, PRC-07",
+  "maintains": "Pre-contract schedule and channel screenshots/current price publication.",
+  "idList": [
+   "PRC-06",
+   "PRC-07"
+  ]
+ },
+ {
+  "title": "Credit assessment & lending contract",
+  "ids": "LON-01–LON-04",
+  "maintains": "Affordability evidence, contract template, delivery of agreement and renewal pack evidence.",
+  "idList": [
+   "LON-01",
+   "LON-02",
+   "LON-03",
+   "LON-04"
+  ]
+ },
+ {
+  "title": "Borrower transaction rights",
+  "ids": "LON-05, LON-07, LON-08, ML-05",
+  "maintains": "Cooling-off/settlement/receipt controls and borrower information-request workflow evidence.",
+  "idList": [
+   "LON-05",
+   "LON-07",
+   "LON-08",
+   "ML-05"
+  ]
+ },
+ {
+  "title": "Guarantor controls",
+  "ids": "LON-06",
+  "maintains": "Guarantor explanation, confirmation and consent evidence.",
+  "idList": [
+   "LON-06"
+  ]
+ },
+ {
+  "title": "Collateral controls",
+  "ids": "COL-01–COL-03; ML-04 and NDT-04 where applicable",
+  "maintains": "Collateral type, valuation, custody, register, insurance, demand/sale and proceeds evidence.",
+  "idList": [
+   "COL-01",
+   "COL-02",
+   "COL-03",
+   "ML-04",
+   "NDT-04"
+  ]
+ },
+ {
+  "title": "Collections conduct",
+  "ids": "DBT-01",
+  "maintains": "Approved scripts, call/message monitoring, complaints and exception handling.",
+  "idList": [
+   "DBT-01"
+  ]
+ },
+ {
+  "title": "Recovery-agent oversight",
+  "ids": "DBT-02, DBT-03 where applicable",
+  "maintains": "Due diligence, contracts, customer notice, training and monitoring.",
+  "idList": [
+   "DBT-02",
+   "DBT-03"
+  ]
+ },
+ {
+  "title": "Credit information sharing",
+  "ids": "CRD-01, CRD-02",
+  "maintains": "Consent, reporting file validation, reconciliation and current reporting arrangement.",
+  "idList": [
+   "CRD-01",
+   "CRD-02"
+  ]
+ },
+ {
+  "title": "Complaints & fair treatment",
+  "ids": "CNS-01–CNS-03, CNS-10",
+  "maintains": "Complaint mechanism, cases, root-cause analysis and fair-treatment controls.",
+  "idList": [
+   "CNS-01",
+   "CNS-02",
+   "CNS-03",
+   "CNS-10"
+  ]
+ },
+ {
+  "title": "Customer information & advertising",
+  "ids": "CNS-04–CNS-06",
+  "maintains": "Key facts, regulated-status disclosures, product information and advertisement approval evidence.",
+  "idList": [
+   "CNS-04",
+   "CNS-05",
+   "CNS-06"
+  ]
+ },
+ {
+  "title": "Statements, account closure & suitability",
+  "ids": "CNS-07, CNS-09, CNS-11 as applicable",
+  "maintains": "Agreed statement cycle, closure notices and suitability records where advice is given.",
+  "idList": [
+   "CNS-07",
+   "CNS-09",
+   "CNS-11"
+  ]
+ },
+ {
+  "title": "Digital system integrity",
+  "ids": "TEC-01, TEC-02",
+  "maintains": "Security testing, release approval, permissions inventory and app/channel evidence.",
+  "idList": [
+   "TEC-01",
+   "TEC-02"
+  ]
+ },
+ {
+  "title": "Privacy & data lifecycle",
+  "ids": "TEC-03, TEC-10, TEC-11 where applicable",
+  "maintains": "Data inventory, lawful-use controls, retention/destruction evidence and cross-border assessment.",
+  "idList": [
+   "TEC-03",
+   "TEC-10",
+   "TEC-11"
+  ]
+ },
+ {
+  "title": "AML governance & programme",
+  "ids": "AML-01–AML-05, AML-12, AML-13",
+  "maintains": "FIA/goAML setup, MLCO, programme, risk assessments, training and audit/remediation.",
+  "idList": [
+   "AML-01",
+   "AML-02",
+   "AML-03",
+   "AML-04",
+   "AML-05",
+   "AML-12",
+   "AML-13"
+  ]
+ },
+ {
+  "title": "AML customer risk & monitoring",
+  "ids": "AML-06–AML-08",
+  "maintains": "CDD, beneficial ownership, PEP/high-risk EDD, monitoring and refresh evidence.",
+  "idList": [
+   "AML-06",
+   "AML-07",
+   "AML-08"
+  ]
+ },
+ {
+  "title": "AML sanctions & dynamic risk",
+  "ids": "AML-14, AML-15",
+  "maintains": "Current sanctions/high-risk-jurisdiction sources, screening and escalation evidence.",
+  "idList": [
+   "AML-14",
+   "AML-15"
+  ]
+ },
+ {
+  "title": "AML records & lender funds",
+  "ids": "AML-11, AML-17",
+  "maintains": "Retention evidence and source-of-funds documentation.",
+  "idList": [
+   "AML-11",
+   "AML-17"
+  ]
+ }
+]

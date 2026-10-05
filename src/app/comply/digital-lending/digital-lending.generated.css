@@ -1,0 +1,266 @@
+/* Beacon — Digital Lending Compliance ("Comply").
+   Generated from the design prototype's three <style> blocks (base +
+   beacon-unified-module-design + beacon-digital-compliance-type-scale), every
+   selector scoped under .dcl-root by scripts/scope-dcl-css.js logic so nothing
+   leaks into the rest of the site. The !important overrides from the design are
+   kept as-is so the effective values are identical. */
+.dcl-root{--ink:#111;--ink2:#343434;--muted:#6f737a;--faint:#92959a;--paper:#fff;--soft:#fafafa;--soft2:#f5f5f5;--rule:#e7e7e7;--rule2:#cfcfcf;--success:#2e7d4f;--success-bg:#eaf5ee;--warn:#806000;--warn-bg:#fff6e5;--danger:#b3261e;--danger-bg:#fcebea;--sans:"Montserrat",Arial,sans-serif}
+.dcl-root *{box-sizing:border-box}
+.dcl-root,.dcl-root{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.dcl-root button,.dcl-root input,.dcl-root select,.dcl-root textarea{font:inherit}
+.dcl-root button{cursor:pointer}
+.dcl-root a{color:inherit}
+.dcl-root .hidden{display:none!important}
+.dcl-root .screen{display:none;min-height:100vh}
+.dcl-root .screen.active{display:block}
+.dcl-root .mast{height:76px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(255,255,255,.97);position:sticky;top:0;z-index:60}
+.dcl-root .brand{display:flex;align-items:center;gap:10px}
+.dcl-root .brandmark{width:28px;height:28px}
+.dcl-root .brandtitle{font-size:15px;font-weight:700;letter-spacing:-.02em}
+.dcl-root .brandsub{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
+.dcl-root .head-actions{display:flex;align-items:center;gap:8px}
+.dcl-root .btn,.dcl-root .ghost,.dcl-root .link{border:1px solid var(--rule2);background:#fff;color:#111;border-radius:8px;padding:10px 14px;font-size:11px;font-weight:600}
+.dcl-root .btn.primary,.dcl-root .ghost.primary{background:#111;color:#fff;border-color:#111}
+.dcl-root .link{border:0;background:transparent;padding:8px}
+.dcl-root .btn:hover,.dcl-root .ghost:hover{background:#f7f7f7}
+.dcl-root .btn.primary:hover,.dcl-root .ghost.primary:hover{background:#292929}
+.dcl-root .textlink{border:0;background:transparent;padding:0;font-size:11px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.dcl-root .landing{max-width:1020px;margin:0 auto;padding:86px 36px 90px}
+.dcl-root .eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#777;margin-bottom:16px}
+.dcl-root .landing h1{font-size:48px;line-height:1.06;letter-spacing:-.045em;margin:0;max-width:800px}
+.dcl-root .landing .dek{font-size:15px;line-height:1.75;color:#575b61;max-width:700px;margin:22px 0 28px}
+.dcl-root .hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dcl-root .hero-actions .btn{padding:12px 17px}
+.dcl-root .landing-foot{border-top:1px solid var(--rule);margin-top:68px;padding-top:22px;display:flex;gap:18px;max-width:760px}
+.dcl-root .landing-foot strong{font-size:12px}
+.dcl-root .landing-foot p{margin:0;font-size:11.5px;line-height:1.55;color:var(--muted)}
+.dcl-root .profile-wrap{max-width:920px;margin:0 auto;padding:54px 30px 90px}
+.dcl-root .profile-top h2{font-size:30px;letter-spacing:-.035em;margin:0 0 9px}
+.dcl-root .profile-top p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.65;max-width:700px}
+.dcl-root .profile-section{border-top:1px solid var(--rule);padding-top:22px;margin-top:30px}
+.dcl-root .profile-section h3{font-size:14px;margin:0 0 13px}
+.dcl-root .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.dcl-root .field{margin-bottom:13px}
+.dcl-root .field label{display:block;font-size:10px;font-weight:700;margin-bottom:6px}
+.dcl-root .field small{display:block;font-size:9.3px;line-height:1.5;color:#888;margin-top:5px}
+.dcl-root .field input,.dcl-root .field select,.dcl-root .field textarea{width:100%;border:1px solid var(--rule2);border-radius:7px;padding:10px 11px;background:#fff;font-size:11px;outline:none}
+.dcl-root .field textarea{min-height:86px;resize:vertical}
+.dcl-root .choice-row{display:flex;gap:7px;flex-wrap:wrap}
+.dcl-root .choice{border:1px solid var(--rule2);background:#fff;border-radius:7px;padding:9px 11px;font-size:10.5px;font-weight:600}
+.dcl-root .choice.selected{background:#111;color:#fff;border-color:#111}
+.dcl-root .optional{border:1px solid var(--rule);border-radius:9px;padding:13px 14px;margin-top:12px}
+.dcl-root .optional summary{font-size:10.5px;font-weight:700;cursor:pointer}
+.dcl-root .profile-actions{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule);margin-top:28px;padding-top:18px}
+.dcl-root .workspace-head{height:75px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;background:#fff;z-index:55}
+.dcl-root .workspace-left{display:flex;align-items:center;gap:13px}
+.dcl-root .route-pill{font-size:9px;border:1px solid var(--rule2);border-radius:999px;padding:5px 8px;color:#555;font-weight:700}
+.dcl-root .workspace-title{font-size:14px;font-weight:700}
+.dcl-root .workspace-actions{display:flex;gap:8px}
+.dcl-root .workspace-tabs{height:49px;border-bottom:1px solid var(--rule);display:flex;padding:0 29px;gap:24px;align-items:end;position:sticky;top:75px;background:#fff;z-index:50}
+.dcl-root .tab{height:49px;border:0;background:transparent;padding:0 2px;font-size:11px;color:#777;font-weight:600;position:relative}
+.dcl-root .tab.active{color:#111}
+.dcl-root .tab.active:after{content:"";height:2px;position:absolute;bottom:0;left:0;right:0;background:#111}
+.dcl-root .app-shell{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 250px;min-height:calc(100vh - 124px)}
+.dcl-root .main{padding:34px 34px 100px;min-width:0}
+.dcl-root .right{border-left:1px solid var(--rule);padding:31px 24px 70px 20px;position:sticky;top:124px;height:calc(100vh - 124px);overflow:auto}
+.dcl-root .panel{display:none}
+.dcl-root .panel.active{display:block}
+.dcl-root .page-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:25px}
+.dcl-root .page-head h1{font-size:29px;letter-spacing:-.035em;margin:0 0 7px}
+.dcl-root .page-head p{font-size:11.8px;color:var(--muted);line-height:1.6;margin:0;max-width:740px}
+.dcl-root .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}
+.dcl-root .metric{border:1px solid var(--rule);border-radius:10px;padding:15px 16px}
+.dcl-root .metric-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#888;font-weight:700}
+.dcl-root .metric-value{font-size:27px;font-weight:700;letter-spacing:-.035em;margin-top:7px}
+.dcl-root .metric-note{font-size:9.5px;color:#888;margin-top:4px}
+.dcl-root .section{margin-top:28px}
+.dcl-root .section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:10px}
+.dcl-root .section-head h2{font-size:15px;margin:0}
+.dcl-root .section-head p{font-size:10px;color:#888;margin:0}
+.dcl-root .work-list{border-top:1px solid var(--rule)}
+.dcl-root .work-row{display:grid;grid-template-columns:minmax(0,1fr) 112px 105px 126px;gap:12px;align-items:center;border-bottom:1px solid var(--rule);padding:13px 0}
+.dcl-root .work-title-line{display:flex;align-items:center;gap:6px}
+.dcl-root .work-title{font-size:11.8px;font-weight:700;line-height:1.35}
+.dcl-root .work-sub{font-size:9.7px;line-height:1.5;color:#777;margin-top:5px}
+.dcl-root .info{width:17px;height:17px;border:1px solid #bdbdbd;border-radius:50%;background:#fff;font-size:9px;font-weight:700;padding:0;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.dcl-root .badge{display:inline-flex;width:max-content;border:1px solid var(--rule2);border-radius:999px;padding:5px 7px;font-size:8.7px;font-weight:700;white-space:nowrap}
+.dcl-root .badge.action{background:var(--warn-bg);color:#775800;border-color:#e4d29f}
+.dcl-root .badge.overdue{background:var(--danger-bg);color:#9b271e;border-color:#e6b7b3}
+.dcl-root .badge.upcoming{background:#f4f4f4;color:#555}
+.dcl-root .badge.submitted,.dcl-root .badge.evidence{background:var(--success-bg);color:#276941;border-color:#bfdcc9}
+.dcl-root .badge.awaiting{background:#eef2ff;color:#40558b;border-color:#cbd5f3}
+.dcl-root .badge.attention{background:var(--warn-bg);color:#775800;border-color:#e4d29f}
+.dcl-root .row-date{font-size:9.8px;color:#555;line-height:1.45}
+.dcl-root .row-owner{font-size:9.5px;color:#777}
+.dcl-root .row-action{border:1px solid var(--rule2);background:#fff;border-radius:7px;padding:8px 9px;font-size:9.7px;font-weight:700}
+.dcl-root .row-action:hover{background:#f7f7f7}
+.dcl-root .empty{border:1px dashed #d2d2d2;border-radius:9px;padding:20px;color:#777;font-size:10.5px;line-height:1.55}
+.dcl-root .control-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dcl-root .control-card{border:1px solid var(--rule);border-radius:10px;padding:14px;min-height:132px;display:flex;flex-direction:column}
+.dcl-root .control-card h3{font-size:11px;margin:0 0 6px;display:flex;align-items:center;gap:5px}
+.dcl-root .control-card p{font-size:9.5px;color:#777;line-height:1.5;margin:0}
+.dcl-root .control-card .control-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:11px}
+.dcl-root .control-card button{border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;font-size:9.5px;font-weight:700;padding:0}
+.dcl-root .rail-card{border-bottom:1px solid var(--rule);padding-bottom:21px;margin-bottom:21px}
+.dcl-root .rail-card:last-child{border:0}
+.dcl-root .rail-label{font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;color:#888;font-weight:700;margin-bottom:9px}
+.dcl-root .rail-next{font-size:10.5px;line-height:1.5;margin-bottom:10px}
+.dcl-root .rail-btn{width:100%;border:1px solid var(--rule2);background:#fff;border-radius:7px;padding:9px;font-size:9.8px;font-weight:700;margin-top:6px}
+.dcl-root .rail-btn.primary{background:#111;color:#fff;border-color:#111}
+.dcl-root .rail-profile{font-size:9.6px;color:#777;line-height:1.55}
+.dcl-root .rail-profile strong{color:#111}
+.dcl-root .rail-link{border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;padding:0;font-size:9.5px;font-weight:600}
+.dcl-root .calendar-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+.dcl-root .filters{display:flex;gap:7px;flex-wrap:wrap}
+.dcl-root .filter{border:1px solid var(--rule2);background:#fff;border-radius:999px;padding:7px 9px;font-size:9.5px;font-weight:600}
+.dcl-root .filter.active{background:#111;color:#fff;border-color:#111}
+.dcl-root .cal-list{border-top:1px solid var(--rule)}
+.dcl-root .cal-month{font-size:12px;font-weight:700;margin:22px 0 8px}
+.dcl-root .cal-row{display:grid;grid-template-columns:84px minmax(0,1fr) 120px 115px;gap:14px;align-items:center;border-bottom:1px solid var(--rule);padding:12px 0}
+.dcl-root .cal-date{font-size:10px;font-weight:700}
+.dcl-root .cal-date span{display:block;color:#888;font-size:9px;font-weight:500;margin-top:3px}
+.dcl-root .internal{font-size:9px;color:#888;margin-top:3px}
+.dcl-root .lib-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 170px 170px;gap:9px;margin-bottom:15px}
+.dcl-root .lib-toolbar input,.dcl-root .lib-toolbar select{border:1px solid var(--rule2);border-radius:7px;padding:9px 10px;font-size:10px}
+.dcl-root .ob-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 150px 88px;gap:12px;align-items:center;border-bottom:1px solid var(--rule);padding:12px 0}
+.dcl-root .ob-id{font-size:8.5px;color:#999;font-weight:700;margin-right:6px}
+.dcl-root .ob-clock{font-size:9.2px;color:#666;line-height:1.45}
+.dcl-root .behaviour{font-size:8.5px;color:#666}
+.dcl-root .controls-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.dcl-root .big-control{border:1px solid var(--rule);border-radius:10px;padding:16px}
+.dcl-root .big-control h3{font-size:12px;margin:0;display:flex;align-items:center;gap:6px}
+.dcl-root .big-control p{font-size:9.8px;color:#777;line-height:1.55;margin:7px 0 12px}
+.dcl-root .control-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:9px;color:#777}
+.dcl-root .control-actions{display:flex;justify-content:space-between;align-items:center;margin-top:13px;padding-top:11px;border-top:1px solid var(--rule)}
+.dcl-root .overlay{position:fixed;inset:0;background:rgba(0,0,0,.22);z-index:90;display:none}
+.dcl-root .overlay.open{display:block}
+.dcl-root .drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,96vw);background:#fff;z-index:100;box-shadow:-18px 0 44px rgba(0,0,0,.11);transform:translateX(102%);transition:transform .18s ease;display:flex;flex-direction:column}
+.dcl-root .drawer.open{transform:translateX(0)}
+.dcl-root .drawer-head{padding:22px 26px 18px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.dcl-root .drawer-eyebrow{font-size:8.5px;text-transform:uppercase;letter-spacing:.11em;color:#888;font-weight:700;margin-bottom:6px}
+.dcl-root .drawer-head h2{font-size:19px;line-height:1.3;letter-spacing:-.02em;margin:0}
+.dcl-root .drawer-close{border:0;background:#fff;font-size:20px;padding:2px}
+.dcl-root .drawer-body{padding:23px 26px 84px;overflow:auto}
+.dcl-root .drawer-footer{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--rule);background:#fff;padding:12px 26px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dcl-root .drawer-footer .textlink{font-size:9.8px}
+.dcl-root .guide-block{padding:14px 0;border-bottom:1px solid var(--rule)}
+.dcl-root .guide-block:first-child{padding-top:0}
+.dcl-root .guide-label{font-size:8.6px;text-transform:uppercase;letter-spacing:.1em;color:#888;font-weight:700;margin-bottom:6px}
+.dcl-root .guide-text{font-size:10.8px;color:#52565b;line-height:1.6}
+.dcl-root .source-link{font-size:10px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.dcl-root .drawer-section{margin-bottom:23px}
+.dcl-root .drawer-section h3{font-size:11px;margin:0 0 9px}
+.dcl-root .drawer-section p{font-size:10.4px;line-height:1.6;color:#666;margin:0}
+.dcl-root .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:15px}
+.dcl-root .meta-box{border:1px solid var(--rule);border-radius:8px;padding:11px}
+.dcl-root .meta-box label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#888;font-weight:700;margin-bottom:5px}
+.dcl-root .meta-box div{font-size:10.5px;line-height:1.45}
+.dcl-root .upload{border:1px dashed #cfcfcf;border-radius:8px;padding:12px;margin:8px 0}
+.dcl-root .upload strong{font-size:9.8px}
+.dcl-root .upload input{font-size:9.2px;margin-top:7px;max-width:100%}
+.dcl-root .saved-file{font-size:9px;color:#777;margin-top:5px}
+.dcl-root .drawer-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.dcl-root .save{border:1px solid #111;background:#111;color:#fff;border-radius:7px;padding:9px 12px;font-size:9.8px;font-weight:700}
+.dcl-root .subtle{border:1px solid var(--rule2);background:#fff;color:#111;border-radius:7px;padding:9px 12px;font-size:9.8px;font-weight:700}
+.dcl-root .note{border-left:3px solid #999;background:#fafafa;padding:10px 11px;font-size:9.5px;line-height:1.55;color:#666;margin:10px 0}
+.dcl-root .note.warn{border-color:#9c7800;background:var(--warn-bg)}
+.dcl-root .steps{counter-reset:st;margin:0;padding:0;list-style:none}
+.dcl-root .steps li{counter-increment:st;border-bottom:1px solid var(--rule);padding:10px 0 10px 30px;position:relative;font-size:10px;line-height:1.5}
+.dcl-root .steps li:before{content:counter(st);position:absolute;left:0;top:9px;width:20px;height:20px;border-radius:50%;border:1px solid #cfcfcf;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700}
+.dcl-root .event-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dcl-root .event-card{border:1px solid var(--rule2);background:#fff;border-radius:8px;padding:12px;text-align:left}
+.dcl-root .event-card strong{display:block;font-size:10.5px;margin-bottom:4px}
+.dcl-root .event-card span{font-size:9px;color:#777;line-height:1.45}
+.dcl-root .event-card:hover{border-color:#777}
+.dcl-root .generated{border:1px solid var(--rule);border-radius:8px;padding:12px;margin-top:9px}
+.dcl-root .generated strong{font-size:10px}
+.dcl-root .generated p{font-size:9.5px;line-height:1.5;color:#666;margin:5px 0 0}
+.dcl-root .exception{border:1px solid var(--rule);border-radius:8px;padding:10px;margin:7px 0}
+.dcl-root .exception strong{font-size:9.8px}
+.dcl-root .exception p{font-size:9px;color:#777;margin:4px 0 0}
+.dcl-root .activity{border-top:1px solid var(--rule)}
+.dcl-root .activity-row{padding:10px 0;border-bottom:1px solid var(--rule);font-size:9.8px}
+.dcl-root .activity-row span{display:block;color:#888;font-size:8.8px;margin-top:3px}
+.dcl-root .badge.notreviewed{background:#f4f4f4;color:#666;border-color:#d9d9d9}
+.dcl-root .fee-line{font-size:9px;color:#555;margin-top:4px}
+.dcl-root .fee-box{border:1px solid var(--rule);background:#fafafa;border-radius:8px;padding:11px 12px;margin:10px 0}
+.dcl-root .fee-box strong{font-size:10px}
+.dcl-root .fee-items{margin:7px 0 0;padding:0;list-style:none}
+.dcl-root .fee-items li{font-size:9.5px;color:#555;padding:3px 0;display:flex;justify-content:space-between;gap:12px}
+.dcl-root .cost-list{border-top:1px solid var(--rule)}
+.dcl-root .cost-row{padding:9px 0;border-bottom:1px solid var(--rule);font-size:9.7px;display:flex;justify-content:space-between;gap:12px}
+.dcl-root .cost-row span{color:#666}
+.dcl-root .profile-hint{font-size:9.5px;color:#777;line-height:1.5;margin-top:7px}
+.dcl-root .inline-choice{margin-top:6px}
+.dcl-root .unresolved{color:#806000;font-weight:600}
+.dcl-root .drawer-section .choice{font-size:9.5px;padding:7px 9px}
+@media(max-width:1050px){.dcl-root .app-shell{grid-template-columns:1fr}
+.dcl-root .right{display:none}
+.dcl-root .metric-grid{grid-template-columns:repeat(2,1fr)}
+.dcl-root .control-strip{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){.dcl-root .mast,.dcl-root .workspace-head{padding:0 16px}
+.dcl-root .landing{padding:58px 21px}
+.dcl-root .landing h1{font-size:38px}
+.dcl-root .profile-wrap{padding:42px 18px}
+.dcl-root .field-grid,.dcl-root .meta-grid,.dcl-root .event-grid{grid-template-columns:1fr}
+.dcl-root .workspace-tabs{padding:0 16px;overflow:auto}
+.dcl-root .workspace-actions .ghost:not(.primary){display:none}
+.dcl-root .main{padding:24px 18px 70px}
+.dcl-root .metric-grid,.dcl-root .control-strip,.dcl-root .controls-grid{grid-template-columns:1fr}
+.dcl-root .work-row{grid-template-columns:minmax(0,1fr) 110px}
+.dcl-root .work-row .row-date,.dcl-root .work-row .row-owner{display:none}
+.dcl-root .cal-row{grid-template-columns:72px minmax(0,1fr) 95px}
+.dcl-root .cal-row .row-owner{display:none}
+.dcl-root .ob-row{grid-template-columns:minmax(0,1fr) 100px}
+.dcl-root .ob-row .ob-clock,.dcl-root .ob-row .behaviour{display:none}
+.dcl-root .lib-toolbar{grid-template-columns:1fr}
+}
+.dcl-root{--ink:#111111;--ink-soft:#333333;--slate:#4A4A4A;--muted:#6F737A;--faint:#92959A;
+  --paper:#FFFFFF;--soft:#FAFAFA;--soft2:#F5F5F5;--rule:#E5E5E5;--rule2:#D0D0D0;
+  --success:#2E7D4F;--success-bg:#E9F5EE;--warn:#946200;--warn-bg:#FFF6E5;--danger:#B3261E;--danger-bg:#FCEAE9;
+  --sans:"Montserrat",Arial,sans-serif;}
+.dcl-root,.dcl-root,.dcl-root button,.dcl-root input,.dcl-root select,.dcl-root textarea{font-family:"Montserrat",Arial,sans-serif!important}
+.dcl-root{color:#111111!important;background:#FFFFFF!important;-webkit-font-smoothing:antialiased}
+.dcl-root .btn,.dcl-root .ghost,.dcl-root .ghost-btn,.dcl-root .link-btn,.dcl-root .row-action,.dcl-root .rail-btn,.dcl-root .choice,.dcl-root .filter,.dcl-root .tab-action,.dcl-root .text-button,.dcl-root .field input,.dcl-root .field select,.dcl-root .field textarea,.dcl-root input,.dcl-root select,.dcl-root textarea{border-radius:3px!important}
+.dcl-root .route-card,.dcl-root .req-card,.dcl-root .rail-card,.dcl-root .metric,.dcl-root .control-card,.dcl-root .big-control,.dcl-root .meta-box,.dcl-root .support-option,.dcl-root .optional,.dcl-root .nested,.dcl-root .preview-sheet,.dcl-root .work-card,.dcl-root .fee-box,.dcl-root .upload,.dcl-root .generated,.dcl-root .exception,.dcl-root .cost-row{border-radius:4px!important}
+.dcl-root .info,.dcl-root .info-btn,.dcl-root .work-info-btn,.dcl-root .cost-info-btn{width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;
+  border:1px solid #D0D0D0!important;border-radius:50%!important;background:#FFFFFF!important;color:#333333!important;
+  font-family:"Montserrat",Arial,sans-serif!important;font-size:12px!important;font-weight:700!important;font-style:normal!important;
+  line-height:1!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  vertical-align:middle!important;box-shadow:none!important;text-decoration:none!important;flex:0 0 22px!important;}
+.dcl-root .info:hover,.dcl-root .info-btn:hover,.dcl-root .work-info-btn:hover,.dcl-root .cost-info-btn:hover{border-color:#111111!important;color:#111111!important;background:#FAFAFA!important}
+.dcl-root .masthead,.dcl-root .mast,.dcl-root .workspace-head{background:rgba(255,255,255,.98)!important;border-bottom-color:#E5E5E5!important}
+.dcl-root .eyebrow{color:#6F737A!important;font-weight:700!important}
+.dcl-root .workspace-tabs{gap:26px!important}
+.dcl-root .tab{font-size:13px!important;font-weight:600!important}
+.dcl-root .page-head h1{font-size:28px!important;font-weight:700!important}
+.dcl-root .page-head p{font-size:13px!important;line-height:1.6!important}
+.dcl-root .metric-label{font-size:10.5px!important}
+.dcl-root .metric-value{font-size:28px!important}
+.dcl-root .metric-note{font-size:11px!important}
+.dcl-root .section-head h2{font-size:17px!important}
+.dcl-root .section-head p{font-size:12px!important}
+.dcl-root .work-title{font-size:13px!important;font-weight:600!important}
+.dcl-root .work-sub{font-size:11.5px!important}
+.dcl-root .row-date,.dcl-root .row-owner{font-size:11px!important}
+.dcl-root .row-action{font-size:11.5px!important;padding:8px 11px!important}
+.dcl-root .badge{font-size:10px!important;padding:5px 8px!important}
+.dcl-root .control-card h3,.dcl-root .big-control h3{font-size:13px!important}
+.dcl-root .control-card p,.dcl-root .big-control p{font-size:11.5px!important;line-height:1.55!important}
+.dcl-root .control-card button,.dcl-root .rail-btn,.dcl-root .rail-link{font-size:11.5px!important}
+.dcl-root .rail-label{font-size:10px!important}
+.dcl-root .rail-next,.dcl-root .rail-profile{font-size:11.5px!important}
+.dcl-root .cal-date{font-size:11.5px!important}
+.dcl-root .cal-date span,.dcl-root .internal{font-size:10.5px!important}
+.dcl-root .filter{font-size:11px!important}
+.dcl-root .ob-id{font-size:10px!important}
+.dcl-root .ob-clock,.dcl-root .behaviour{font-size:11px!important}
+.dcl-root .lib-toolbar input,.dcl-root .lib-toolbar select{font-size:12px!important}
+.dcl-root .profile-top p,.dcl-root .setup-note{font-size:13px!important}
+.dcl-root .field label{font-size:11.5px!important}
+.dcl-root .field small{font-size:10.5px!important}
+.dcl-root .field input,.dcl-root .field select,.dcl-root .field textarea{font-size:12.5px!important}
+.dcl-root .choice{font-size:11.5px!important}
+.dcl-root .optional summary{font-size:11.5px!important}
+.dcl-root .drawer-head p,.dcl-root .helper,.dcl-root .profile-hint,.dcl-root .saved-file{font-size:11.5px!important}

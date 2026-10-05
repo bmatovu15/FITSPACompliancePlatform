@@ -1,0 +1,47 @@
+[
+ {
+  "ID": "FIT-01",
+  "Industry obligation": "Obtain board approval to adopt the Code and name a senior executive",
+  "Trigger": "Joining FITSPA or Code update",
+  "Code timing": "Before certification; then continuous",
+  "Due logic": "Keep the board decision, executive mandate and third-party flow-down controls together.",
+  "Evidence": "Board minutes, executive appointment, contracts and training",
+  "Basis": "Code 1.2"
+ },
+ {
+  "ID": "FIT-02",
+  "Industry obligation": "Maintain the certification documents",
+  "Trigger": "Certificate renewal or supporting document expiry",
+  "Code timing": "Before Code certification or renewal",
+  "Due logic": "Use the earliest supporting-document expiry as an internal alert.",
+  "Evidence": "Licence, certificates, policies, template and submission proof",
+  "Basis": "Code 11.2"
+ },
+ {
+  "ID": "FIT-03",
+  "Industry obligation": "Submit the annual self-assessment to renew Code certification",
+  "Trigger": "FITSPA certificate expiry",
+  "Code timing": "For annual certification renewal",
+  "Due logic": "Enter the actual certificate expiry on Dashboard and use an earlier internal target.",
+  "Evidence": "Completed self-assessment, declaration, supporting evidence and renewed certificate",
+  "Basis": "Code 11.3.1 and Annex B"
+ },
+ {
+  "ID": "FIT-04",
+  "Industry obligation": "Submit biannual grievance metrics",
+  "Trigger": "FITSPA reporting instruction",
+  "Code timing": "Date specified by FITSPA",
+  "Due logic": "Create the task when the reporting schedule is received; do not invent a legal day.",
+  "Evidence": "Approved metrics, reconciliation, submission proof and receipt",
+  "Basis": "Code 11.3.2"
+ },
+ {
+  "ID": "FIT-05",
+  "Industry obligation": "Report significant Code breaches and cyber incidents immediately",
+  "Trigger": "Significant Code breach or cyber incident",
+  "Code timing": "Immediately",
+  "Due logic": "Use the incident workflow, but keep separate notices and receipts for each recipient.",
+  "Evidence": "Incident record, materiality assessment, notices, updates and closure",
+  "Basis": "Code 11.3.3"
+ }
+]

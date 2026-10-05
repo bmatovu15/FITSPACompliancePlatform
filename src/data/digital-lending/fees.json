@@ -1,0 +1,9 @@
+{
+  "mlRenewal": { "items": [ { "name": "Renewal application fee", "amount": 50000 }, { "name": "Annual licence fee", "amount": 500000 } ], "source": "Money Lenders Regulations, 2018 — Schedule 1" },
+  "ndtRenewal": { "items": [ { "name": "Annual licence fee", "amount": 500000 } ], "source": "NDTMFI Regulations, 2018 — fee schedule" },
+  "mlAdditionalPlace": { "items": [ { "name": "Inspection and registration of additional place", "amount": 300000 } ], "source": "Money Lenders Regulations, 2018 — Schedule 1" },
+  "ndtBranch": { "items": [ { "name": "Branch licence fee", "amount": 300000 } ], "source": "NDTMFI Regulations, 2018 — fee schedule" },
+  "mlChange": { "items": [ { "name": "Registration of notice of change", "amount": 100000 } ], "source": "Money Lenders Regulations, 2018 — Schedule 1" },
+  "ndtChange": { "items": [ { "name": "Alteration / registered change fee", "amount": 100000 } ], "source": "NDTMFI Regulations, 2018 — fee schedule" },
+  "pdpo": { "items": [ { "name": "PDPO registration / renewal fee", "amount": null, "label": "Check current fee" } ], "source": "Current PDPO fee schedule — verify before payment" }
+}

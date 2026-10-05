@@ -1,0 +1,15 @@
+{
+ "LIC": "Licence administration",
+ "ML": "Money Lender operations",
+ "NDT": "NDTMFI prudential",
+ "RPT": "Reporting & returns",
+ "REC": "Records & retention",
+ "PRC": "Pricing & interest",
+ "LON": "Lending & customer contract",
+ "COL": "Collateral",
+ "DBT": "Collections & recovery",
+ "CRD": "Credit information",
+ "CNS": "Consumer protection",
+ "TEC": "Technology & privacy",
+ "AML": "AML/CFT"
+}
