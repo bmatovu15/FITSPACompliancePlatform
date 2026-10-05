@@ -577,9 +577,7 @@ export default function DigitalLendingWizardClient({
         onReview={async () => {
           const scope = shown.reqId && reqTitle ? `Review: ${reqTitle}` : "Application review";
           if (application) return requestReview(scope, shown.reqId);
-          const ok = await postExpert({ requestType: "application_review", message: `${scope} requested.`, contextLabel: contextText });
-          if (ok) addSupport({ type: "Review requested", text: scope, date: new Date().toLocaleDateString(), context: contextText });
-          return ok;
+          return postExpert({ requestType: "application_review", message: `${scope} requested.`, contextLabel: contextText });
         }}
       />
     );
