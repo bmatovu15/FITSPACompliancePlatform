@@ -35,7 +35,7 @@ export function LandingScreen({ canResume, onStart, onResume }: { canResume: boo
   return (
     <div>
       <PaymentsMasthead
-        subtitle="Beacon · Get licensed"
+        subtitle="FITSPA Compliance Platform · Get licensed"
         logoHome
         right={
           <button className={cx("link-btn")} type="button" onClick={() => router.push("/apply")}>
@@ -686,7 +686,7 @@ export function DetailsScreen({
           {blocker && (
             <div className={cx("application-details-alert")}>
               <strong>This payment-instrument route needs confirmation.</strong>
-              The standard Form C route should not be assumed for a financial institution or microfinance deposit-taking institution. Speak to an expert before Beacon generates a standard checklist.
+              The standard Form C route should not be assumed for a financial institution or microfinance deposit-taking institution. Speak to an expert before FITSPA Compliance Platform generates a standard checklist.
               <br />
               <button className={cx("work-btn subtle")} type="button" onClick={onExpert}>
                 Speak to an expert

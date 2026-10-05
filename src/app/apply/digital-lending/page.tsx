@@ -1,15 +1,16 @@
 import localFont from "next/font/local";
 import { createClient } from "@/lib/supabase/server";
+import BeaconNav from "@/components/beacon-nav";
 import DigitalLendingWizardClient from "./digital-lending-wizard-client";
 import type { LicenceApplicationTemplate, LicenceApplicationWizardClass } from "@/lib/types";
 
 export const metadata = {
-  title: "Digital Lending Licence Application | Beacon",
+  title: "Digital Lending Licence Application | FITSPA Compliance Platform",
   description:
     "Prepare a Money Lender or NDTMFI digital lending licence application — no login required. Pick your route, work through the requirements, and track your progress in this browser.",
 };
 
-// Montserrat is the Beacon design system's typeface; it was previously only
+// Montserrat is the FITSPA Compliance Platform design system's typeface; it was previously only
 // named in CSS and never actually loaded. Self-hosted (latin subset, SIL OFL --
 // see fonts/OFL-LICENSE.txt) so neither the build nor the browser depends on
 // Google Fonts. Scoped to this module via the --dl-montserrat variable, which
@@ -33,7 +34,7 @@ const APPLICATION_KEY = "digital_lending";
 // 21-item template catalogue and the 2 wizard classes (Money Lender / NDTMFI)
 // are admin-authored reference data; this page reads them and hands them to
 // the client, which owns all applicant-specific state. The module renders its
-// own masthead per screen (as in the Beacon design), so no site nav is added here.
+// own masthead per screen (as in the FITSPA Compliance Platform design), under the former site menu.
 export default async function ApplyDigitalLendingPage() {
   const supabase = await createClient();
 
@@ -44,6 +45,7 @@ export default async function ApplyDigitalLendingPage() {
 
   return (
     <div className={montserrat.variable}>
+      <BeaconNav active="apply" backHref="/apply" backLabel="← Applications" sticky={false} />
       <DigitalLendingWizardClient
         applicationKey={APPLICATION_KEY}
         templates={(templateRows ?? []) as LicenceApplicationTemplate[]}

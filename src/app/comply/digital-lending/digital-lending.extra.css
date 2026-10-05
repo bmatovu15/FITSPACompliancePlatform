@@ -42,3 +42,5 @@
 .dcl-root .badge{text-transform:none;letter-spacing:normal;align-items:normal}
 .dcl-root .btn:disabled{opacity:1}
 .dcl-root input[type=file]{color:var(--ink)}
+
+.dcl-root .brandtitle{white-space:nowrap}

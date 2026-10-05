@@ -31,7 +31,7 @@ export function LandingScreen({
         <div className="brand">
           <BrandMark />
           <div>
-            <span className="brandtitle">Beacon</span>
+            <span className="brandtitle">FITSPA Compliance Platform</span>
             <span className="brandsub">Digital Lending Compliance</span>
           </div>
         </div>
@@ -127,7 +127,7 @@ export function SetupScreen({
         <div className="profile-top">
           <div className="eyebrow">First-time setup</div>
           <h2>Set up the essentials.</h2>
-          <p>Give Beacon the few facts it needs to build your first compliance workspace. You can complete the rest of your operating profile later.</p>
+          <p>Give FITSPA Compliance Platform the few facts it needs to build your first compliance workspace. You can complete the rest of your operating profile later.</p>
         </div>
         <section className="profile-section">
           <h3>Licence &amp; reporting basics</h3>
@@ -148,7 +148,7 @@ export function SetupScreen({
             <div className="field">
               <label>Financial year-end</label>
               <input id="p-fye" type="date" value={f.fye} onChange={(e) => setF({ ...f, fye: e.target.value })} />
-              <small>Beacon uses the month and day for recurring fiscal-year workflows.</small>
+              <small>FITSPA Compliance Platform uses the month and day for recurring fiscal-year workflows.</small>
             </div>
           </div>
         </section>

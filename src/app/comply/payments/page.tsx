@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/current-member";
 import { PAYMENTS_CATALOG_KEY } from "@/lib/compliance-engine";
 import { profileFromLegacy, type LegacyPaymentsProfile } from "@/lib/comply/payments-legacy";
+import BeaconNav from "@/components/beacon-nav";
 import PaymentsComplianceClient from "./payments-compliance-client";
 
 export const metadata = {
@@ -46,6 +47,7 @@ export default async function PaymentsCompliancePage() {
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
         precedence="default"
       />
+      <BeaconNav active="comply" backHref="/comply" backLabel="← Compliance" sticky={false} />
       <PaymentsComplianceClient
         member={{
           id: member.id,

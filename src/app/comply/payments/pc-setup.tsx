@@ -38,7 +38,7 @@ export function Landing({ ctx }: { ctx: PcCtx }) {
   return (
     <section className="screen active" id="screen-landing">
       <header className="masthead">
-        <Brand name="Beacon" sub="Payments compliance" />
+        <Brand name="FITSPA Compliance Platform" sub="Payments compliance" />
         <div className="masthead-actions">
           <Link className="link-btn" id="beacon-home-link" href="/comply">
             ← Compliance
@@ -108,7 +108,7 @@ export function Landing({ ctx }: { ctx: PcCtx }) {
           </div>
           <div className="preview-float">
             <strong>Something changed?</strong>
-            <span>Report the event. Beacon works out the obligations and timing that follow.</span>
+            <span>Report the event. FITSPA Compliance Platform works out the obligations and timing that follow.</span>
           </div>
         </div>
       </main>
@@ -219,7 +219,7 @@ export function SetupLicence({ ctx }: { ctx: PcCtx }) {
         <p className="eyebrow">Licence profile</p>
         <h1 className="setup-title">Which NPS licences do you hold?</h1>
         <p className="setup-note">
-          Select every category and class that appears on your operating licence. Beacon uses the complete licence
+          Select every category and class that appears on your operating licence. FITSPA Compliance Platform uses the complete licence
           profile — not a single “primary” licence — to determine what applies.
         </p>
         <p className="setup-inline-help">
@@ -264,7 +264,7 @@ export function SetupLicence({ ctx }: { ctx: PcCtx }) {
 
         <div className="setup-section" style={{ marginTop: 24 }}>
           <h3>Licence details</h3>
-          <p>These details help Beacon distinguish historical obligations from future monitoring.</p>
+          <p>These details help FITSPA Compliance Platform distinguish historical obligations from future monitoring.</p>
           <div className="field-row">
             <div className="field">
               <label htmlFor="licence-date">Licence effective date</label>
@@ -328,13 +328,13 @@ export function SetupOperating({ ctx }: { ctx: PcCtx }) {
   const pick = (key: BinaryKey, val: string) => {
     if (key === "safeguard" && p.fiMdi === true && val !== "special") {
       setSafeguardAlert(
-        "For an EMI that is also an FI/MDI, Beacon uses the special-account route. Change the institution-type answer if that is not correct.",
+        "For an EMI that is also an FI/MDI, FITSPA Compliance Platform uses the special-account route. Change the institution-type answer if that is not correct.",
       );
       return;
     }
     if (key === "safeguard" && p.fiMdi === false && val !== "trust") {
       setSafeguardAlert(
-        "For a non-bank EMI, Beacon uses the approved trust-account route. Change the institution-type answer if that is not correct.",
+        "For a non-bank EMI, FITSPA Compliance Platform uses the approved trust-account route. Change the institution-type answer if that is not correct.",
       );
       return;
     }
@@ -386,8 +386,8 @@ export function SetupOperating({ ctx }: { ctx: PcCtx }) {
           <div className="step-dot">3</div>
         </div>
         <p className="eyebrow">Operating profile</p>
-        <h1 className="setup-title">Tell Beacon how you operate.</h1>
-        <p className="setup-note">We only ask facts that change your compliance obligations or how Beacon should manage them.</p>
+        <h1 className="setup-title">Tell FITSPA Compliance Platform how you operate.</h1>
+        <p className="setup-note">We only ask facts that change your compliance obligations or how FITSPA Compliance Platform should manage them.</p>
 
         {emi && (
           <div className="setup-section conditional-emi">
@@ -430,7 +430,7 @@ export function SetupOperating({ ctx }: { ctx: PcCtx }) {
 
         <div className="setup-actions">
           <span className="setup-helper">
-            You can change these facts later. Beacon will preview the impact before changing your obligations.
+            You can change these facts later. FITSPA Compliance Platform will preview the impact before changing your obligations.
           </span>
           <button
             type="button"
@@ -494,7 +494,7 @@ export function SetupBaseline({ ctx }: { ctx: PcCtx }) {
   return (
     <section className="screen active" id="screen-setup-baseline">
       <header className="masthead">
-        <Brand name="Payments Compliance Assistant" sub="Bring Beacon up to date" />
+        <Brand name="Payments Compliance Assistant" sub="Bring FITSPA Compliance Platform up to date" />
         <div className="masthead-actions">
           <button type="button" className="link-btn" onClick={() => ctx.setScreen("operating")}>
             ← Back
@@ -510,7 +510,7 @@ export function SetupBaseline({ ctx }: { ctx: PcCtx }) {
           <div className="step-dot active">3</div>
         </div>
         <p className="eyebrow">Baseline status</p>
-        <h1 className="setup-title">What had already happened before Beacon?</h1>
+        <h1 className="setup-title">What had already happened before FITSPA Compliance Platform?</h1>
         <p className="setup-note">
           We will not label earlier obligations overdue until you confirm they are still outstanding. If you are not
           sure, leave them as <strong>Not sure</strong> and resolve them from Home later. This is a starting
@@ -531,7 +531,7 @@ export function SetupBaseline({ ctx }: { ctx: PcCtx }) {
                     <div className="baseline-evidence-note">
                       {evid.length
                         ? `Evidence recorded: ${evid[0].name}`
-                        : "Reported complete — evidence is still needed before Beacon treats it as verified."}
+                        : "Reported complete — evidence is still needed before FITSPA Compliance Platform treats it as verified."}
                     </div>
                   )}
                 </div>

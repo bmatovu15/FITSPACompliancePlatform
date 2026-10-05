@@ -590,7 +590,7 @@ export function EventStartBody() {
   return (
     <>
       <div className="drawer-section">
-        <p>Tell Beacon what happened in the business. Beacon will generate the regulatory work that follows.</p>
+        <p>Tell FITSPA Compliance Platform what happened in the business. FITSPA Compliance Platform will generate the regulatory work that follows.</p>
       </div>
       {cats.map((cat) => (
         <div className="drawer-section" key={cat}>
@@ -642,7 +642,7 @@ export function EventFormBody({ id }: { id: string }) {
         })}
       </div>
       <div className="drawer-section">
-        <h3>Regulatory work Beacon will create</h3>
+        <h3>Regulatory work FITSPA Compliance Platform will create</h3>
         {linked.map((o) => (
           <div className="generated" key={o.ID}>
             <strong>{o.Obligation}</strong>

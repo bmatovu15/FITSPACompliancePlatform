@@ -1,7 +1,7 @@
 "use client";
 
 // Digital Lending Compliance ("Comply", MRD-MoFPED) -- faithful React port of
-// the Beacon design prototype (digital_comply.html): landing -> setup ->
+// the FITSPA Compliance Platform design prototype (digital_comply.html): landing -> setup ->
 // workspace (Dashboard / Calendar / Obligations / Controls) with one shared
 // right-hand drawer. All pure logic lives in @/lib/comply/digital-engine; the
 // whole state document is persisted through the shared WorkspaceAdapter

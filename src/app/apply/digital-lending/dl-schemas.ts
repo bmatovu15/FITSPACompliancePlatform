@@ -1,6 +1,6 @@
 // Data schema for the Digital Lending Apply requirement drawers.
 //
-// Every requirement drawer in the Beacon design (digital_apply.html) is a
+// Every requirement drawer in the FITSPA Compliance Platform design (digital_apply.html) is a
 // purpose-built form. Rather than hand-coding 17 components, each one is
 // described here as a list of "blocks" that ONE renderer (dl-forms.tsx) draws
 // and ONE evaluator (dl-engine.ts) reads to decide whether the requirement is

@@ -277,7 +277,7 @@ function RegulatorDetail({
             {regulator.title} <span className="text-xs font-normal font-mono" style={{ color: "var(--color-text-muted)" }}>({regulator.key})</span>
           </h2>
           <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-            Public page retired (replaced by Beacon Apply/Comply)
+            Public page retired (replaced by FITSPA Compliance Platform Apply/Comply)
           </span>
         </div>
 

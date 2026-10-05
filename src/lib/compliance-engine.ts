@@ -36,7 +36,7 @@ export type ProfileFields = {
   collateral: string;
   recovery_agents: string;
   fitspa_subscriber: string;
-  // Beacon Phase 2 additions (Digital Lending Compliance audit, plan §9.3).
+  // FITSPA Compliance Platform Phase 2 additions (Digital Lending Compliance audit, plan §9.3).
   route: string;
   issue_date: string;
   fye_date: string;
@@ -219,7 +219,7 @@ export function obligationApplies(o: Obligation, profile: ProfileFields, catalog
     if (o.applies_advice && profile.advice === "Yes") return true;
     return false;
   }
-  // Beacon Phase 2: independent flags so combined licences (e.g. PSO + PSP)
+  // FITSPA Compliance Platform Phase 2: independent flags so combined licences (e.g. PSO + PSP)
   // both fire, instead of the old single primary_category equality check
   // which could only ever match one category at a time.
   if (o.applies_pso && profile.is_pso === "Yes") return true;
@@ -271,7 +271,7 @@ export function profileSummaryText(p: ProfileFields, catalogKey: string): string
     return dlParts.join("  ·  ") || "No profile set";
   }
   const parts: string[] = [];
-  // Beacon Phase 2: a member can hold combined licences, so all three flags
+  // FITSPA Compliance Platform Phase 2: a member can hold combined licences, so all three flags
   // are checked independently rather than a single primary_category branch.
   if (p.is_pso === "Yes") parts.push("PSO" + (p.pso_class ? " · " + (PSO_CLASS_LABEL[p.pso_class] || p.pso_class) : ""));
   if (p.is_psp === "Yes") parts.push("PSP" + (p.emi === "Yes" ? " · EMI" : ""));
@@ -313,7 +313,7 @@ export function profileIssues(p: ProfileFields, catalogKey: string): ProfileIssu
     need(!!p.fitspa_subscriber, 1, "Answer: FITSPA subscriber");
     return issues;
   }
-  // Beacon Phase 2: at least one of PSO/PSP/Instrument must be answered Yes —
+  // FITSPA Compliance Platform Phase 2: at least one of PSO/PSP/Instrument must be answered Yes —
   // combined licences are allowed, but the member must hold at least one.
   need(!!p.is_pso, 1, "Answer “Payment system operator (PSO)?”");
   need(!!p.is_psp, 1, "Answer “Payment service provider (PSP)?”");

@@ -189,7 +189,7 @@
   "Recipient": "UMRA",
   "guide": {
    "what": "The licence runs to 31 December each year. Submit a complete renewal pack and the prescribed fee early enough for continuity. Money Lender applications are due at least three months before expiry; NDTMFI applications are due at least ninety days before expiry.",
-   "do": "Beacon derives 31 December and calculates the legal renewal date by route; it does not ask the user to enter a licence-expiry date.",
+   "do": "FITSPA Compliance Platform derives 31 December and calculates the legal renewal date by route; it does not ask the user to enter a licence-expiry date.",
    "when": "Money Lender — at least 3 months before 31 December. NDTMFI — at least 90 days before 31 December.",
    "keep": "Renewal form, supporting documents, fee receipt, submission proof and renewed licence"
   },
@@ -1660,13 +1660,13 @@
   "Obligation": "Report large cash/monetary transactions at or above the statutory threshold through the current FIA reporting cycle",
   "Applies to": "Both",
   "Behaviour": "Threshold-triggered regulatory report",
-  "Legal clock": "Use the current FIA LCTR submission instruction/reporting cycle; do not invent a fixed day in Beacon",
+  "Legal clock": "Use the current FIA LCTR submission instruction/reporting cycle; do not invent a fixed day in FITSPA Compliance Platform",
   "Source / provision": "AML Act s.8; FIA reporting/goAML guidance",
   "Recipient": "FIA",
   "guide": {
    "what": "Accountable persons must report cash/monetary transactions meeting the statutory large-cash threshold. FIA guidance identifies one thousand currency points as UGX 20,000,000.",
    "do": "Transaction matching threshold creates an LCTR occurrence and routes it into the currently configured FIA reporting cycle.",
-   "when": "Use the current FIA LCTR submission instruction/reporting cycle; do not invent a fixed day in Beacon",
+   "when": "Use the current FIA LCTR submission instruction/reporting cycle; do not invent a fixed day in FITSPA Compliance Platform",
    "keep": "Transaction record, threshold logic, LCTR submission and receipt"
   },
   "domain": "AML",

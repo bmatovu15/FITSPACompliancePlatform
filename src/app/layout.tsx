@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import SiteChrome from "@/components/site-chrome";
 
 export const metadata: Metadata = {
-  title: "Beacon — Fintech Compliance Platform",
+  title: "FITSPA Compliance Platform",
   description:
     "Regulatory compliance platform for FITSPA members — obligations, licences, and regulator document library.",
 };

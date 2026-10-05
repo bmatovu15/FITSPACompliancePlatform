@@ -199,7 +199,7 @@ export function WorkDrawer({ ctx, id, taskKey }: { ctx: PcCtx; id: string; taskK
           ))
         ) : (
           <p className="helper">
-            No evidence recorded yet. Beacon will not treat evidence-dependent completion as satisfied just because a status button was
+            No evidence recorded yet. FITSPA Compliance Platform will not treat evidence-dependent completion as satisfied just because a status button was
             clicked.
           </p>
         )}
@@ -433,7 +433,7 @@ export function EventDrawer({ ctx }: { ctx: PcCtx }) {
           </div>
           <div className="consequence">
             <h3>
-              Beacon will create {actions.length} compliance action{actions.length === 1 ? "" : "s"}
+              FITSPA Compliance Platform will create {actions.length} compliance action{actions.length === 1 ? "" : "s"}
             </h3>
             {actions.length ? (
               actions.map((a) => (
@@ -509,7 +509,7 @@ export function RegulatorDrawer({ ctx }: { ctx: PcCtx }) {
     <>
       <div className="notice">
         Use this for a licence condition, directive, inspection finding or information request where BoU specifies the action or deadline.
-        Beacon should not invent the requirement.
+        FITSPA Compliance Platform should not invent the requirement.
       </div>
       <div className="field">
         <label htmlFor="reg-title">Title / required action</label>
@@ -578,7 +578,7 @@ export function ExpertDrawer({ ctx, contextId }: { ctx: PcCtx; contextId: string
     <>
       <div className="support-option">
         <h3>Ask a question</h3>
-        <p>Ask about {context}. Beacon keeps the question linked to the current compliance context.</p>
+        <p>Ask about {context}. FITSPA Compliance Platform keeps the question linked to the current compliance context.</p>
         <button type="button" className="btn small" id="expert-question" onClick={() => ctx.openDrawer({ kind: "question", contextId }, { kind: "expert", contextId })}>
           Ask a question
         </button>
@@ -705,7 +705,7 @@ export function ProfileDrawer({ ctx }: { ctx: PcCtx }) {
         </p>
       </div>
       <div className="notice">
-        Changing the profile can add or remove obligations. In production Beacon should show an impact preview before applying the change.
+        Changing the profile can add or remove obligations. In production FITSPA Compliance Platform should show an impact preview before applying the change.
       </div>
       <div className="work-actions">
         <button
@@ -765,7 +765,7 @@ export function drawerMeta(view: DrawerView | null): { kicker: string; title: st
     case "sent":
       return { kicker: "Expert Support", title: "Inquiry sent" };
     case "profile":
-      return { kicker: "Compliance profile", title: "What Beacon is using" };
+      return { kicker: "Compliance profile", title: "What FITSPA Compliance Platform is using" };
   }
 }
 

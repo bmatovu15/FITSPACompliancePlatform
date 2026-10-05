@@ -477,7 +477,7 @@ function OfficialFormEditor({ api }: { api: EditorApi }) {
   return (
     <>
       <Section title={form}>
-        <p className={cx("editor-note")}>Download the official form, complete it outside Beacon, commission or sign it where required, then upload the completed copy.</p>
+        <p className={cx("editor-note")}>Download the official form, complete it outside FITSPA Compliance Platform, commission or sign it where required, then upload the completed copy.</p>
         <a className={cx("form-link")} href={link} target="_blank" rel="noopener noreferrer">
           Open official {form} ↗
         </a>
@@ -493,7 +493,7 @@ function PersonUploads({ api, isForm }: { api: EditorApi; isForm: boolean }) {
   const cfg = productConfig(api.t);
   const people = getPeople(api.ctx, cfg.person_filter);
   if (!people.length) {
-    return <div className={cx("drawer-empty")}>Add the applicable owners, directors and senior managers first. Beacon will then show the people who need this item.</div>;
+    return <div className={cx("drawer-empty")}>Add the applicable owners, directors and senior managers first. FITSPA Compliance Platform will then show the people who need this item.</div>;
   }
   const slots: [string, string][] = isForm ? [["form", "Completed & commissioned Form B"]] : cfg.slots ?? [];
   const link = isForm && api.t.official_form?.url ? api.t.official_form.url : "";
@@ -759,7 +759,7 @@ function SourceFundsEditor({ api }: { api: EditorApi }) {
   const [rows, setRows] = useState<Record<string, { source?: string; explanation?: string }>>(d.rows ?? {});
   const [flash, doFlash] = useFlash();
   if (!sh.length) {
-    return <div className={cx("drawer-empty")}>Complete Ownership &amp; beneficial ownership first. Beacon will use the direct shareholders entered there.</div>;
+    return <div className={cx("drawer-empty")}>Complete Ownership &amp; beneficial ownership first. FITSPA Compliance Platform will use the direct shareholders entered there.</div>;
   }
   const set = (id: string, p: { source?: string; explanation?: string }) => setRows({ ...rows, [id]: { ...rows[id], ...p } });
   return (

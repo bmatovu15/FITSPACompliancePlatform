@@ -22,7 +22,7 @@ import {
   DIGITAL_LENDING_CATALOG_KEY,
 } from "@/lib/compliance-engine";
 
-// The Beacon-styled Comply routes are per-catalog (/comply/payments,
+// The FITSPA Compliance Platform-styled Comply routes are per-catalog (/comply/payments,
 // /comply/digital-lending) rather than one shared page keyed by a
 // `?catalog=` query param -- this maps a catalog_key to its route so the
 // dashboard's own links land on the right one. Falls back to the Comply hub

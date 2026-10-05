@@ -1,6 +1,6 @@
 // Payments Compliance ("Comply") -- pure rules engine.
 //
-// Typed port of the logic in the Beacon design prototype (payments_comply.html /
+// Typed port of the logic in the FITSPA Compliance Platform design prototype (payments_comply.html /
 // pc.js): applicability, baseline items, recurring / event / regulator task
 // generation, the status model, workflows, evidence rules, event consequence
 // actions, operational grouping, product filters, timing and the working-day

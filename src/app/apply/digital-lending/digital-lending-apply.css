@@ -171,3 +171,5 @@
 /* Tailwind preflight strips the native file-input button; restore the browser default the prototype shows. */
 .dl-apply input[type=file]::file-selector-button{font:inherit;color:#000;background-color:buttonface;border:1px solid #767676;border-radius:3px;padding:2px 7px;margin-inline-end:4px;cursor:pointer}
 .dl-apply input[type=file]:disabled::file-selector-button{cursor:not-allowed;opacity:.6}
+
+.dl-apply .brand-title{white-space:nowrap}

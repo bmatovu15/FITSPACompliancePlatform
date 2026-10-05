@@ -1,6 +1,6 @@
 "use client";
 
-// Payments Compliance ("Comply") -- React port of the Beacon design prototype
+// Payments Compliance ("Comply") -- React port of the FITSPA Compliance Platform design prototype
 // (payments_comply.html). Screens: landing -> 3-step setup (licence profile,
 // operating profile, baseline status) -> workspace (Home / Obligations /
 // Calendar / Evidence) with the right-hand drawer in all its modes. The rules
@@ -281,7 +281,7 @@ export default function PaymentsComplianceClient(props: PaymentsComplianceClient
             <div className="brand">
               <div className="brand-mark" aria-hidden="true"></div>
               <div>
-                <span className="brand-name">Beacon</span>
+                <span className="brand-name">FITSPA Compliance Platform</span>
                 <span className="brand-sub" id="profile-summary">
                   {profileText(state.profile)}
                 </span>

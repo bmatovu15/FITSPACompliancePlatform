@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./home.module.css";
 import { BRAND } from "@/lib/brand";
 
-// The Beacon platform landing screen (`screen-platform` in the uploaded
+// The FITSPA Compliance Platform platform landing screen (`screen-platform` in the uploaded
 // template), ported markup-for-markup per the Phase 1 plan in
 // strategy/beacon-template-redesign-plan.md §3 (option B: same classes, same
 // structure, only the interaction wiring is adapted -- imperative
@@ -22,8 +22,12 @@ export default function Home() {
           </button>
           <Link className={styles["bp-nav-link"]} href="/apply">Apply</Link>
           <Link className={styles["bp-nav-link"]} href="/comply">Comply</Link>
+          <Link className={styles["bp-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <div className={styles["bp-nav-spacer"]} aria-hidden="true"></div>
+        <div className={styles["bp-nav-actions"]}>
+          <Link className={styles["bp-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["bp-nav-register"]} href="/signup">Register</Link>
+        </div>
       </header>
 
       <section className={styles["bp-hero"]}>
@@ -121,6 +125,11 @@ export default function Home() {
               <h4>AI Assistant</h4>
               <p>Ask questions about fintech regulation and get guided to the right pathway.</p>
               <Link href="/assistant">Talk to the AI Assistant →</Link>
+            </div>
+            <div className={styles["bp-utility-card"]}>
+              <h4>FITSPA Admin (demonstration)</h4>
+              <p>See how FITSPA manages every obligation and how it appears on member pages. No login needed.</p>
+              <Link href="/fitspa-admin">Open the admin demo →</Link>
             </div>
           </div>
         </div>

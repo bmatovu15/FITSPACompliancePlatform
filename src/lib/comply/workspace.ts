@@ -1,4 +1,4 @@
-// Shared persistence for the Beacon "Comply" workspaces (Payments, Digital
+// Shared persistence for the FITSPA Compliance Platform "Comply" workspaces (Payments, Digital
 // Lending). The design prototypes keep their whole state in one JSON document
 // in localStorage; in production that same document lives in
 // public.member_comply_workspace (one row per member + module), protected by

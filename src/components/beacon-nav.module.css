@@ -179,3 +179,6 @@
     font-size: 12px;
   }
 }
+
+/* Menu above a module that owns its own sticky masthead. */
+.navStatic{position:relative}

@@ -8,9 +8,9 @@ export const metadata = {
   description: "Track and manage your ongoing Payments, Digital Lending or Insurance compliance obligations.",
 };
 
-// Ports `screen-comply-hub` from the uploaded Beacon template 1:1 (§9, Phase
+// Ports `screen-comply-hub` from the uploaded FITSPA Compliance Platform template 1:1 (§9, Phase
 // 1 of strategy/beacon-template-redesign-plan.md). The cards route into the
-// real Beacon-styled Comply modules at /comply/payments, /comply/digital-
+// real FITSPA Compliance Platform-styled Comply modules at /comply/payments, /comply/digital-
 // lending and /comply/insurance (§5 of the plan) -- the same database-
 // backed, member-gated compliance engine as before, restyled to match the
 // uploaded template. The old /dashboard/compliance-pathway page these used
@@ -28,8 +28,13 @@ export default function ComplyHubPage() {
           </button>
           <Link className={styles["ch-nav-link"]} href="/apply">Apply</Link>
           <span className={`${styles["ch-nav-link"]} ${styles.active}`}>Comply</span>
+          <Link className={styles["ch-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <Link className={styles["ch-home"]} id="ch-home" href="/">← Beacon home</Link>
+        <div className={styles["ch-nav-actions"]}>
+          <Link className={styles["ch-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["ch-nav-register"]} href="/signup">Register</Link>
+          <Link className={styles["ch-nav-back"]} href="/">← Home</Link>
+        </div>
       </header>
       <main className={styles["ch-main"]}>
         <div className={styles["ch-eyebrow"]}>Compliance Assistant</div>

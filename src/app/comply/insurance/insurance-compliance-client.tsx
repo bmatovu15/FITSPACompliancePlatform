@@ -33,7 +33,7 @@ import {
 } from "@/lib/compliance-engine";
 import styles from "./insurance-compliance.module.css";
 
-// Beacon-styled Insurance Comply workspace. Same component architecture and
+// FITSPA Compliance Platform-styled Insurance Comply workspace. Same component architecture and
 // CSS class vocabulary as digital-lending-compliance-client.tsx (and the
 // same shared @/lib/compliance-engine applicability rules), adapted for two
 // real differences between this catalog and Digital Lending / Payments:
@@ -516,7 +516,7 @@ function ProfileWizard({
         <div className={styles.eyebrow}>{onCancel ? "Profile & registrations" : "First-time setup"}</div>
         <h2>Set up the essentials.</h2>
         <p>
-          Give Beacon the few facts it needs to build your insurance compliance workspace. Your IRA licence route —
+          Give FITSPA Compliance Platform the few facts it needs to build your insurance compliance workspace. Your IRA licence route —
           and, for Insurers and Brokers, whether you write life, non-life or both — decides which obligations,
           event-triggered clocks and controls apply to you.
         </p>
@@ -879,7 +879,7 @@ function EventFormBody({
   return (
     <>
       <div className={styles["drawer-section"]}>
-        <p>{ev.response || "Tell Beacon when this happened, then set the deadline the legal clock below implies."}</p>
+        <p>{ev.response || "Tell FITSPA Compliance Platform when this happened, then set the deadline the legal clock below implies."}</p>
       </div>
       <div className={styles["meta-grid"]}>
         <div className={styles["meta-box"]}>

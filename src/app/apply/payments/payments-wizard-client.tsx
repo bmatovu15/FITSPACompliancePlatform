@@ -50,7 +50,7 @@ import {
 
 // The Payments application: the front door (landing -> classification ->
 // isn't-listed / expert / sandbox -> licence result -> application details)
-// and the 58-requirement workspace, ported screen-for-screen from the Beacon
+// and the 58-requirement workspace, ported screen-for-screen from the FITSPA Compliance Platform
 // design prototype. The prototype keeps everything in localStorage; here the
 // same state lives in Supabase:
 //   - member_licence_applications.facts  : classification, the ten detail

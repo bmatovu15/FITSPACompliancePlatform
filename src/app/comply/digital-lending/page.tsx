@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/current-member";
 import { DIGITAL_LENDING_CATALOG_KEY } from "@/lib/compliance-engine";
+import BeaconNav from "@/components/beacon-nav";
 import DigitalLendingComplianceClient from "./digital-lending-compliance-client";
 import type { LegacyProfileRow } from "@/lib/comply/digital-engine";
 
@@ -11,11 +12,11 @@ export const metadata = {
 };
 
 // Digital Lending Compliance workspace (Money Lender / NDTMFI, MRD-MoFPED).
-// A faithful port of the Beacon design prototype: the workspace is one state
+// A faithful port of the FITSPA Compliance Platform design prototype: the workspace is one state
 // document (profile -> generated dated occurrences, logged events, control
 // reviews, evidence, activity) persisted in public.member_comply_workspace
 // (module_key = 'digital_lending'); evidence files live in the private
-// compliance-evidence bucket. The module draws its own Beacon masthead
+// compliance-evidence bucket. The module draws its own FITSPA Compliance Platform masthead
 // (landing / setup / workspace), so there is no site nav above it.
 export default async function DigitalLendingCompliancePage() {
   const member = await requireMember();
@@ -42,6 +43,8 @@ export default async function DigitalLendingCompliancePage() {
   }
 
   return (
+    <>
+    <BeaconNav active="comply" backHref="/comply" backLabel="← Compliance" sticky={false} />
     <DigitalLendingComplianceClient
       memberId={member.id}
       catalogKey={DIGITAL_LENDING_CATALOG_KEY}
@@ -51,5 +54,6 @@ export default async function DigitalLendingCompliancePage() {
       contactName={member.signup_contact_name}
       contactEmail={member.company_email}
     />
+    </>
   );
 }

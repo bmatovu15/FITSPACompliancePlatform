@@ -24,6 +24,7 @@ export default function BeaconNav({
   active,
   backHref = "/",
   backLabel = "← Home",
+  sticky = true,
 }: {
   active: BeaconNavActive;
   /** Where the "← Home" action links. Defaults to "/". Pass a different
@@ -32,9 +33,12 @@ export default function BeaconNav({
   backHref?: string;
   /** Label for the back action. Defaults to "← Home". */
   backLabel?: string;
+  /** Module pages draw their own sticky masthead below the menu, so they
+   *  pass false to let the menu scroll away instead of stacking. */
+  sticky?: boolean;
 }) {
   return (
-    <header className={styles.nav}>
+    <header className={`${styles.nav} ${sticky ? "" : styles.navStatic}`}>
       <Link className={styles.brand} href="/" aria-label={`${BRAND} home`}>
         <span className={styles.brandMark} aria-hidden="true"></span>{BRAND}
       </Link>

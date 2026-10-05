@@ -8,7 +8,7 @@ export const metadata = {
   description: "Prepare and manage your Payments, Digital Lending, or Insurance licence application.",
 };
 
-// Ports `screen-apply-hub` from the uploaded Beacon template 1:1 (§9, Phase 1
+// Ports `screen-apply-hub` from the uploaded FITSPA Compliance Platform template 1:1 (§9, Phase 1
 // of strategy/beacon-template-redesign-plan.md). The Payments and Digital
 // Lending application flows themselves are Phase 3/4 work -- until then
 // these two cards lead to a short "being built" page rather than a broken
@@ -26,8 +26,13 @@ export default function ApplyHubPage() {
           </button>
           <span className={`${styles["ah-nav-link"]} ${styles.active}`}>Apply</span>
           <Link className={styles["ah-nav-link"]} href="/comply">Comply</Link>
+          <Link className={styles["ah-nav-link"]} href="/assistant">AI Assistant</Link>
         </nav>
-        <Link className={styles["ah-home"]} id="ah-home" href="/">← Beacon home</Link>
+        <div className={styles["ah-nav-actions"]}>
+          <Link className={styles["ah-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["ah-nav-register"]} href="/signup">Register</Link>
+          <Link className={styles["ah-nav-back"]} href="/">← Home</Link>
+        </div>
       </header>
       <main className={styles["ah-main"]}>
         <div className={styles["ah-eyebrow"]}>Licence Application Manager</div>

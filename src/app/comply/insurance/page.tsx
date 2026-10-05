@@ -22,7 +22,7 @@ export const metadata = {
 
 const CATALOG_KEY = INSURANCE_CATALOG_KEY;
 
-// Beacon-styled Insurance Comply workspace, mirroring the component
+// FITSPA Compliance Platform-styled Insurance Comply workspace, mirroring the component
 // architecture of /comply/digital-lending (see digital-lending-compliance-
 // client.tsx) and reusing the same shared applicability engine
 // (@/lib/compliance-engine). Unlike Digital Lending / Payments, the IRA

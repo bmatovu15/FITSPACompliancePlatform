@@ -147,7 +147,7 @@ export function DashboardPanel() {
       </div>
       {warn ? (
         <div className="note">
-          <strong>Finish your profile.</strong> {warn} so Beacon can confirm which conditional obligations apply.{" "}
+          <strong>Finish your profile.</strong> {warn} so FITSPA Compliance Platform can confirm which conditional obligations apply.{" "}
           <button type="button" className="textlink" id="profile-warning-link" onClick={() => openDrawer({ kind: "profile" })}>
             Open Profile &amp; registrations
           </button>

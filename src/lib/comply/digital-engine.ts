@@ -1,6 +1,6 @@
 // Digital Lending Compliance ("Comply") occurrence engine.
 //
-// Verbatim port of the pure logic of the Beacon "Digital Lending Compliance"
+// Verbatim port of the pure logic of the FITSPA Compliance Platform "Digital Lending Compliance"
 // design prototype (digital_comply.html): the profile generates dated
 // occurrences, logged events generate more with computed due dates, and each
 // occurrence is a workflow with owner / reviewer / evidence / submission /

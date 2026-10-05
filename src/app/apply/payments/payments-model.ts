@@ -1,5 +1,5 @@
 // Pure (React-free) model for the Payments application: classification,
-// fees, item applicability and readiness rules. This is a port of the Beacon
+// fees, item applicability and readiness rules. This is a port of the FITSPA Compliance Platform
 // design prototype's own logic (beacon.html: CLASS_OPTIONS, selectedFeeRows,
 // pricingAssessment, FACT_QUESTIONS, routeBaseApplies / factApplies,
 // visualItems, statusFor, getPeople ...). The editors in payments-drawers.tsx

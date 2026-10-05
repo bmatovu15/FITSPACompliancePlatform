@@ -1,5 +1,5 @@
 // Pre-fills the Payments setup profile from an old `member_compliance_profile`
-// row (the yes/no wizard the Comply module used before the Beacon rebuild) so a
+// row (the yes/no wizard the Comply module used before the FITSPA Compliance Platform rebuild) so a
 // member with no workspace row yet does not start from a blank form. Only fields
 // that map cleanly are carried over; the member still walks through the
 // 3-step setup and confirms everything.

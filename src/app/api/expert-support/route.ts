@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 // strategy/beacon-template-redesign-plan.md §8.4, these now land in the
 // `expert_support_requests` table (Admin → Expert Requests queue + email
 // notification are Phase 5 work; the row lands regardless so nothing sent
-// through Beacon between now and then is lost).
+// through FITSPA Compliance Platform between now and then is lost).
 //
 // Also backs the dedicated consultation-booking screen in each Apply flow's
 // front-door assessment (landing -> wizard -> "activity isn't listed" triage

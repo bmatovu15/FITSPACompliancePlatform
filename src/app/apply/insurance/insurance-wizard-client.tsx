@@ -58,7 +58,7 @@ const PHASE_LABELS: Record<Phase, string> = {
 
 type ItemStatus = "not_started" | "in_progress" | "ready";
 // "landing" / "unlisted" / "expert" / "sandbox" / "result" are the
-// pre-workspace "assessment" front door ported from the Beacon prototype's
+// pre-workspace "assessment" front door ported from the FITSPA Compliance Platform prototype's
 // Payments module -- see payments-wizard-client.tsx's Screen type comment
 // for the full rationale. Order: landing -> route -> (class, for the 3
 // multi-class routes) -> (unlisted -> expert | sandbox, optional detour) ->
@@ -106,7 +106,7 @@ type ApplicationReview = {
 
 // A drawer can host a requirement's own editing form ("item"), its guidance
 // ("guide", the info-button popover -- built as a drawer rather than a
-// floating popover, matching every other Beacon workspace on this site), or
+// floating popover, matching every other FITSPA Compliance Platform workspace on this site), or
 // the Expert Support panel ("expert", optionally scoped to a requirement
 // when opened via a requirement's own "Ask an expert" link).
 type DrawerState = { kind: "item" | "guide"; externalId: string } | { kind: "expert"; externalId?: string } | null;

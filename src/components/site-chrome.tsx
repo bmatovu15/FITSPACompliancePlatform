@@ -28,7 +28,8 @@ function isBeaconShellRoute(pathname: string) {
     pathname.startsWith("/lookup") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/search") ||
-    pathname.startsWith("/assistant")
+    pathname.startsWith("/assistant") ||
+    pathname.startsWith("/fitspa-admin")
   );
 }
 

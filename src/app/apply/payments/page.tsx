@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import BeaconNav from "@/components/beacon-nav";
 import PaymentsWizardClient from "./payments-wizard-client";
 import type {
   LicenceApplicationFeeTier,
@@ -7,7 +8,7 @@ import type {
 } from "@/lib/types";
 
 export const metadata = {
-  title: "Beacon — Payments Licence Application",
+  title: "FITSPA Compliance Platform — Payments Licence Application",
   description:
     "Prepare a Bank of Uganda payments licence application (PSO, PSP/EMI or payment instrument issuer) — no login required. Classify your business, work through the requirements checklist, and track your progress in this browser.",
 };
@@ -53,6 +54,7 @@ export default async function ApplyPaymentsPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#FFFFFF" }}>
+      <BeaconNav active="apply" backHref="/apply" backLabel="← Applications" sticky={false} />
       <PaymentsWizardClient
         applicationKey={APPLICATION_KEY}
         templates={templates}

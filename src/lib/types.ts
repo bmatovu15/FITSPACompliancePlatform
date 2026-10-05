@@ -76,7 +76,7 @@ export type Obligation = {
   applies_collateral: boolean;
   applies_recovery_agents: boolean;
   applies_fitspa_subscriber: boolean;
-  // Beacon Phase 2 additions (Digital Lending Compliance audit, plan §9.3):
+  // FITSPA Compliance Platform Phase 2 additions (Digital Lending Compliance audit, plan §9.3):
   // custody/crossborder/advice are independent facts from the DL prototype
   // that don't map onto any existing applies_* column.
   applies_custody: boolean;
@@ -250,7 +250,7 @@ export type MemberComplianceProfile = {
   member_id: string;
   catalog_key: string;
   primary_category: string | null;
-  // Beacon Phase 2: independent Payments classification flags, replacing the
+  // FITSPA Compliance Platform Phase 2: independent Payments classification flags, replacing the
   // single-select primary_category equality check so a member can hold
   // combined licences (e.g. PSO + PSP at once). primary_category is kept
   // for backward compatibility/display and is derived from these on save.
@@ -273,7 +273,7 @@ export type MemberComplianceProfile = {
   collateral: string | null;
   recovery_agents: string | null;
   fitspa_subscriber: string | null;
-  // Beacon Phase 2 additions (Digital Lending Compliance audit, plan §9.3).
+  // FITSPA Compliance Platform Phase 2 additions (Digital Lending Compliance audit, plan §9.3).
   route: string | null;
   issue_date: string | null;
   fye_date: string | null;
@@ -559,7 +559,7 @@ export type PathwayFee = {
 };
 
 // ---------------------------------------------------------------------------
-// Licence Application Manager -- the public/no-login "Apply" wizard (Beacon
+// Licence Application Manager -- the public/no-login "Apply" wizard (FITSPA Compliance Platform
 // Phase 4). One admin-authored template catalog per application_key (e.g.
 // 'digital_lending') drives a per-applicant checklist; the applicant's own
 // progress is tracked anonymously (member_id nullable) against a

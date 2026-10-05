@@ -50,7 +50,7 @@ export function PaymentsMasthead({
   const brand = (
     <div className={cx("masthead-brand")}>
       {logoHome ? (
-        <Link href="/" title="Back to Beacon home" className={cx("logo-link")}>
+        <Link href="/" title="Back to FITSPA Compliance Platform home" className={cx("logo-link")}>
           <Logo />
         </Link>
       ) : (

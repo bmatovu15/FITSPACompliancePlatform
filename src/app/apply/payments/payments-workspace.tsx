@@ -520,7 +520,7 @@ export default function PaymentsWorkspace(p: WorkspaceProps) {
                 <h3>Final application pack</h3>
                 <p>
                   {summary.complete
-                    ? "All visible preparation requirements are complete. Beacon can organise the current final versions into the application pack."
+                    ? "All visible preparation requirements are complete. FITSPA Compliance Platform can organise the current final versions into the application pack."
                     : summary.ready +
                       " of " +
                       summary.total +

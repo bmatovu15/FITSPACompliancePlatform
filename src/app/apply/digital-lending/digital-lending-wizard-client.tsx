@@ -1,6 +1,6 @@
 "use client";
 
-// Public, no-login Digital Lending "Apply" module -- a port of the Beacon
+// Public, no-login Digital Lending "Apply" module -- a port of the FITSPA Compliance Platform
 // design prototype (digital_apply.html): landing -> route picker -> workspace
 // (Application / Documents / Review / Post-submission tabs, right rail,
 // requirement drawers, Expert Support drawer, Record-submission drawer and
@@ -621,7 +621,7 @@ export default function DigitalLendingWizardClient({
           <div className="brand">
             {brandMark()}
             <div>
-              <span className="brand-title">Beacon</span>
+              <span className="brand-title">FITSPA Compliance Platform</span>
               <span className="brand-sub">Digital Lending Licence Application</span>
             </div>
           </div>
@@ -686,7 +686,7 @@ export default function DigitalLendingWizardClient({
           <div className="eyebrow">Choose your route</div>
           <h2>Which licence are you applying for?</h2>
           <p className="intro">
-            Choose the application you want Beacon to help you prepare. If you are not sure which route applies, get help
+            Choose the application you want FITSPA Compliance Platform to help you prepare. If you are not sure which route applies, get help
             before building the checklist.
           </p>
           <div className="route-grid">
@@ -712,7 +712,7 @@ export default function DigitalLendingWizardClient({
           <div className="route-help">
             <div>
               <strong>Not sure which licence applies?</strong>
-              <p>Get help choosing before Beacon builds your application.</p>
+              <p>Get help choosing before FITSPA Compliance Platform builds your application.</p>
             </div>
             {expertButton("route", "btn", "Speak to an expert")}
           </div>
@@ -778,7 +778,7 @@ export default function DigitalLendingWizardClient({
             <section className={`tab-panel${activeTab === "application" ? " active" : ""}`} id="tab-application">
               <h1>Your application</h1>
               <p className="workspace-intro" id="workspace-intro">
-                Prepare the {routeName} application requirement by requirement. Beacon only shows work that belongs in this
+                Prepare the {routeName} application requirement by requirement. FITSPA Compliance Platform only shows work that belongs in this
                 route.
               </p>
               <div id="application-sections">

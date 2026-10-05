@@ -165,7 +165,7 @@
   "id": "complaint",
   "cat": "Customer",
   "title": "Customer complaint received",
-  "desc": "Log a complaint once; Beacon calculates the applicable response clock.",
+  "desc": "Log a complaint once; FITSPA Compliance Platform calculates the applicable response clock.",
   "ids": [
    "CNS-01",
    "CNS-02",
