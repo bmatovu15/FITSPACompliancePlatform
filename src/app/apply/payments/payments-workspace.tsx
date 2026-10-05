@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cx, PaymentsMasthead } from "./pw-ui";
 import { EditorBody, GuidanceBody, editorEyebrow, type EditorApi } from "./payments-drawers";
 import {
@@ -397,7 +397,7 @@ export default function PaymentsWorkspace(p: WorkspaceProps) {
                   if (!group) return null;
                   const ready = readyIn(group);
                   return (
-                    <div key={ph}>
+                    <Fragment key={ph}>
                       <div className={cx("phase-heading-row")}>
                         <div>
                           <h3>{phaseLabel(ph)}</h3>
@@ -419,7 +419,7 @@ export default function PaymentsWorkspace(p: WorkspaceProps) {
                           onOpen={() => setDrawer({ kind: "editor", id: t.external_id })}
                         />
                       ))}
-                    </div>
+                    </Fragment>
                   );
                 })}
               </div>

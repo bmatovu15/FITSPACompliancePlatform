@@ -389,7 +389,7 @@ export function resultFeeClassLabel(c: Classification, row: FeeRow): string {
     if (c.classes.psp_other) psp.push("Any other Payment Service Provider");
     return psp.length ? psp.join(" · ") : "Payment Service Provider";
   }
-  if (row.category === "Payment instrument issuer") {
+  if (row.cls === "Payment instrument issuer") {
     const instruments: string[] = [];
     if (c.classes.payment_cards) instruments.push("Payment Cards");
     if (c.classes.electronic_devices) instruments.push("Electronic Devices");

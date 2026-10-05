@@ -482,6 +482,11 @@ export default function PaymentsWizardClient({
     if (typeof window !== "undefined") window.scrollTo(0, 0);
   };
 
+  // Every screen change starts at the top, as showScreen() does.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [screen]);
+
   // ----------------------------------------------------------------- render
   let body: React.ReactNode;
   switch (screen) {
