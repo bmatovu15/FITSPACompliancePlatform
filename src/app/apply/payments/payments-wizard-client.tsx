@@ -65,6 +65,23 @@ const BUCKET = "licence-application-files";
 
 type Screen = "loading" | "landing" | "wizard" | "unlisted" | "expert" | "sandbox" | "result" | "details" | "app";
 
+function buildFileMap(rows: MemberLicenceApplicationFile[]): FileMap {
+  const out: FileMap = {};
+  rows.forEach((f) => {
+    const cur = out[f.external_id]?.[f.slot];
+    if (cur && cur.version >= f.version) return;
+    (out[f.external_id] ||= {})[f.slot] = {
+      name: f.file_name,
+      version: f.version,
+      uploadedAt: f.uploaded_at,
+      label: f.label || f.slot,
+      slot: f.slot,
+      storagePath: f.storage_path,
+    };
+  });
+  return out;
+}
+
 export default function PaymentsWizardClient({
   applicationKey,
   templates,
@@ -91,6 +108,9 @@ export default function PaymentsWizardClient({
   const appRef = useRef<MemberLicenceApplication | null>(null);
   const creating = useRef<Promise<MemberLicenceApplication | null> | null>(null);
   const classTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Synchronous mirror of the file rows so several uploads in a row (a
+  // multi-file pick) each see the previous one.
+  const fileRowsRef = useRef<MemberLicenceApplicationFile[]>([]);
 
   const catalogue = useMemo(() => buildFeeCatalogue(wizardClasses, feeTiers), [wizardClasses, feeTiers]);
   const sortedTemplates = useMemo(() => [...templates].sort((a, b) => a.seq - b.seq), [templates]);
@@ -109,22 +129,7 @@ export default function PaymentsWizardClient({
     return out;
   }, [itemStates]);
 
-  const files: FileMap = useMemo(() => {
-    const out: FileMap = {};
-    fileRows.forEach((f) => {
-      const cur = out[f.external_id]?.[f.slot];
-      if (cur && cur.version >= f.version) return;
-      (out[f.external_id] ||= {})[f.slot] = {
-        name: f.file_name,
-        version: f.version,
-        uploadedAt: f.uploaded_at,
-        label: f.label || f.slot,
-        slot: f.slot,
-        storagePath: f.storage_path,
-      };
-    });
-    return out;
-  }, [fileRows]);
+  const files: FileMap = useMemo(() => buildFileMap(fileRows), [fileRows]);
 
   const ctx: Ctx = useMemo(() => ({ c, routes, facts, data, files, pricing }), [c, routes, facts, data, files, pricing]);
 
@@ -261,7 +266,8 @@ export default function PaymentsWizardClient({
       setApp(app);
       setC(readClassification(app.facts ?? {}));
       setItemStates(Object.fromEntries(((stateRows ?? []) as MemberLicenceApplicationItemState[]).map((r) => [r.external_id, r])));
-      setFileRows((fRows ?? []) as MemberLicenceApplicationFile[]);
+      fileRowsRef.current = (fRows ?? []) as MemberLicenceApplicationFile[];
+      setFileRows(fileRowsRef.current);
       setScreen("landing");
     })();
     return () => {
@@ -357,7 +363,7 @@ export default function PaymentsWizardClient({
     const app = appRef.current;
     if (!app) return;
     const id = t.external_id;
-    const prev = files[id]?.[slot];
+    const prev = buildFileMap(fileRowsRef.current)[id]?.[slot];
     const version = prev ? prev.version + 1 : 1;
     const safe = (s: string) => s.replace(/[^\w.\-]+/g, "_");
     const path = `${app.id}/${safe(id)}/${safe(slot)}-v${version}-${Date.now()}-${safe(file.name)}`;
@@ -379,22 +385,14 @@ export default function PaymentsWizardClient({
       return;
     }
     const row = { ...(res.data as MemberLicenceApplicationFile), label: (res.data as any).label ?? label };
-    const nextRows = [...fileRows, row];
+    const nextRows = [...fileRowsRef.current, row];
+    fileRowsRef.current = nextRows;
     setFileRows(nextRows);
     setErrorMsg(null);
 
     // Recompute this item's status with the new file included.
-    const nextFiles: FileMap = { ...files, [id]: { ...(files[id] ?? {}) } };
-    nextFiles[id][slot] = {
-      name: row.file_name,
-      version: row.version,
-      uploadedAt: row.uploaded_at,
-      label: row.label || slot,
-      slot,
-      storagePath: row.storage_path,
-    };
     const answers = data[id] ?? {};
-    const status = statusFor(t, { ...ctx, files: nextFiles });
+    const status = statusFor(t, { ...ctx, files: buildFileMap(nextRows) });
     await upsertItem(id, answers, status);
     await markReviewUpdated();
   }
@@ -469,6 +467,7 @@ export default function PaymentsWizardClient({
     }
     setApp(null);
     setItemStates({});
+    fileRowsRef.current = [];
     setFileRows([]);
     setC({ classes: emptyClasses(), fundsTier: "", emiTier: "" });
     setDetailsDraft(emptyFacts());

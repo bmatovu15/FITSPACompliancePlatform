@@ -932,19 +932,25 @@ function TinTaxEditor({ api }: { api: EditorApi }) {
   );
 }
 
+// The design replaces the helper note with "N document(s) added." after a batch.
+function BatchNote({ api, accept, text }: { api: EditorApi; accept: string; text: string }) {
+  const [note, setNote] = useState<string | null>(null);
+  return (
+    <>
+      <MultiInput api={api} accept={accept} onDone={(n) => setNote(n + " document" + (n === 1 ? "" : "s") + " added.")} />
+      <p className={cx("editor-note")}>{note ?? text}</p>
+    </>
+  );
+}
+
 function MultiUploadEditor({ api }: { api: EditorApi }) {
-  const files = api.ctx.files[api.t.external_id] ?? {};
-  const keys = Object.keys(files);
   return (
     <Section>
-      <MultiInput api={api} accept={productConfig(api.t).accept || ".doc,.docx,.pdf,.rtf,.txt"} />
-      <p className={cx("editor-note")}>Add one or more documents. Existing files remain in the application unless you replace them.</p>
-      {keys.map((k) => (
-        <div className={cx("upload-row")} key={k}>
-          <div className={cx("upload-label")}>{files[k].name}</div>
-          <div className={cx("upload-meta")}>v{files[k].version}</div>
-        </div>
-      ))}
+      <BatchNote
+        api={api}
+        accept={productConfig(api.t).accept || ".doc,.docx,.pdf,.rtf,.txt"}
+        text="Add one or more documents. Existing files remain in the application unless you replace them."
+      />
     </Section>
   );
 }
@@ -953,11 +959,16 @@ function ITControlsEditor({ api }: { api: EditorApi }) {
   const d = api.data;
   const [cov, setCov] = useState<Record<string, boolean>>(d.coverage ?? {});
   const [flash, doFlash] = useFlash();
+  const [batchKey, setBatchKey] = useState(0);
   return (
     <>
       <Section title="IT documents">
-        <MultiInput api={api} accept=".doc,.docx,.pdf,.xls,.xlsx,.ppt,.pptx,.rtf,.txt" />
-        <p className={cx("editor-note")}>The control areas can be covered in one consolidated document or across several documents.</p>
+        <BatchNote
+          key={batchKey}
+          api={api}
+          accept=".doc,.docx,.pdf,.xls,.xlsx,.ppt,.pptx,.rtf,.txt"
+          text="The control areas can be covered in one consolidated document or across several documents."
+        />
       </Section>
       <Section title="Coverage">
         {IT_CONTROLS.map((c) => (
@@ -971,6 +982,7 @@ function ITControlsEditor({ api }: { api: EditorApi }) {
             flash={flash}
             onClick={async () => {
               await api.save({ ...d, coverage: cov });
+              setBatchKey((k) => k + 1);
               doFlash();
             }}
           />
