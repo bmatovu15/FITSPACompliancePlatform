@@ -753,7 +753,6 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 .screen-app .docs-upload-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px}
 .screen-app .docs-upload-row .doc-sub{margin:0}
 .screen-app .pack-card .work-btn:disabled{opacity:.55;cursor:not-allowed}
-.screen-app .drawer-body .upload-row .file-input{min-width:0}
 .pw-visually-hidden{position:absolute;left:-9999px}
 .pwRoot .btn-primary:disabled{cursor:not-allowed}
 .pwRoot .application-details-alert .work-btn{border:1px solid var(--rule-strong);background:#fff;color:var(--slate);padding:7px 12px;border-radius:2px;font-size:12.5px;font-weight:600}
@@ -764,3 +763,4 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 :where(.pwRoot input[type="radio"]){margin:3px 3px 0 5px}
 :where(.pwRoot) ul,:where(.pwRoot) ol{list-style:revert;margin:1em 0;padding-left:40px}
 :where(.pwRoot) img,:where(.pwRoot) svg{display:inline;vertical-align:baseline}
+:where(.pwRoot input[type="file"])::file-selector-button{font:revert;color:revert;background-color:revert;border-radius:revert;opacity:revert;letter-spacing:revert;border:revert;padding:revert;margin:revert}

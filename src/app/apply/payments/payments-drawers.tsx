@@ -852,6 +852,7 @@ function DocpackEditor({ api }: { api: EditorApi }) {
 function FinancialsEditor({ api }: { api: EditorApi }) {
   const established = api.ctx.facts.established_business;
   return (
+    <>
     <Section>
       <h3>Applicant stage</h3>
       <div className={cx("field-grid one")}>
@@ -866,6 +867,7 @@ function FinancialsEditor({ api }: { api: EditorApi }) {
           </select>
         </Field>
       </div>
+    </Section>
       {established === true ? (
         <UploadRow api={api} slot="main" label="Audited financial statements for the previous two years" accept=".pdf" />
       ) : established === false ? (
@@ -873,7 +875,7 @@ function FinancialsEditor({ api }: { api: EditorApi }) {
       ) : (
         <div className={cx("mini-alert")}>Select the applicant stage to see the correct financial-statement requirement.</div>
       )}
-    </Section>
+    </>
   );
 }
 
