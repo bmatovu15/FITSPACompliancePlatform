@@ -251,20 +251,56 @@ export default function FitspaAdminDemo({ onSignOut }: { onSignOut?: () => void 
 
   return (
     <div className={styles.root}>
-      <div className={styles.demoBar} role="note">
-        <strong>Demonstration</strong>
-        <span>
-          Signed in as the presentation FITSPA Admin. No live data is touched: this runs on the published obligation catalogue
-          and five sample members, and changes live only in this browser tab.
-        </span>
-        <button type="button" className={styles.linkBtn} onClick={reset}>
-          Reset demo
-        </button>
-        {onSignOut ? (
-          <button type="button" className={styles.linkBtn} onClick={onSignOut}>
-            Sign out
-          </button>
-        ) : null}
+      <div className={styles.adminBar}>
+        <div className={styles.adminBarInner}>
+          <div className={styles.adminBrand}>
+            <span className={styles.adminMark} aria-hidden="true"></span>
+            <span>
+              FITSPA Admin
+              <small>Regulatory console</small>
+            </span>
+          </div>
+
+          <nav className={styles.adminNav} aria-label="Admin sections">
+            {TABS.map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                className={`${styles.adminLink} ${tab === t.key ? styles.adminLinkActive : ""}`}
+                onClick={() => setTab(t.key)}
+                aria-current={tab === t.key ? "page" : undefined}
+              >
+                {t.label}
+                {t.key === "activity" && log.length > 0 ? <span className={styles.adminBadge}>{log.length}</span> : null}
+              </button>
+            ))}
+          </nav>
+
+          <div className={styles.adminTools}>
+            <button type="button" className={styles.adminGhost} onClick={reset}>
+              Reset demo
+            </button>
+            <a className={styles.adminGhost} href="/" target="_blank" rel="noreferrer">
+              Public site ↗
+            </a>
+            <span className={styles.adminUser}>
+              <span className={styles.adminAvatar} aria-hidden="true">
+                FA
+              </span>
+              <span className={styles.adminEmail}>admin@fitspa.demo</span>
+            </span>
+            {onSignOut ? (
+              <button type="button" className={styles.adminSignOut} onClick={onSignOut}>
+                Sign out
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.demoNote} role="note">
+        <strong>Demonstration</strong> Sample data only: the published obligation catalogue and five sample members. Nothing
+        live is touched, and changes live only in this browser tab.
       </div>
 
       <header className={styles.head}>
@@ -277,21 +313,6 @@ export default function FitspaAdminDemo({ onSignOut }: { onSignOut?: () => void 
           </p>
         </div>
       </header>
-
-      <nav className={styles.tabs} aria-label="Admin sections">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            className={`${styles.tab} ${tab === t.key ? styles.tabActive : ""}`}
-            onClick={() => setTab(t.key)}
-            aria-current={tab === t.key ? "page" : undefined}
-          >
-            {t.label}
-            {t.key === "activity" && log.length > 0 ? <span className={styles.badge}>{log.length}</span> : null}
-          </button>
-        ))}
-      </nav>
 
       {tab === "overview" && (
         <section className={styles.panel}>

@@ -44,7 +44,7 @@ export default async function DigitalLendingCompliancePage() {
 
   return (
     <>
-    <BeaconNav active="comply" backHref="/comply" backLabel="← Compliance" sticky={false} />
+    <BeaconNav active="comply" backHref="/comply" backLabel="← Compliance" />
     <DigitalLendingComplianceClient
       memberId={member.id}
       catalogKey={DIGITAL_LENDING_CATALOG_KEY}

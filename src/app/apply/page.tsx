@@ -30,6 +30,7 @@ export default function ApplyHubPage() {
         </nav>
         <div className={styles["ah-nav-actions"]}>
           <Link className={styles["ah-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["ah-nav-admin"]} href="/fitspa-admin">FITSPA Admin</Link>
           <Link className={styles["ah-nav-register"]} href="/signup">Register</Link>
           <Link className={styles["ah-nav-back"]} href="/">← Home</Link>
         </div>

@@ -32,6 +32,7 @@ export default function ComplyHubPage() {
         </nav>
         <div className={styles["ch-nav-actions"]}>
           <Link className={styles["ch-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["ch-nav-admin"]} href="/fitspa-admin">FITSPA Admin</Link>
           <Link className={styles["ch-nav-register"]} href="/signup">Register</Link>
           <Link className={styles["ch-nav-back"]} href="/">← Home</Link>
         </div>

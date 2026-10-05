@@ -45,7 +45,7 @@ export default async function ApplyDigitalLendingPage() {
 
   return (
     <div className={montserrat.variable}>
-      <BeaconNav active="apply" backHref="/apply" backLabel="← Applications" sticky={false} />
+      <BeaconNav active="apply" backHref="/apply" backLabel="← Applications" />
       <DigitalLendingWizardClient
         applicationKey={APPLICATION_KEY}
         templates={(templateRows ?? []) as LicenceApplicationTemplate[]}

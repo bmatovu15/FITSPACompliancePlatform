@@ -81,6 +81,10 @@ export default function BeaconNav({
           </Link>
         )}
 
+        <Link className={styles.navAdmin} href="/fitspa-admin">
+          FITSPA Admin
+        </Link>
+
         {active === "register" ? (
           <span className={styles.navActionActive} aria-current="page">
             Register

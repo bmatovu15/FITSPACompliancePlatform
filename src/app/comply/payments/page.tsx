@@ -47,7 +47,7 @@ export default async function PaymentsCompliancePage() {
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
         precedence="default"
       />
-      <BeaconNav active="comply" backHref="/comply" backLabel="← Compliance" sticky={false} />
+      <BeaconNav active="comply" backHref="/comply" backLabel="← Compliance" />
       <PaymentsComplianceClient
         member={{
           id: member.id,

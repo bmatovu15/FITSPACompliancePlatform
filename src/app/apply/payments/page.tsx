@@ -54,7 +54,7 @@ export default async function ApplyPaymentsPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#FFFFFF" }}>
-      <BeaconNav active="apply" backHref="/apply" backLabel="← Applications" sticky={false} />
+      <BeaconNav active="apply" backHref="/apply" backLabel="← Applications" />
       <PaymentsWizardClient
         applicationKey={APPLICATION_KEY}
         templates={templates}

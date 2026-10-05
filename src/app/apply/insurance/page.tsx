@@ -65,6 +65,7 @@ export default async function ApplyInsurancePage() {
         </nav>
         <div className={ahStyles["ah-nav-actions"]}>
           <Link className={ahStyles["ah-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={ahStyles["ah-nav-admin"]} href="/fitspa-admin">FITSPA Admin</Link>
           <Link className={ahStyles["ah-nav-register"]} href="/signup">Register</Link>
           <Link className={ahStyles["ah-nav-back"]} href="/apply">← Applications</Link>
         </div>

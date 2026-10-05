@@ -13,7 +13,7 @@
 .dcl-root .hidden{display:none!important}
 .dcl-root .screen{display:none;min-height:100vh}
 .dcl-root .screen.active{display:block}
-.dcl-root .mast{height:76px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(255,255,255,.97);position:sticky;top:0;z-index:60}
+.dcl-root .mast{height:76px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(255,255,255,.97);position:sticky;top:74px;z-index:60}
 .dcl-root .brand{display:flex;align-items:center;gap:10px}
 .dcl-root .brandmark{width:28px;height:28px}
 .dcl-root .brandtitle{font-size:15px;font-weight:700;letter-spacing:-.02em}
@@ -51,18 +51,18 @@
 .dcl-root .optional{border:1px solid var(--rule);border-radius:9px;padding:13px 14px;margin-top:12px}
 .dcl-root .optional summary{font-size:10.5px;font-weight:700;cursor:pointer}
 .dcl-root .profile-actions{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule);margin-top:28px;padding-top:18px}
-.dcl-root .workspace-head{height:75px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;background:#fff;z-index:55}
+.dcl-root .workspace-head{height:75px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:74px;background:#fff;z-index:55}
 .dcl-root .workspace-left{display:flex;align-items:center;gap:13px}
 .dcl-root .route-pill{font-size:9px;border:1px solid var(--rule2);border-radius:999px;padding:5px 8px;color:#555;font-weight:700}
 .dcl-root .workspace-title{font-size:14px;font-weight:700}
 .dcl-root .workspace-actions{display:flex;gap:8px}
-.dcl-root .workspace-tabs{height:49px;border-bottom:1px solid var(--rule);display:flex;padding:0 29px;gap:24px;align-items:end;position:sticky;top:75px;background:#fff;z-index:50}
+.dcl-root .workspace-tabs{height:49px;border-bottom:1px solid var(--rule);display:flex;padding:0 29px;gap:24px;align-items:end;position:sticky;top:149px;background:#fff;z-index:50}
 .dcl-root .tab{height:49px;border:0;background:transparent;padding:0 2px;font-size:11px;color:#777;font-weight:600;position:relative}
 .dcl-root .tab.active{color:#111}
 .dcl-root .tab.active:after{content:"";height:2px;position:absolute;bottom:0;left:0;right:0;background:#111}
 .dcl-root .app-shell{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 250px;min-height:calc(100vh - 124px)}
 .dcl-root .main{padding:34px 34px 100px;min-width:0}
-.dcl-root .right{border-left:1px solid var(--rule);padding:31px 24px 70px 20px;position:sticky;top:124px;height:calc(100vh - 124px);overflow:auto}
+.dcl-root .right{border-left:1px solid var(--rule);padding:31px 24px 70px 20px;position:sticky;top:198px;height:calc(100vh - 198px);overflow:auto}
 .dcl-root .panel{display:none}
 .dcl-root .panel.active{display:block}
 .dcl-root .page-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:25px}

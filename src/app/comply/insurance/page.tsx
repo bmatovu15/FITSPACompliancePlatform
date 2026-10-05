@@ -81,6 +81,7 @@ export default async function InsuranceCompliancePage() {
         </nav>
         <div className={icStyles["dc-nav-actions"]}>
           <Link className={icStyles["dc-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={icStyles["dc-nav-admin"]} href="/fitspa-admin">FITSPA Admin</Link>
           <Link className={icStyles["dc-nav-register"]} href="/signup">Register</Link>
           <Link className={icStyles["dc-nav-back"]} href="/comply">← Compliance</Link>
         </div>

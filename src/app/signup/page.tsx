@@ -27,6 +27,7 @@ function SignupNav() {
       </nav>
       <div className={styles["su-nav-actions"]}>
         <Link className={styles["su-nav-search"]} href="/lookup">Search a member</Link>
+        <Link className={styles["su-nav-admin"]} href="/fitspa-admin">FITSPA Admin</Link>
         <span className={`${styles["su-nav-link"]} ${styles.active}`} style={{ padding: 0 }}>Register</span>
         <Link className={styles["su-nav-back"]} href="/">← Home</Link>
       </div>

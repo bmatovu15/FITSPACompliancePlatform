@@ -26,6 +26,7 @@ export default function Home() {
         </nav>
         <div className={styles["bp-nav-actions"]}>
           <Link className={styles["bp-nav-search"]} href="/lookup">Search a member</Link>
+          <Link className={styles["bp-nav-admin"]} href="/fitspa-admin">FITSPA Admin</Link>
           <Link className={styles["bp-nav-register"]} href="/signup">Register</Link>
         </div>
       </header>

@@ -43,7 +43,7 @@
   justify-content:space-between;
   gap:16px;
   position:sticky;
-  top:0;
+  top:74px;
   z-index:50;}
 .masthead-brand{display:flex;
   align-items:baseline;
@@ -307,8 +307,8 @@ h1.hero-title{font-size:32px;}
 :global(#tab-checklist).active{display:flex;align-items:flex-start;}
 .phase-rail{width:250px;flex-shrink:0;
   padding:22px 14px 40px 28px;
-  position:sticky;top:98px;
-  max-height:calc(100vh - 98px);
+  position:sticky;top:172px;
+  max-height:calc(100vh - 172px);
   overflow-y:auto;}
 .phase-link{display:block;width:100%;text-align:left;background:none;border:none;
   padding:9px 10px;margin-bottom:2px;border-radius:3px;
@@ -569,7 +569,7 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 .screen-app .work-card-heading{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
 .screen-app .work-card-heading .work-card-title{flex:0 1 auto;min-width:0}
 .screen-app .work-info-btn{flex:0 0 auto;margin-top:-1px}
-.screen-app .application-rail{width:252px;flex:0 0 252px;padding:22px 28px 90px 12px;position:sticky;top:132px;max-height:calc(100vh - 145px);overflow-y:auto}
+.screen-app .application-rail{width:252px;flex:0 0 252px;padding:22px 28px 90px 12px;position:sticky;top:206px;max-height:calc(100vh - 219px);overflow-y:auto}
 .screen-app .rail-card{background:#fff;border:1px solid var(--rule);border-radius:3px;padding:16px 18px;margin-bottom:13px}
 .screen-app .rail-label{font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px}
 .screen-app .rail-number{font-size:34px;line-height:1;font-weight:700;letter-spacing:-.02em;margin:0 0 10px}
@@ -615,7 +615,7 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 .screen-app .application-rail{grid-template-columns:1fr}
 .screen-app .review-summary-grid{grid-template-columns:1fr}
 }
-.screen-app .app-tabs{display:flex;gap:2px;padding:0 28px;background:#fff;border-bottom:1px solid var(--rule);position:sticky;top:84px;z-index:35}
+.screen-app .app-tabs{display:flex;gap:2px;padding:0 28px;background:#fff;border-bottom:1px solid var(--rule);position:sticky;top:158px;z-index:35}
 .screen-app .app-tab{background:none;border:none;padding:14px 5px;margin-right:24px;font-size:14px;font-weight:600;color:var(--slate);border-bottom:2px solid transparent}
 .screen-app .app-tab.active{color:var(--ink);border-bottom-color:var(--ink)}
 .screen-app .tab-panel{display:none}

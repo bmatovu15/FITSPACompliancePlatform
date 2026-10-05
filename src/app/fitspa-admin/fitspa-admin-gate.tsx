@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import BeaconNav from "@/components/beacon-nav";
 import FitspaAdminDemo from "./fitspa-admin-demo";
 import styles from "./fitspa-admin.module.css";
 
@@ -62,10 +63,12 @@ export default function FitspaAdminGate() {
   }
 
   if (signedIn) return <FitspaAdminDemo onSignOut={signOut} />;
-  if (!ready) return <div className={styles.root} />;
+  if (!ready) return <BeaconNav active="home" />;
 
   return (
-    <div className={styles.root}>
+    <>
+      <BeaconNav active="home" />
+      <div className={styles.root}>
       <div className={styles.loginWrap}>
         <p className={styles.eyebrow}>FITSPA ADMIN</p>
         <h1 className={styles.loginTitle}>Sign in to the FITSPA Admin console</h1>
@@ -125,6 +128,7 @@ export default function FitspaAdminGate() {
           </p>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

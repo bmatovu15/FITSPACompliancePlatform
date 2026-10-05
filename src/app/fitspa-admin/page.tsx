@@ -1,4 +1,3 @@
-import BeaconNav from "@/components/beacon-nav";
 import FitspaAdminGate from "./fitspa-admin-gate";
 
 export const metadata = {
@@ -13,9 +12,6 @@ export const metadata = {
 // sample members, and every change lives only in this browser tab.
 export default function FitspaAdminPage() {
   return (
-    <>
-      <BeaconNav active="home" />
-      <FitspaAdminGate />
-    </>
+    <FitspaAdminGate />
   );
 }
