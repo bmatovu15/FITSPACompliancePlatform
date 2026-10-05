@@ -136,6 +136,7 @@ export function WorkDrawer({ ctx, id, taskKey }: { ctx: PcCtx; id: string; taskK
       ],
     }));
     setFormKey((k) => k + 1);
+    setEvType(options[0] || "");
   };
 
   const next = () => {
@@ -213,7 +214,7 @@ export function WorkDrawer({ ctx, id, taskKey }: { ctx: PcCtx; id: string; taskK
           </div>
           <div className="field">
             <label htmlFor="work-file">File or record</label>
-            <input type="file" id="work-file" ref={fileRef} />
+            <input type="file" id="work-file" ref={fileRef} onChange={() => setAlertMsg("")} />
           </div>
         </div>
         <div className="work-actions">
@@ -301,6 +302,7 @@ export function AddEvidenceDrawer({ ctx }: { ctx: PcCtx }) {
             setObId(e.target.value);
             setOccKey(null);
             setType(null);
+            setAlertMsg("");
           }}
         >
           {entries.map((e) => (
@@ -312,7 +314,7 @@ export function AddEvidenceDrawer({ ctx }: { ctx: PcCtx }) {
       </div>
       <div className="field">
         <label htmlFor="ev-occurrence">Reporting period / event / control review</label>
-        <select id="ev-occurrence" value={occValue} onChange={(e) => setOccKey(e.target.value)}>
+        <select id="ev-occurrence" value={occValue} onChange={(e) => { setOccKey(e.target.value); setAlertMsg(""); }}>
           {occ.map((o) => (
             <option key={o.value || "general"} value={o.value}>
               {o.label}
@@ -323,7 +325,7 @@ export function AddEvidenceDrawer({ ctx }: { ctx: PcCtx }) {
       <div className="field-row">
         <div className="field">
           <label htmlFor="ev-type">Evidence type</label>
-          <select id="ev-type" value={typeValue} onChange={(e) => setType(e.target.value)}>
+          <select id="ev-type" value={typeValue} onChange={(e) => { setType(e.target.value); setAlertMsg(""); }}>
             {types.map((x) => (
               <option key={x}>{x}</option>
             ))}
@@ -331,7 +333,7 @@ export function AddEvidenceDrawer({ ctx }: { ctx: PcCtx }) {
         </div>
         <div className="field">
           <label htmlFor="ev-file">File</label>
-          <input type="file" id="ev-file" ref={fileRef} />
+          <input type="file" id="ev-file" ref={fileRef} onChange={() => setAlertMsg("")} />
         </div>
       </div>
       <Alert msg={alertMsg} />

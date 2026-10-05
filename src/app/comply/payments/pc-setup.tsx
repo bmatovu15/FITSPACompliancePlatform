@@ -170,6 +170,8 @@ export function SetupLicence({ ctx }: { ctx: PcCtx }) {
       <button
         type="button"
         key={val}
+        data-arr={arr}
+        data-val={val}
         className={`check-chip${p[arr].includes(val) ? " selected" : ""}`}
         aria-pressed={p[arr].includes(val)}
         onClick={() => toggleChip(arr, val)}
@@ -180,6 +182,7 @@ export function SetupLicence({ ctx }: { ctx: PcCtx }) {
   const card = (c: CatName, title: string, text: string) => (
     <button
       type="button"
+      data-cat={c}
       className={`choice-card${p.categories[c] ? " selected" : ""}`}
       aria-pressed={p.categories[c]}
       onClick={() => toggleCat(c)}
