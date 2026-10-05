@@ -21,7 +21,7 @@
 .chRoot .ch-title{margin:0;font-size:46px;line-height:1.08;letter-spacing:-.04em;font-weight:700}
 .chRoot .ch-dek{margin:18px 0 38px;color:var(--ch-muted);font-size:16px;line-height:1.65;max-width:650px}
 .chRoot .ch-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.chRoot .ch-card{border:1px solid #DEDEDE;border-radius:4px;padding:27px;min-height:260px;display:flex;flex-direction:column;background:#fff}
+.chRoot .ch-card{border:1px solid #DEDEDE;padding:27px;min-height:260px;display:flex;flex-direction:column;background:#fff}
 .chRoot .ch-card:hover{border-color:#AFAFAF;box-shadow:0 10px 30px rgba(17,17,17,.035)}
 .chRoot .ch-card-kicker{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:#7B8087;margin-bottom:18px}
 .chRoot .ch-card h2{font-size:24px;line-height:1.2;letter-spacing:-.025em;margin:0 0 12px}
