@@ -31,6 +31,9 @@ export async function POST(req: NextRequest) {
     contactPhone,
     preferredDate,
     preferredTime,
+    catalogKey,
+    applicationKey,
+    contextLabel,
   } = body ?? {};
 
   if (sourceModule !== "apply" && sourceModule !== "comply") {
@@ -39,7 +42,10 @@ export async function POST(req: NextRequest) {
   if (!message || typeof message !== "string" || !message.trim()) {
     return NextResponse.json({ error: "message required" }, { status: 400 });
   }
-  const resolvedRequestType = requestType === "consultation_booking" ? "consultation_booking" : "question";
+  const resolvedRequestType =
+    requestType === "consultation_booking" || requestType === "compliance_review" || requestType === "application_review"
+      ? requestType
+      : "question";
 
   const supabase = await createClient();
   const {
@@ -55,10 +61,12 @@ export async function POST(req: NextRequest) {
     member_id: memberId,
     source_module: sourceModule,
     context_key: typeof contextKey === "string" ? contextKey : "general",
+    catalog_key: typeof catalogKey === "string" && catalogKey ? catalogKey : null,
+    application_key: typeof applicationKey === "string" && applicationKey ? applicationKey : null,
     contact_name: typeof contactName === "string" ? contactName : null,
     contact_email: typeof contactEmail === "string" ? contactEmail : null,
     contact_phone: typeof contactPhone === "string" && contactPhone.trim() ? contactPhone.trim() : null,
-    message: message.trim(),
+    message: (typeof contextLabel === "string" && contextLabel ? `[${contextLabel}] ` : "") + message.trim(),
     request_type: resolvedRequestType,
     business_name: typeof businessName === "string" && businessName.trim() ? businessName.trim() : null,
     preferred_date: typeof preferredDate === "string" && preferredDate.trim() ? preferredDate.trim() : null,
