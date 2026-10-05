@@ -728,8 +728,6 @@ export type MemberLicenceApplicationFile = {
   // Human label of the upload slot ("Certificate of Incorporation").
   label?: string | null;
   uploaded_at: string;
-  // Optional human label for the slot (migration 0205).
-  label?: string | null;
 };
 
 export type MemberLicenceApplicationReview = {
