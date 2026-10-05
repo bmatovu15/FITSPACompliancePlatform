@@ -128,7 +128,7 @@ export default function Home() {
             </div>
             <div className={styles["bp-utility-card"]}>
               <h4>FITSPA Admin (demonstration)</h4>
-              <p>See how FITSPA manages every obligation and how it appears on member pages. No login needed.</p>
+              <p>See how FITSPA manages every obligation and how it appears on member pages. Presentation sign-in provided.</p>
               <Link href="/fitspa-admin">Open the admin demo →</Link>
             </div>
           </div>

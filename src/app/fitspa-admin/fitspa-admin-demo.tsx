@@ -168,7 +168,7 @@ interface LogEntry {
   text: string;
 }
 
-export default function FitspaAdminDemo() {
+export default function FitspaAdminDemo({ onSignOut }: { onSignOut?: () => void } = {}) {
   const [tab, setTab] = useState<Tab>("overview");
   const [obligations, setObligations] = useState<Obligation[]>(seedObligations);
   const [requirements, setRequirements] = useState(REQUIREMENTS);
@@ -254,12 +254,17 @@ export default function FitspaAdminDemo() {
       <div className={styles.demoBar} role="note">
         <strong>Demonstration</strong>
         <span>
-          No login is needed here and no live data is touched. This runs on the published obligation catalogue and five sample
-          members; changes live only in this browser tab.
+          Signed in as the presentation FITSPA Admin. No live data is touched: this runs on the published obligation catalogue
+          and five sample members, and changes live only in this browser tab.
         </span>
         <button type="button" className={styles.linkBtn} onClick={reset}>
           Reset demo
         </button>
+        {onSignOut ? (
+          <button type="button" className={styles.linkBtn} onClick={onSignOut}>
+            Sign out
+          </button>
+        ) : null}
       </div>
 
       <header className={styles.head}>
