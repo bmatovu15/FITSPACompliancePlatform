@@ -10,14 +10,26 @@ export function parseDomains(text: string): string[] {
     .filter((s) => /^[a-z0-9.-]+\.[a-z]{2,}$/.test(s));
 }
 
-/** One per line: "NPS = National Payment System; National Payments System" -> { nps: [...] } */
+/**
+ * One acronym per line, e.g. "NPS = National Payment System; National Payments System".
+ * Also tolerates several acronyms on one line separated by semicolons ("BOU = Bank of Uganda; NPS = ..."):
+ * a segment with "=" starts a new acronym, a segment without it is another spelling of the previous one.
+ */
 export function parseAcronyms(text: string): Record<string, string[]> {
   const out: Record<string, string[]> = {};
   for (const line of (text || "").split(/\r?\n/)) {
-    const m = line.match(/^\s*([A-Za-z0-9-]{2,20})\s*(?:=|:|-)\s*(.+)$/);
-    if (!m) continue;
-    const phrases = m[2].split(/;/).map((p) => p.trim().toLowerCase().replace(/"/g, "")).filter(Boolean);
-    if (phrases.length) out[m[1].toLowerCase()] = phrases;
+    let current: string | null = null;
+    for (const segment of line.split(";")) {
+      const m = segment.match(/^\s*([A-Za-z0-9-]{2,20})\s*(?:=|:)\s*(.+)$/);
+      if (m) {
+        current = m[1].toLowerCase();
+        const phrase = m[2].trim().toLowerCase().replace(/"/g, "");
+        if (phrase) (out[current] ??= []).push(phrase);
+      } else if (current) {
+        const phrase = segment.trim().toLowerCase().replace(/"/g, "");
+        if (phrase) out[current].push(phrase);
+      }
+    }
   }
   return out;
 }
