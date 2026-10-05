@@ -1,0 +1,2220 @@
+[
+ {
+  "id": "GEN-01",
+  "group": "General / cross-cutting",
+  "requirement": "Operate only the activities stated on the licence",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 9(4)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Keep the live product, customer journey and transaction flow inside the services approved on the licence. A new service must be assessed and approved before launch.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Any product, channel or service change. Timing: Before an unlicensed activity starts",
+  "evidence": "Current licence, product inventory and signed perimeter review",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 9(4). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-02",
+  "group": "General / cross-cutting",
+  "requirement": "Track every licence condition, directive and BoU instruction",
+  "applies": "All NPS licensees",
+  "type": "Regulator-set obligation",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 ss. 9(2), 20 and 23",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Create a task for each condition on the licence and each later written instruction, including its exact due date, owner and evidence. These items cannot be inferred from the general legislation.",
+  "what_do": "Capture the incoming licence condition, directive, finding or request exactly as received, including its due date and required format. Assign an owner/reviewer, submit the required response and retain the regulator communication and closure evidence.",
+  "when": "Trigger: Receipt of licence condition, directive, inspection finding or letter. Timing: Date specified by BoU",
+  "evidence": "Instruction, action plan, response and closure evidence",
+  "next": "Close only when the required response/action and regulator-facing evidence are recorded. A new instruction creates a new task.",
+  "cta": "Add regulator instruction",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 ss. 9(2), 20 and 23. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-03",
+  "group": "General / cross-cutting",
+  "requirement": "Pay the annual licence fee",
+  "applies": "All NPS licensees",
+  "type": "Regulatory filing/payment",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 15; National Payment Systems Regulations, 2021 \u2014 reg. 5; National Payment Systems (Amendment) Regulations, 2022 \u2014 Schedule 3",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ],
+   [
+    "2022 Amendment Regulations",
+    "https://drive.google.com/file/d/1oozJCdTwoyvU_kRJHpiHBi_ZxWqG2sCY/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The annual fee is due by 31 January each year. Where one operating licence combines more than one licence category or class, Beacon must calculate the annual fee from all licences/classes held rather than from a single \u201cprimary\u201d licence. An instrument-only class may carry a nil annual fee under the amended schedule.",
+  "what_do": "At the start of each year, read every licence/class held by the organisation, calculate the applicable annual fees under the amended Schedule 3, arrange payment, and retain BoU payment confirmation. Do not calculate the fee from only one licence category where the operating licence is combined.",
+  "when": "Every year. Legal deadline: 31 January.",
+  "evidence": "Fee calculation by each licence/class held; payment instruction; BoU receipt or other payment confirmation.",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Record payment / action",
+  "completion": "Payment/action completed and confirmation retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Act s.15; NPS Regs reg.5; 2022 amended Schedule 3. Combined applications pay fees for each licence category/class held. Calculate the annual fee from every licence/class held. Do not use a single \u201cprimary licence\u201d. Combined licences pay the fee for each category/class; instrument-only fee may be nil."
+ },
+ {
+  "id": "GEN-04",
+  "group": "General / cross-cutting",
+  "requirement": "Provide information requested by BoU",
+  "applies": "All NPS licensees",
+  "type": "Regulator-set obligation",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 23",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Supply complete and accurate operational data in the format and by the date BoU specifies. Treat ad hoc requests as controlled submissions, not informal email tasks.",
+  "what_do": "Capture the incoming licence condition, directive, finding or request exactly as received, including its due date and required format. Assign an owner/reviewer, submit the required response and retain the regulator communication and closure evidence.",
+  "when": "Trigger: BoU information request. Timing: Date and format specified by BoU",
+  "evidence": "Request, approved response, submission evidence and receipt",
+  "next": "Close only when the required response/action and regulator-facing evidence are recorded. A new instruction creates a new task.",
+  "cta": "Add regulator instruction",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 23. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-05",
+  "group": "General / cross-cutting",
+  "requirement": "Support inspections and produce records",
+  "applies": "Payment system operator; Payment service provider",
+  "type": "Event-driven",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 22",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Make requested records, systems and responsible staff available within the reasonable period stated by the inspector. Keep a controlled log of every item shared.",
+  "what_do": "Log the triggering event immediately, capture the exact occurrence/receipt time, calculate the legal clock, prepare and send the required notification/response, and retain the notice, delivery evidence and any follow-up or closure record.",
+  "when": "Trigger: Inspection notice or on-site request. Timing: Within the period specified by the inspector",
+  "evidence": "Inspection request log, documents supplied and management responses",
+  "next": "After the initial notice/response, keep the event open for any regulator follow-up, remediation and closure evidence.",
+  "cta": "Log event / response",
+  "completion": "Required notice/response sent within the legal clock; delivery evidence and follow-up retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 22. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-06",
+  "group": "General / cross-cutting",
+  "requirement": "Commence operations within six months of licence issue",
+  "applies": "Payment system operator",
+  "type": "One-off deadline",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 13(1)(c)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "A payment-system operator can face revocation or suspension if the licensed payment system has not commenced operations within six months after the licence was granted. Beacon should treat this as a one-off post-licensing threshold tied to the licence issue date.",
+  "what_do": "Create the obligation from the licence/event date, complete the one-off action within the legal period, retain the evidence and continue any ongoing element after the initial action is closed.",
+  "when": "Once after licence grant. Threshold: within 6 calendar months of the licence date.",
+  "evidence": "Go-live approval, transaction evidence and regulatory correspondence",
+  "next": "Close the one-off element only when evidence is attached. Any continuing control remains active.",
+  "cta": "Complete setup action",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 13(1)(c). Treat as a one-off post-licensing continuity check tied to the licence issue date. Hide once commencement is evidenced; surface escalation before the six-month threshold."
+ },
+ {
+  "id": "GEN-07",
+  "group": "General / cross-cutting",
+  "requirement": "Do not leave the licensed payment system inactive for more than thirty days",
+  "applies": "Payment system operator",
+  "type": "Continuous control",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 13(1)(d)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "A payment-system operator can face revocation or suspension if the licensed payment system ceases to operate for more than thirty days. This is an inactivity threshold, not a monthly filing.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Only when inactivity begins. Escalate before the system has been inactive for more than 30 days.",
+  "evidence": "Availability records, incident log and BoU correspondence",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 13(1)(d). Treat as a PSO inactivity threshold, not a generic recurring task. Start a clock only when system inactivity is detected."
+ },
+ {
+  "id": "GEN-08",
+  "group": "General / cross-cutting",
+  "requirement": "Give notice before ceasing the licensed business",
+  "applies": "All NPS licensees",
+  "type": "Prior notice",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 70",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Notify BoU, publish the notice and submit a cessation plan covering approval, customer payments and risk mitigation. This must happen before the business stops.",
+  "what_do": "Complete the operational action described above, retain the evidence that demonstrates compliance, and record any exception or remediation required.",
+  "when": "Trigger: Decision to cease licensed business. Timing: At least 30 days before cessation",
+  "evidence": "Board approval, cessation plan, BoU notice and newspaper publication",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Review control",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 70. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-09",
+  "group": "General / cross-cutting",
+  "requirement": "Publish and display the licence",
+  "applies": "All NPS licensees",
+  "type": "One-off and continuous",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 7",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "After the licence is issued, the licensee must publish it in the Gazette and in a newspaper of wide circulation on at least a quarter page within seven days, furnish copies to BoU, and keep the licence displayed conspicuously at its premises.",
+  "what_do": "Complete the two-part obligation: publish the licence and furnish evidence to BoU within seven days, then maintain a conspicuous physical display of the current licence at the premises.",
+  "when": "Publish and furnish copies within 7 days after licence issue; display continuously thereafter.",
+  "evidence": "Gazette publication; full newspaper page showing the quarter-page publication; evidence copies were furnished to BoU; current display evidence at the premises.",
+  "next": "Close the one-off element only when evidence is attached. Any continuing control remains active.",
+  "cta": "Complete setup action",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 7. Split the workflow into initial publication/delivery evidence and continuous licence display. One card may contain both sub-actions."
+ },
+ {
+  "id": "GEN-10",
+  "group": "General / cross-cutting",
+  "requirement": "Maintain minimum capital unimpaired",
+  "applies": "Payment system operator; Payment service provider",
+  "type": "Continuous control",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 66; National Payment Systems Regulations, 2021 \u2014 reg. 8; National Payment Systems (Amendment) Regulations, 2022 \u2014 Schedule 4",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ],
+   [
+    "2022 Amendment Regulations",
+    "https://drive.google.com/file/d/1oozJCdTwoyvU_kRJHpiHBi_ZxWqG2sCY/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The applicable minimum capital must be maintained unimpaired by losses or other adjustments. For a combined operating licence, the required minimum is the highest applicable capital threshold among the combined categories/classes.",
+  "what_do": "Configure the profile with all licence classes held and the applicable amended Schedule 4 thresholds. Monitor capital against the highest applicable threshold for a combined licence. A shortfall should immediately open an exception and regulatory-response workflow.",
+  "when": "At all times. If BoU orders restoration after a shortfall, the Regulations provide a 90-day restoration period.",
+  "evidence": "Current capital computation; general-ledger support; evidence of applicable class/combined-licence threshold; management review; remediation and BoU correspondence if a shortfall occurs.",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Act s.66; NPS Regs reg.8 and amended Schedule 4. Reg.8(2): combined operating licence maintains the highest applicable minimum capital. Use all held licence classes. For a combined operating licence, the minimum capital is the highest applicable class/category threshold under reg. 8(2)."
+ },
+ {
+  "id": "GEN-11",
+  "group": "General / cross-cutting",
+  "requirement": "Obtain approval before changing key licence information",
+  "applies": "All NPS licensees",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 9",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Do not change the physical address, director, manager, trustee or substantial shareholder until BoU approves the proposed change.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Proposed key change. Timing: Before the change takes effect",
+  "evidence": "Application pack, fit-and-proper documents and BoU approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 9. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-12",
+  "group": "General / cross-cutting",
+  "requirement": "Obtain approval before a merger or acquisition",
+  "applies": "All NPS licensees",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 27",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Do not sign or implement a merger or acquisition agreement involving the licensee without written BoU approval.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Proposed merger or acquisition. Timing: Before entering the agreement",
+  "evidence": "Transaction documents, regulatory submission and written approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 27. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-13",
+  "group": "General / cross-cutting",
+  "requirement": "Obtain approval before outsourcing licensed services, core operations or technical personnel",
+  "applies": "All NPS licensees",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 28",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Submit the selection criteria, business rationale, risk controls, agreement and any fit-and-proper form before the outsourced arrangement starts. The licensee remains accountable after approval.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Proposed regulated outsourcing. Timing: Before outsourcing starts",
+  "evidence": "Due diligence, risk assessment, contract, application and BoU approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 28. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-14",
+  "group": "General / cross-cutting",
+  "requirement": "Obtain approval before opening a branch or creating a subsidiary",
+  "applies": "All NPS licensees",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 31",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Do not operate a branch in or outside Uganda, or create a subsidiary, until written BoU approval is received.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Proposed branch or subsidiary. Timing: Before establishment or operation",
+  "evidence": "Business case, application and written approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 31. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-15",
+  "group": "General / cross-cutting",
+  "requirement": "Maintain an effective risk management framework",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 32 and Schedule 6",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "The licensee must maintain a risk management framework and comply with the technical and international payment-system standards required by the Regulations. The cited rule does not impose a fixed annual filing date; an annual review can be used as an internal management cadence, not presented as a statutory deadline.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Continuous. No fixed annual filing date in the cited rule; any scheduled annual review is an internal management cadence.",
+  "evidence": "Risk register, framework, minutes, tests and remediation log",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Regs reg.32 and Schedule 6. No fixed annual filing date in the cited rule; annual review is an internal control cadence unless directed otherwise. Keep the legal continuous control. Any annual review reminder must be labelled an internal management cadence, not a statutory annual deadline."
+ },
+ {
+  "id": "GEN-16",
+  "group": "General / cross-cutting",
+  "requirement": "Maintain BoU access to electronic systems and records",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 26",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Keep the technical and access arrangements needed for BoU monitoring available and controlled. A trust or special account institution must also make balance statements accessible.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: BoU monitoring access. Timing: At all times",
+  "evidence": "Access test, access log and issue remediation",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 26. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-17",
+  "group": "General / cross-cutting",
+  "requirement": "Submit the monthly NPS operational return",
+  "applies": "All NPS licensees",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 22(1)-(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Report agents, transaction volumes and values, POS activity, fraud, outages, security breaches, STR counts, gender data and complaints. EMI licensees add account, trust, interest, cross-border, interoperability, dormancy and backing data.",
+  "what_do": "For each month, compile every data field required by regulation 22, reconcile the return to source systems, obtain internal sign-off, submit within the 10-working-day clock, and keep the submitted version plus receipt. EMI-specific fields should appear only for EMI profiles.",
+  "when": "Trigger: Month end. Timing: Within 10 working days after month end",
+  "evidence": "Approved return, source-data reconciliation, submission evidence and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 22(1)-(3). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-18",
+  "group": "General / cross-cutting",
+  "requirement": "Submit quarterly financial statements",
+  "applies": "All NPS licensees",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 23(1)(a)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Submit the income statement and statement of financial position, verified by an external auditor, after each calendar quarter.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Calendar quarter end. Timing: 15th day of the following month",
+  "evidence": "Signed statements, auditor verification, submission evidence and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 23(1)(a). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-19",
+  "group": "General / cross-cutting",
+  "requirement": "Submit annual audited financial statements",
+  "applies": "All NPS licensees",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 23(1)(b)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Complete the calendar-year audit and submit the signed financial statements by the statutory date.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Calendar year end. Timing: No later than 30 March",
+  "evidence": "Signed audited statements, management letter, submission evidence and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 23(1)(b). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-20",
+  "group": "General / cross-cutting",
+  "requirement": "Submit the annual payment-system or platform audit report",
+  "applies": "All NPS licensees",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 23(1)(c); BoU annual systems-audit guidance",
+  "links": [
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ],
+   [
+    "BoU audit guidance",
+    "https://drive.google.com/file/d/1c8bEypgMW9rUU4xnISEQo4kQ_bGM0cXZ/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Arrange an independent audit of the payment system, payment-service platform or platform used to issue an instrument. Resolve scope and evidence early enough to file the final report by the statutory date.",
+  "what_do": "Plan the annual system/platform audit early enough to obtain the final report by 30 March. Use the applicable BoU audit-scope guidance for the engagement, track remediation of material findings, submit the final report and retain receipt. Where the EMI trustee/system audit covers the same requirement, avoid duplicating the task.",
+  "when": "Trigger: Calendar year end. Timing: By 30 March",
+  "evidence": "Final audit report, vulnerability assessment where applicable, remediation plan, submission evidence and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Regulations; BoU Annual Systems Audits guidance \u2014 reg. 23(1)(c); BoU annual systems-audit guidance. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-21",
+  "group": "General / cross-cutting",
+  "requirement": "Publish audited financial statements",
+  "applies": "All NPS licensees",
+  "type": "Public disclosure",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 23(2)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Publish the audited annual financial statements in a newspaper of wide circulation after the audit is complete.",
+  "what_do": "Prepare the required publication, complete it by the legal deadline and retain a full copy of the published material together with evidence of the publication date.",
+  "when": "Trigger: Calendar year end. Timing: By 30 April",
+  "evidence": "Published newspaper page and invoice",
+  "next": "Archive the publication evidence against the relevant reporting period; the next annual occurrence is generated automatically.",
+  "cta": "Record publication",
+  "completion": "Publication completed by deadline and publication evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 23(2). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-22",
+  "group": "General / cross-cutting",
+  "requirement": "Maintain reliable operational data and an audit trail",
+  "applies": "Payment service provider",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 25",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Keep a management information system that can collect and process regulatory data and reproduce a complete audit trail for management, auditors and BoU.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Transaction processing and reporting. Timing: At all times",
+  "evidence": "Data dictionary, lineage, audit logs, reconciliations and exception log",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 25. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-23",
+  "group": "General / cross-cutting",
+  "requirement": "Retain payment transaction records for at least ten years",
+  "applies": "Payment service provider",
+  "type": "Retention control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 63(1)-(2)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Preserve each transaction and related operational information in its original format or one that accurately represents it. The retention clock applies record by record.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Creation of each record. Timing: At least 10 years",
+  "evidence": "Retention schedule, archive logs, retrieval tests and legal holds",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 63(1)-(2). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-24",
+  "group": "General / cross-cutting",
+  "requirement": "Obtain approval before destroying payment records",
+  "applies": "Payment service provider",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 63(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Even after the ten-year retention period, do not destroy payment transaction records without applying for and receiving BoU approval.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Records become eligible for destruction. Timing: Before destruction",
+  "evidence": "Disposal list, approval application, BoU approval and destruction certificate",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 63(3). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "GEN-25",
+  "group": "General / cross-cutting",
+  "requirement": "Protect customer and participant information",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 64",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Limit disclosure to lawful grounds, court orders or express consent, and apply access, security and confidentiality controls throughout the data lifecycle.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Collection, use, sharing or disclosure of information. Timing: At all times",
+  "evidence": "Data inventory, access logs, consents, agreements and privacy assessments",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 64. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-01",
+  "group": "Consumer protection",
+  "requirement": "Maintain a board-approved consumer protection policy",
+  "applies": "All NPS licensees",
+  "type": "Governance control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 3-5",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Every licensee must maintain a consumer protection policy, have it approved and overseen by the board, and implement it through management. The policy must cover the consumer-protection controls specified in the Regulations, including risk assessment, data security, staff/agent responsibilities, complaints and redress.",
+  "what_do": "Maintain one live consumer-protection control set, not merely a policy file. Link the policy to the board approval, management responsibilities, quarterly data-security assessment, annual consumer-protection audit, complaints/redress controls and training evidence.",
+  "when": "Trigger: Licence operation and policy changes. Timing: Maintain continuously",
+  "evidence": "Current board-approved policy; board approval/minutes; implementation/control map; management monitoring evidence; training and complaint/redress evidence.",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 3-5. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-02",
+  "group": "Consumer protection",
+  "requirement": "Review the consumer protection policy at least every two years",
+  "applies": "All NPS licensees",
+  "type": "Periodic review and filing",
+  "decision": "EMBED",
+  "source": "National Payment Systems (Consumer Protection) Regulations, 2022 \u2014 reg. 3(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The consumer protection policy must be reviewed at least every two years. After board approval of a revised policy, the revised policy and the changes made must be submitted to the Central Bank within thirty days. This should sit inside the CP-01 policy lifecycle rather than appear as an unrelated card.",
+  "what_do": "Within CP-01, track the last board-approved review date and automatically create the next two-year review. If the review produces a revised policy, start a 30-day submission clock from board approval and retain the change summary and submission evidence.",
+  "when": "Review at least every 2 years; where revised, submit the board-approved revised policy and changes within 30 days after approval.",
+  "evidence": "Policy review record; revised policy; board approval; change summary; submission evidence and receipt where the policy was revised.",
+  "next": "The revised-policy submission closes only when the revised policy/change summary and submission evidence are retained. The next two-year review date is then calculated from the approved review cycle.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Embedded inside CP-01",
+  "audit_note": "Consumer Protection Regs reg.3(3): review at least every two years; submit revised policy within 30 days after board approval. Make this the recurring review/submission cycle inside the Consumer Protection Policy control (CP-01), rather than a separate standalone obligation card."
+ },
+ {
+  "id": "CP-03",
+  "group": "Consumer protection",
+  "requirement": "Conduct quarterly internal data-security risk assessments",
+  "applies": "All NPS licensees",
+  "type": "Internal control test",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 3(2)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The consumer protection policy must provide for quarterly internal risk assessments to identify and assess data-security risks on systems and the controls used to restrict and monitor access to consumer information.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Calendar quarter or policy quarter. Timing: Every quarter; no external filing date stated",
+  "evidence": "Risk assessment, access review and remediation tracker",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 3(2). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-04",
+  "group": "Consumer protection",
+  "requirement": "Conduct an annual consumer protection audit",
+  "applies": "All NPS licensees",
+  "type": "Internal assurance",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 3(2)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The consumer protection policy must provide for an annual consumer protection audit. Beacon should track the annual assurance cycle and evidence, without inventing an external filing date that the cited rule does not state.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Annual audit plan. Timing: Once every year; no fixed filing date stated",
+  "evidence": "Audit report, management responses and closure evidence",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 3(2). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-05",
+  "group": "Consumer protection",
+  "requirement": "Submit the monthly complaints report",
+  "applies": "All NPS licensees",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 6",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Every licensee must submit monthly information on consumer complaints, broken down by category and agent location and including remedial measures, within fifteen days after the last day of each month.",
+  "what_do": "At month-end, reconcile the complaints register by category and agent location, record remedial measures, obtain review/sign-off, and submit the report within the 15-day legal clock.",
+  "when": "Monthly; within 15 days from the last day of each month.",
+  "evidence": "Complaint register reconciliation, approved report, submission evidence and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 6. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-06",
+  "group": "Consumer protection",
+  "requirement": "Submit the consumer-awareness report",
+  "applies": "All NPS licensees",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Consumer Protection) Regulations, 2022 \u2014 regs. 10\u201311",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "A licensee must report to the Central Bank on its consumer-awareness programmes twice each year. The Regulations set the reporting dates as 15 January and 15 July.",
+  "what_do": "Maintain evidence of awareness programmes during each six-month period, prepare the report, obtain internal approval and submit by 15 January / 15 July as applicable.",
+  "when": "Twice yearly: 15 January and 15 July.",
+  "evidence": "Programme evidence, monitoring results, approved report and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Consumer Protection Regs regs.10-11: biannual consumer-awareness report; due 15 January and 15 July. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-07",
+  "group": "Consumer protection",
+  "requirement": "Run and evaluate consumer-awareness programmes",
+  "applies": "All NPS licensees",
+  "type": "Continuous programme",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 10-11",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "A licensee must develop consumer-awareness programmes suited to the relevant consumer categories and monitor and evaluate whether those programmes are effective.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Product launch, fraud trend or customer need. Timing: No fixed date",
+  "evidence": "Materials, translations, attendance/reach data and evaluation results",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 10-11. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-08",
+  "group": "Consumer protection",
+  "requirement": "Give clear product information and a key-facts document before sign-up",
+  "applies": "All NPS licensees",
+  "type": "Transaction control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 12-14",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Before a consumer signs up for or acquires a product or service, the licensee must provide clear, complete and accurate information and a written key-facts document. The key facts include charges, fees, interest where applicable, and whether payment of charges/fees is instant or deferred.",
+  "what_do": "Before product acquisition, make the current product information and written key-facts document available to the consumer. Beacon should keep approved versions and evidence that the document/process was updated when product pricing or terms changed.",
+  "when": "Trigger: Before contract or product acquisition. Timing: Before the customer signs up",
+  "evidence": "Approved key-facts document, version log and customer acceptance record",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 12-14. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-09",
+  "group": "Consumer protection",
+  "requirement": "Notify customers before increasing a fee or charge",
+  "applies": "All NPS licensees",
+  "type": "Prior notice",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Consumer Protection) Regulations, 2022 \u2014 reg. 14(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "A licensee may not increase a fee or charge that was not disclosed at sign-up unless the consumer has first been given thirty days\u2019 notice of the increase.",
+  "what_do": "Complete the operational action described above, retain the evidence that demonstrates compliance, and record any exception or remediation required.",
+  "when": "At least 30 days before a fee or charge increase takes effect.",
+  "evidence": "Approved pricing change, customer notice and delivery evidence",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Review control",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Consumer Protection Regs reg.14(3): 30 days\u2019 notice before an increment in fees/charges. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-10",
+  "group": "Consumer protection",
+  "requirement": "Notify customers before planned maintenance",
+  "applies": "All NPS licensees",
+  "type": "Prior notice",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Consumer Protection) Regulations, 2022 \u2014 reg. 17(4)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Where planned servicing or maintenance will temporarily make service channels inaccessible, the licensee must give consumers at least forty-eight hours\u2019 notice.",
+  "what_do": "Complete the operational action described above, retain the evidence that demonstrates compliance, and record any exception or remediation required.",
+  "when": "At least 48 hours before planned maintenance makes service channels inaccessible.",
+  "evidence": "Change ticket, approved notice and delivery evidence",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Review control",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Consumer Protection Regs reg.17(4): at least 48 hours\u2019 notice before planned servicing/maintenance makes channels inaccessible. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-11",
+  "group": "Consumer protection",
+  "requirement": "Keep service channels available and communicate outages",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 17",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Service channels must remain available in accordance with the customer agreement. Where channels become unavailable because of an emergency or maintenance, consumers must be told about the unavailability and the expected restoration timeline.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Service degradation or outage. Timing: Immediate communication for unplanned events",
+  "evidence": "Availability report, incident log and customer communications",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 17. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-12",
+  "group": "Consumer protection",
+  "requirement": "Acknowledge customer inquiries immediately",
+  "applies": "All NPS licensees",
+  "type": "Service-level obligation",
+  "decision": "EMBED",
+  "source": "National Payment Systems (Consumer Protection) Regulations, 2022 \u2014 reg. 21(2)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "A consumer inquiry or request must be acknowledged immediately in writing. This should be the first step inside the same inquiry-handling workflow used for CP-13, not a standalone compliance card.",
+  "what_do": "Create a case for each request, record the start time, apply the correct service-level clock, keep the consumer updated where required, and retain the final written outcome and timestamps.",
+  "when": "Immediately upon receipt of the consumer inquiry/request; handled inside CP-13.",
+  "evidence": "Complaint record and acknowledgment timestamp",
+  "next": "Close the case only when the written outcome and resolution timestamp are recorded; breached SLAs remain visible as exceptions.",
+  "cta": "Open case",
+  "completion": "Case resolved within applicable SLA with acknowledgement/outcome timestamps and records.",
+  "ui_placement": "Embedded inside CP-13",
+  "audit_note": "Consumer Protection Regs reg.21(2): immediate written acknowledgement; use with CP-13 Schedule resolution times. Combine with CP-13 into one inquiry-handling SLA workflow: immediate written acknowledgement plus resolution within the applicable Schedule timeframe."
+ },
+ {
+  "id": "CP-13",
+  "group": "Consumer protection",
+  "requirement": "Resolve inquiries within the product-specific time limit",
+  "applies": "All NPS licensees",
+  "type": "Service-level obligation",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Consumer Protection) Regulations, 2022 \u2014 regs. 21 and 23, and Schedule",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Each consumer inquiry or request must be resolved within the Schedule timeframe: 6 hours for electronic-money cash transactions, electronic-money funds transfers, card/merchant payments and instant payments other than electronic-money financial services; 24 hours for payments/services involving third parties regulated by other authorities; and 48 hours for cross-border payments/services and other inquiries arising from licensed activity.",
+  "what_do": "Every inquiry should start one case clock. Record the channel, product/service category and lodging time; issue the written acknowledgement immediately; apply the correct 6/24/48-hour resolution window; record the written decision and the time resolved.",
+  "when": "From the time the inquiry/request is lodged: 6, 24 or 48 hours depending on the product/service category in the Schedule.",
+  "evidence": "Inquiry record; written acknowledgement timestamp; classification of the inquiry type; resolution timestamp; written clarification/decision; consumer updates and supporting evidence.",
+  "next": "Close the case only when the written outcome and resolution timestamp are recorded; breached SLAs remain visible as exceptions.",
+  "cta": "Open case",
+  "completion": "Case resolved within applicable SLA with acknowledgement/outcome timestamps and records.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Consumer Protection Regs regs.21/23 + Schedule: 6h/24h/48h resolution windows depending on product/service category. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-14",
+  "group": "Consumer protection",
+  "requirement": "Maintain free, accessible complaint channels around the clock",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 23(2)-(4)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The licensee must maintain a free, fair, accessible, timely, transparent and independent inquiry mechanism with multiple channels such as telephone, help desk, email or web chat. Those channels must be available twenty-four hours a day.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Customer inquiry or complaint. Timing: 24/7 availability",
+  "evidence": "Channel inventory, uptime report, test results and complaint records",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 23(2)-(4). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-15",
+  "group": "Consumer protection",
+  "requirement": "Provide redress and retain inquiry records",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 23-25",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The licensee must keep inquiry records, keep consumers updated, avoid conflicts in complaint handling, and maintain a redress mechanism that can provide compensation, rectification or restitution where appropriate.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Substantiated complaint or inquiry. Timing: Within the applicable complaint clock",
+  "evidence": "Complete case file, approval and proof of redress",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 23-25. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-16",
+  "group": "Consumer protection",
+  "requirement": "Train and supervise staff, agents and relevant third parties",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 5 and 20",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The licensee must assess training needs and provide continuous training and supervision so staff and agents remain competent as products, markets, legislation and regulation change.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Onboarding, role change and material update. Timing: No fixed date",
+  "evidence": "Training plan, attendance, assessment and remediation",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 regs. 5 and 20. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-17",
+  "group": "Consumer protection",
+  "requirement": "Use fair and accurate sales and promotional material",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "NPS Act; NPS Consumer Protection Regulations \u2014 Act s. 65(3); Consumer Regulations regs. 7-9 and 16",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Sales and promotional activity must be fair and must not mislead consumers. Written disclosures must be legible and clear; promotional material must not contain false, incomplete or misleading information and should identify the licensee as regulated by the Central Bank where required.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Before publication. Timing: Before release",
+  "evidence": "Approved copy, review checklist and published sample",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Act; NPS Consumer Protection Regulations \u2014 Act s. 65(3); Consumer Regulations regs. 7-9 and 16. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "CP-18",
+  "group": "Consumer protection",
+  "requirement": "Protect customer assets and maintain a 24-hour loss-reporting channel",
+  "applies": "All NPS licensees",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 18",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1I0n23-tnJSbwjLnT2mG1tioXWxpgIn8w/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "The licensee must safeguard consumer assets, maintain a twenty-four-hour channel for consumers to report loss or misuse, and make good consumer losses unless the loss resulted from the consumer\u2019s negligence. Loss or misuse must also be reportable to the Central Bank when requested.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Loss or misuse of customer asset. Timing: 24/7 channel; action without delay",
+  "evidence": "Control tests, loss reports, investigation and reimbursement evidence",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Consumer Protection Regulations, 2022 \u2014 reg. 18. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "PSO-01",
+  "group": "Payment-system / participant",
+  "requirement": "Maintain approved payment-system rules",
+  "applies": "Payment system operator",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 11(1)-(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Keep rules covering access, suspension, participant duties, finality, settlement, risk, continuity, disputes, transfer timing, charges and BoU contacts. Operations must match the approved rules.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: System operation and rule change. Timing: At all times",
+  "evidence": "Approved rules, gap review and participant acknowledgments",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 11(1)-(3). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "PSO-02",
+  "group": "Payment-system / participant",
+  "requirement": "Obtain approval before changing payment-system rules",
+  "applies": "Payment system operator",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 11(4)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Submit proposed rule amendments and wait for written approval before they take effect.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Proposed system-rule amendment. Timing: Before the amendment takes effect",
+  "evidence": "Redline, rationale, impact assessment, submission and approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 11(4). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "PSO-03",
+  "group": "Payment-system / participant",
+  "requirement": "Distribute and publish approved system rules",
+  "applies": "Payment system operator",
+  "type": "Event-driven filing/publication",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 11(5)-(6)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Give every participant a copy and publish the rules on the operator's website after approval.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to Participants and public, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: BoU approval of rules or amendments. Timing: Within 14 days after approval",
+  "evidence": "Participant delivery log, website capture and publication date",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Review control",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 11(5)-(6). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "PSO-04",
+  "group": "Payment-system / participant",
+  "requirement": "Keep system services available during the prescribed operating period",
+  "applies": "Payment system operator",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 67",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Monitor uptime against the operating period and system rules, and treat any material interruption as an incident requiring escalation and reporting assessment.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Operating period. Timing: Throughout the prescribed period",
+  "evidence": "Uptime report, incidents and corrective action",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 67. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "PSO-05",
+  "group": "Payment-system / participant",
+  "requirement": "Maintain approved recovery rules for fraud, mistake or error",
+  "applies": "Payment system operator; Payment service provider",
+  "type": "Governance control",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 25(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Where payment or settlement has been affected by fraud, mistake, error or a similar vitiating factor, the operator/service provider must have an approved manner for recovering the equivalent amount. Treat this as a standing recovery framework plus case workflow, not a generic \u201cincident closed\u201d button.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Recovery event or methodology change. Timing: Approved before use",
+  "evidence": "Approved recovery procedure and case files",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 25(3). The source applies to a payment system operator or payment service provider. Rename/reclassify away from a PSO-only grouping in the engine."
+ },
+ {
+  "id": "PSO-06",
+  "group": "Payment-system / participant",
+  "requirement": "Maintain settlement accounts and required minimum balances",
+  "applies": "Payment-system participant",
+  "type": "Continuous control",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 26(1)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "A participant in a payment system must maintain a settlement account with BoU or an authorised settlement agent and maintain the minimum balance required under the applicable terms. This is a participant obligation, not automatically a PSO obligation.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Continuous while participating in the payment system; monitor before settlement windows under the applicable system terms.",
+  "evidence": "Account agreement, balance report and settlement reconciliation",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 26(1). This is a payment-system participant obligation, not a PSO obligation. Drive it from participant status."
+ },
+ {
+  "id": "PSO-07",
+  "group": "Payment-system / participant",
+  "requirement": "Notify the PSO before another participant settles on your behalf",
+  "applies": "Payment-system participant",
+  "type": "Prior notice",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 26(2)-(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "If a participant appoints another participant as its settlement agent, it must notify the payment-system operator in writing and provide the appointed participant\u2019s written confirmation before any obligation is settled on its behalf.",
+  "what_do": "Complete the operational action described above, retain the evidence that demonstrates compliance, and record any exception or remediation required.",
+  "when": "Before the first obligation is settled by the appointed settlement agent.",
+  "evidence": "Appointment, written confirmation and notice receipt",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Review control",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 26(2)-(3). This is a payment-system participant event. Trigger only where a participant appoints another participant as settlement agent."
+ },
+ {
+  "id": "PSO-08",
+  "group": "Payment-system / participant",
+  "requirement": "Maintain an approved collateral arrangement",
+  "applies": "Payment system operator",
+  "type": "Governance control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 39",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "The PSO must prescribe how participants reserve adequate liquid collateral for settlement obligations and obtain BoU approval for the arrangement.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Creation or amendment of collateral rules. Timing: Before operation or amendment",
+  "evidence": "Approved collateral rules, exposure monitoring and exception log",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 39. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "PSO-09",
+  "group": "Payment-system / participant",
+  "requirement": "Notify insolvency proceedings immediately",
+  "applies": "Payment-system participant",
+  "type": "Event-driven notification",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 30(1)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "A participant served with an insolvency petition must notify both the payment-system operator and BoU immediately and, in any event, no later than two hours after service. Participation is then restricted to discharging payment obligations in accordance with the system rules.",
+  "what_do": "When service of an insolvency petition is logged, start a two-hour emergency clock immediately. Notify both the PSO and BoU, preserve evidence of the time each notice was sent/received, and apply the statutory participation restriction.",
+  "when": "Immediately and in any case not more than 2 hours after service of the insolvency petition.",
+  "evidence": "Insolvency petition/service evidence; notification to the PSO; notification to BoU; delivery timestamps/receipts; restricted-participation record.",
+  "next": "After the initial notice/response, keep the event open for any regulator follow-up, remediation and closure evidence.",
+  "cta": "Log event / response",
+  "completion": "Required notice/response sent within the legal clock; delivery evidence and follow-up retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Act s.30(1): participant must notify PSO and BoU immediately and in any case within two hours after service of insolvency petition. This is a participant obligation. The deadline is immediate and in any case no more than two hours after service of the insolvency petition."
+ },
+ {
+  "id": "EMI-01",
+  "group": "Electronic money issuer",
+  "requirement": "Issue electronic money only after equivalent cash is safeguarded",
+  "applies": "Electronic money issuer",
+  "type": "Transaction control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 47(1)(a)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Do not create customer electronic value unless an equal amount of cash is already in the approved trust or special account.",
+  "what_do": "Build the requirement into the relevant customer/product/transaction process so a non-compliant action is blocked or flagged. Retain the operational record and periodic control-test evidence.",
+  "when": "Trigger: Before e-money creation. Timing: Before issuance",
+  "evidence": "Issuance-to-cash reconciliation and exception log",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 47(1)(a). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-02",
+  "group": "Electronic money issuer",
+  "requirement": "Maintain approved trust or special account arrangements",
+  "applies": "Electronic money issuer",
+  "type": "Prior approval and continuous",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 ss. 49 and 51; National Payment Systems Regulations, 2021 \u2014 regs. 12\u201313",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Use only accounts and trustees approved for safeguarding customer funds. A non-deposit-taking EMI uses a trust account; an eligible financial institution or MDI uses an approved special account.",
+  "what_do": "Open the approval workflow as soon as the proposed change is known. Prepare the supporting information, submit the request to BoU and do not implement the proposed action until the required written approval is recorded.",
+  "when": "Trigger: Account opening, replacement or trustee change. Timing: Approval before opening, operating or changing the arrangement",
+  "evidence": "Form D, trust agreement, fit-and-proper pack, account evidence and approvals",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Act and NPS Regulations \u2014 Act ss. 49 and 51; Regulations regs. 12-13. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-03",
+  "group": "Electronic money issuer",
+  "requirement": "Keep trust funds separate and protected",
+  "applies": "Electronic money issuer",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 ss. 50, 52\u201353; National Payment Systems Regulations, 2021 \u2014 reg. 15",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Do not mix customer funds with operating money, use them for other operations or expose them to the licensee's debts. Trustees must maintain safeguards against loss.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Receipt and holding of customer funds. Timing: At all times",
+  "evidence": "Bank statements, ledger segregation, trust controls and exceptions",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Act and NPS Regulations \u2014 Act ss. 50, 52-53; Regulations reg. 15. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-04",
+  "group": "Electronic money issuer",
+  "requirement": "Limit concentration in any one trust-account institution",
+  "applies": "Electronic money issuer",
+  "type": "Continuous threshold",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 15(2)\u2013(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "An EMI must ordinarily ensure that no more than twenty per cent of total electronic value is held in one financial institution or MDI. The Regulations say this concentration rule may not apply where total electronic value does not exceed UGX 500 million, so Beacon should not automatically switch it off solely from the balance; the applicable regulatory position should be evidenced.",
+  "what_do": "Calculate exposure to each trust-account institution against total electronic value and flag concentrations above 20%. Where total electronic value is at or below UGX 500m, do not simply mark the rule \u201cnot applicable\u201d; record the basis for the applicable treatment or regulator position.",
+  "when": "Continuous concentration monitoring. The 20% cap is subject to the reg. 15(3) qualification for total electronic value not exceeding UGX 500m.",
+  "evidence": "Daily/periodic trust-account concentration calculation; institution-level balances; total electronic value; evidence supporting any reliance on the reg. 15(3) qualification; exceptions and remediation.",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Regs reg.15(2)-(3): 20% concentration cap; the rule may not apply where total electronic value does not exceed UGX 500m. Keep for EMI but do not auto-suppress below UGX 500m: reg. 15(3) says the concentration rule may not apply, so Beacon needs evidence of the applicable regulatory position."
+ },
+ {
+  "id": "EMI-05",
+  "group": "Electronic money issuer",
+  "requirement": "Accrue customer interest daily and pay it quarterly",
+  "applies": "Electronic money issuer",
+  "type": "Periodic payment/control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 ss. 49(6), 53(b); National Payment Systems Regulations, 2021 \u2014 reg. 14",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Interest on trust or special accounts cannot be charged away. Accrue it every day and apply it for customer benefit at the end of each calendar quarter.",
+  "what_do": "Run the required calculation/control for each period, complete any payment or allocation required, and retain the calculation, approval and transaction evidence.",
+  "when": "Trigger: Daily balance and quarter end. Timing: End of each calendar quarter",
+  "evidence": "Interest computation, bank evidence, allocation and customer-benefit proof",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Record payment / action",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Act and NPS Regulations \u2014 Act ss. 49(6), 53(b); Regulations reg. 14. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-06",
+  "group": "Electronic money issuer",
+  "requirement": "Report quarterly interest information",
+  "applies": "Electronic money issuer",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 14(7)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Trustees must tell BoU the interest accrued and the applicable interest rate for every calendar quarter.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Calendar quarter. Timing: Every calendar quarter; exact day not stated",
+  "evidence": "Interest report, rate evidence, submission and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 14(7). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-07",
+  "group": "Electronic money issuer",
+  "requirement": "Submit trustees' annual audited accounts",
+  "applies": "Trust-account EMI / approved trustee body (not generic special-account EMI)",
+  "type": "Regulatory return",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 15(1)(a)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "For a trust-account structure, the trustee body must audit and publish the trust entity\u2019s financial statements and submit a copy of the annual audited accounts to BoU not later than 30 April after the end of the calendar year. This should not be applied indiscriminately to an EMI operating only through a special account.",
+  "what_do": "For a trust-account structure, track the trustee body\u2019s audit, publication and submission as one annual workflow. Do not activate this task for an EMI that has only a special-account structure unless another applicable source requires it.",
+  "when": "Annually; submit not later than 30 April after calendar year-end.",
+  "evidence": "Trustee body audited accounts; publication evidence; BoU submission evidence and receipt.",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Regs reg.15(1)(a): trustee body audits/publishes trust-entity financials and submits annual audited accounts by 30 April after year-end. Apply to trustees of a trust-account structure (non-bank EMI route), not indiscriminately to every EMI using a special account."
+ },
+ {
+  "id": "EMI-08",
+  "group": "Electronic money issuer",
+  "requirement": "Submit the annual audit of the electronic-money issuance system",
+  "applies": "Electronic money issuer",
+  "type": "Regulatory return",
+  "decision": "EMBED",
+  "source": "National Payment Systems Regulations, 2021 \u2014 regs. 15(1)(b) and 23(1)(c)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "The trustee body must submit an annual audit report of the electronic-money issuance system by 30 March. Because the general NPS Regulations also require an annual audit report for the payment system/platform by 30 March, Beacon should avoid creating duplicate tasks where one audit/report satisfies both requirements.",
+  "what_do": "Make this a source/role overlay within the general annual system-audit task. If the same final audit report satisfies both reg. 15(1)(b) and reg. 23(1)(c), retain one task with both source references rather than making the licensee upload the same report twice.",
+  "when": "Annually; by 30 March after calendar year-end, coordinated with GEN-20 to prevent duplicate work.",
+  "evidence": "Final audit report, remediation plan, submission and receipt",
+  "next": "The annual system-audit task remains one task with multiple applicable source references. Any material findings should create remediation items.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Embedded inside GEN-20",
+  "audit_note": "NPS Regs reg.15(1)(b) plus general reg.23(1)(c): annual e-money issuance/system audit due by 30 March; avoid duplicate tasks where one report satisfies both. Avoid a duplicate annual systems-audit task. Merge into the general annual systems/platform audit workflow (GEN-20), while preserving the EMI/trustee-specific source and responsibility."
+ },
+ {
+  "id": "EMI-09",
+  "group": "Electronic money issuer",
+  "requirement": "Submit the monthly trust or special account operations report",
+  "applies": "Electronic money issuer",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 53(e)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Report how the safeguarding account operated during the month, including balances and other information required by BoU.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Month end. Timing: Monthly; no fixed day stated in the Act",
+  "evidence": "Approved report, reconciliation, submission and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 53(e). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-10",
+  "group": "Electronic money issuer",
+  "requirement": "Keep 100% of outstanding e-money in eligible liquid assets",
+  "applies": "Electronic money issuer",
+  "type": "Continuous threshold",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 60",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "The full value of issued electronic money must remain backed by unencumbered cash, treasury bills, bonds or another asset accepted by BoU.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Change in e-money or liquid assets. Timing: At all times",
+  "evidence": "Daily backing computation, bank/custody evidence and exceptions",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 60. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-11",
+  "group": "Electronic money issuer",
+  "requirement": "Honour customer withdrawals and transfers on demand",
+  "applies": "Electronic money issuer",
+  "type": "Transaction control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 53(f)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Maintain sufficient immediately available liquidity and operational capacity to redeem or transfer customer value when requested.",
+  "what_do": "Build the requirement into the relevant customer/product/transaction process so a non-compliant action is blocked or flagged. Retain the operational record and periodic control-test evidence.",
+  "when": "Trigger: Customer redemption or transfer request. Timing: On demand",
+  "evidence": "Liquidity dashboard, transaction logs and exceptions",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 53(f). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-12",
+  "group": "Electronic money issuer",
+  "requirement": "Submit the daily e-money to trust-account reconciliation",
+  "applies": "Electronic money issuer",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 22(5)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Reconcile total electronic value to the trust or special account and send the statement to BoU every day.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Daily close. Timing: Daily; cutoff not stated in the regulation",
+  "evidence": "Daily reconciliation, approval, transmission log and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 22(5). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-13",
+  "group": "Electronic money issuer",
+  "requirement": "Report a safeguarding discrepancy immediately",
+  "applies": "Electronic money issuer",
+  "type": "Event-driven notification",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 24",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "If issued e-money and the trust or special account do not match, report the discrepancy immediately and restore the balance within the period BoU sets.",
+  "what_do": "Log the triggering event immediately, capture the exact occurrence/receipt time, calculate the legal clock, prepare and send the required notification/response, and retain the notice, delivery evidence and any follow-up or closure record.",
+  "when": "Trigger: Detection of imbalance. Timing: Immediately; remediation date set by BoU",
+  "evidence": "Reconciliation, incident record, notification, remediation and closure confirmation",
+  "next": "After the initial notice/response, keep the event open for any regulator follow-up, remediation and closure evidence.",
+  "cta": "Log event / response",
+  "completion": "Required notice/response sent within the legal clock; delivery evidence and follow-up retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 24. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-14",
+  "group": "Electronic money issuer",
+  "requirement": "Submit the weekly liquid-asset breakdown",
+  "applies": "Electronic money issuer",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 22(6)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Report how trust or special account balances are held across eligible liquid assets each week.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Weekly reporting cycle. Timing: Weekly; weekday not stated",
+  "evidence": "Weekly breakdown, approval, submission and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 22(6). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-15",
+  "group": "Electronic money issuer",
+  "requirement": "Replicate electronic-money data to BoU in real time",
+  "applies": "Electronic money issuer",
+  "type": "Continuous regulatory feed",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 22(7)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Keep the required account data and records flowing to BoU continuously, or at the alternative frequency BoU directs.",
+  "what_do": "Monitor the regulatory data feed continuously, reconcile completeness and accuracy, record outages or exceptions and remediate any interruption promptly.",
+  "when": "Trigger: Creation or change of e-money data. Timing: Real time or as directed",
+  "evidence": "Feed monitoring, data reconciliation, outage log and remediation",
+  "next": "The feed remains active; an interruption or reconciliation break opens an incident/exception rather than closing the obligation.",
+  "cta": "Review feed status",
+  "completion": "Feed operating and reconciled; no unresolved outage/data exception.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 22(7). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-16",
+  "group": "Electronic money issuer",
+  "requirement": "Notify BoU of serious electronic-money incidents",
+  "applies": "Electronic money issuer",
+  "type": "Event-driven notification",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 22(4)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Report suspected or confirmed fraud, security breaches, material service interruption, loss of confidential data and other significant safety or efficiency issues in writing.",
+  "what_do": "Log the triggering event immediately, capture the exact occurrence/receipt time, calculate the legal clock, prepare and send the required notification/response, and retain the notice, delivery evidence and any follow-up or closure record.",
+  "when": "Trigger: Occurrence of reportable incident. Timing: No later than 24 hours after occurrence",
+  "evidence": "Incident record, impact assessment, written notice, updates and closure report",
+  "next": "After the initial notice/response, keep the event open for any regulator follow-up, remediation and closure evidence.",
+  "cta": "Log event / response",
+  "completion": "Required notice/response sent within the legal clock; delivery evidence and follow-up retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Regs reg.22(4): written notification no later than 24 hours for specified serious EMI incidents. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-17",
+  "group": "Electronic money issuer",
+  "requirement": "Run the statutory dormant-account lifecycle",
+  "applies": "Electronic money issuer",
+  "type": "Event-driven lifecycle",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 57",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Warn the customer one month before nine months of inactivity, block at nine months, notify within five working days, close six months after blocking if not reactivated, then transfer the balance and identifying information to BoU.",
+  "what_do": "Automate the dormant-account stages per account: warning at eight months of inactivity; dormancy/block at nine months; post-block notice within five working days; closure six months after blocking if not reactivated; then transfer the balance and identifying information to BoU.",
+  "when": "Trigger: Customer inactivity. Timing: 8 months, 9 months, 5 working days after block, then 6 months after block",
+  "evidence": "Customer notices, block/reactivation log, closure and transfer evidence",
+  "next": "Beacon automatically advances to the next statutory stage and recalculates the next date until the lifecycle ends.",
+  "cta": "Open lifecycle",
+  "completion": "Every statutory stage completed/evidenced, or lifecycle exited through a valid reactivation/closure path.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 57. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-18",
+  "group": "Electronic money issuer",
+  "requirement": "Maintain the primary payment-services data centre in Uganda",
+  "applies": "Electronic money issuer",
+  "type": "Continuous control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 68",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Keep the primary data centre used for the electronic-money service in Uganda and ensure architecture changes do not move the primary function outside the country.",
+  "what_do": "Keep the control operating on an ongoing basis. Record current evidence and the latest review/test, investigate failures or missing evidence, and open remediation rather than treating the obligation as permanently complete.",
+  "when": "Trigger: Infrastructure or hosting change. Timing: At all times",
+  "evidence": "Architecture, hosting records and change approvals",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 68. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-19",
+  "group": "Electronic money issuer",
+  "requirement": "Apply account-tier limits and customer verification rules",
+  "applies": "Electronic money issuer",
+  "type": "Transaction control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 ss. 56 and 59; National Payment Systems Regulations, 2021 \u2014 regs. 16\u201319 and Schedule 5",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Before activation, verify the customer at the level required for the account tier, assign a unique identifier, use secure activation and enforce the applicable balance and transaction limits.",
+  "what_do": "Build the requirement into the relevant customer/product/transaction process so a non-compliant action is blocked or flagged. Retain the operational record and periodic control-test evidence.",
+  "when": "Trigger: Account opening, activation and transaction. Timing: Before activation and continuously",
+  "evidence": "CDD record, identifier, activation log and limit-control tests",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Act and NPS Regulations \u2014 Act ss. 56 and 59; Regulations regs. 16-19 and Schedule 5. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-20",
+  "group": "Electronic money issuer",
+  "requirement": "Issue electronic value only in Uganda shillings",
+  "applies": "Electronic money issuer",
+  "type": "Transaction control",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 30",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Do not issue e-money denominated in a foreign currency.",
+  "what_do": "Build the requirement into the relevant customer/product/transaction process so a non-compliant action is blocked or flagged. Retain the operational record and periodic control-test evidence.",
+  "when": "Trigger: Issuance configuration or product change. Timing: At all times",
+  "evidence": "Product configuration and control test",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 30. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "EMI-21",
+  "group": "Electronic money issuer",
+  "requirement": "Obtain approval before transferring, terminating or changing control of the EMI",
+  "applies": "Electronic money issuer",
+  "type": "Prior approval",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 61",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view"
+   ]
+  ],
+  "meaning": "Section 61 creates several prior-approval gates for an EMI: transfer or termination of the licence, termination of the electronic-money business, and changes to the name, controlling interest or ownership. Each planned change should open the appropriate approval workflow before it is effected.",
+  "what_do": "When the organisation proposes a licence transfer/termination, business termination, name change, controlling-interest change or ownership change, select the exact change type, create the approval pack and prevent the change from being marked effective until written BoU approval is recorded.",
+  "when": "Trigger: Proposed transfer, termination, name or control change. Timing: Before the change",
+  "evidence": "Board papers, application and written approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Act, Cap. 59 \u2014 s. 61. Use the change/event workflow and include the full section 61 perimeter: licence transfer/termination, EMI business termination, name, controlling interest and ownership changes."
+ },
+ {
+  "id": "EMI-22",
+  "group": "Electronic money issuer",
+  "requirement": "Obtain approvals for regulated product partnerships or other new transactions",
+  "applies": "Electronic money issuer",
+  "type": "Prior approval",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 54(g)\u2013(j); National Payment Systems Regulations, 2021 \u2014 reg. 29 for cross-border services",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "meaning": "Different product expansions have different rules. Savings and credit products require a partnership with an appropriately licensed institution and BoU approval; insurance requires a licensed insurer; another transaction outside the listed categories requires BoU approval. Cross-border payment services are governed separately by regulation 29 and should use their own approval workflow.",
+  "what_do": "Ask what product is being introduced. Route savings/credit partnerships to the relevant licensed-partner plus BoU-approval workflow; verify licensed-insurer status for insurance; route \u201cother\u201d transactions to approval; and send cross-border services to the separate regulation 29 approval workflow.",
+  "when": "Trigger: New product or partnership. Timing: Before launch",
+  "evidence": "Partner licence, agreement, product risk assessment and BoU approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Act s.54(g)-(j) plus NPS Regs reg.29 for cross-border services. Approval conditions differ by product; do not use one blanket rule. Narrow the approval logic. Savings and credit partnerships expressly require BoU approval; insurance requires a licensed insurer; \u201cother transaction\u201d requires approval. Cross-border approval is separately governed by reg. 29."
+ },
+ {
+  "id": "INS-01",
+  "group": "Payment instruments / stored-value cards",
+  "requirement": "Meet the conditions for stored-value or prepaid cards",
+  "applies": "Stored-value/prepaid-card route",
+  "type": "Continuous and prior approval",
+  "decision": "REFRAME",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 20(1)\u2013(3), subject to reg. 20(7)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Stored-value or prepaid cards may be issued only by an eligible deposit-taking institution with clearing capacity or through a qualifying partnership, subject to any conditions BoU imposes. Regulation 20(7) excludes a financial institution or person issuing a stored-value card under section 44 of the Financial Institutions Act, so the workflow must first determine whether the NPS rule applies.",
+  "what_do": "First determine whether the issuer falls within the reg. 20(7) exclusion. If the NPS rule applies, verify the issuer\u2019s deposit-taking/clearing capacity or qualifying partnership and record any BoU conditions before card issuance is enabled.",
+  "when": "Trigger: Product design and partner change. Timing: Before issuance",
+  "evidence": "Eligibility evidence, partnership agreement and BoU conditions",
+  "next": "Close only when the required evidence is recorded; exceptions remain open until remediated.",
+  "cta": "Review control",
+  "completion": "Required action completed and supporting evidence retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "NPS Regs reg.20(1)-(3), with reg.20(7) exclusion for an FI/person issuing a stored-value card under FIA s.44. Do not describe this as a blanket prior-approval duty. Enforce issuer eligibility/qualifying partnership and any BoU conditions; reg. 20 has an FI/FIA exclusion."
+ },
+ {
+  "id": "INS-02",
+  "group": "Payment instruments / stored-value cards",
+  "requirement": "Submit the monthly stored-value or prepaid-card return",
+  "applies": "Stored-value/prepaid-card route",
+  "type": "Regulatory return",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 20(4)-(6)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Report cards issued and active, balances, transaction volumes and values, geographical use and any additional data requested.",
+  "what_do": "For each applicable period or trigger, prepare the required information/action described above, reconcile it to source records where relevant, obtain the necessary internal approval, complete the submission to BoU, and retain the final submitted version and delivery evidence.",
+  "when": "Trigger: Month end. Timing: By the 15th day of every month",
+  "evidence": "Approved return, source reconciliation, submission and receipt",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 20(4)-(6). Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "INS-03",
+  "group": "Payment instruments / stored-value cards",
+  "requirement": "Apply dormant-account rules to stored-value and prepaid cards",
+  "applies": "Stored-value/prepaid-card route",
+  "type": "Event-driven lifecycle",
+  "decision": "KEEP",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 21",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view"
+   ]
+  ],
+  "meaning": "Use the electronic-money dormancy lifecycle, with the necessary changes, for value held on dormant stored-value or prepaid cards.",
+  "what_do": "Track the lifecycle as a sequence of statutory stages. Each stage should carry its own date, action and evidence; the lifecycle stays open until the final stage is completed or the account/case is reactivated.",
+  "when": "Trigger: Inactivity. Timing: Statutory dormant-account stages",
+  "evidence": "Notices, block/reactivation records, closure and transfer evidence",
+  "next": "Beacon automatically advances to the next statutory stage and recalculates the next date until the lifecycle ends.",
+  "cta": "Open lifecycle",
+  "completion": "Every statutory stage completed/evidenced, or lifecycle exited through a valid reactivation/closure path.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "National Payment Systems Regulations, 2021 \u2014 reg. 21. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "AGT-01",
+  "group": "Agents",
+  "requirement": "Obtain approval before using agents",
+  "applies": "Licensee using agents",
+  "type": "Prior approval",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 reg. 3",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "meaning": "A licensee must obtain Central Bank approval before using agents. The approval application includes the due-diligence policy, draft agency agreement, technology description, agent-operation risk assessment and mitigants, AML/CFT procedures, operational manual/risk framework, pricing and revenue-sharing structure, plus any further information required.",
+  "what_do": "Use an agent-programme approval workspace. Build the reg. 3(3) pack from the approved policy, agreement, technology, risk, AML/CFT, operations and pricing materials, submit it to BoU, and do not permit agents to operate until approval is recorded.",
+  "when": "Trigger: Decision to use agents. Timing: Before agents start offering payment services",
+  "evidence": "Application pack and written approval",
+  "next": "The proposed activity remains blocked until the required written approval is attached. Once effective, update the relevant profile/control record.",
+  "cta": "Start approval request",
+  "completion": "Written approval recorded before the change/activity takes effect.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Agents Regs reg.3: obtain approval before using agents; application pack includes due-diligence policy, draft agreement, technology, risk, AML/CFT, operations and pricing materials. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "AGT-02",
+  "group": "Agents",
+  "requirement": "Perform due diligence before appointing each agent",
+  "applies": "Licensee using agents",
+  "type": "Onboarding control",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 reg. 5",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "meaning": "Before appointing an agent, the licensee must conduct suitability and due diligence. The Regulations require checks including prior account/e-money-account history, identity or incorporation documents, a local-authority recommendation and secure premises, in addition to the licensee\u2019s approved due-diligence policy.",
+  "what_do": "Use a repeatable agent-onboarding record. Do the suitability assessment and every required eligibility check before appointment, then record the decision and supporting evidence against that agent.",
+  "when": "Trigger: Proposed appointment. Timing: Before appointment",
+  "evidence": "Suitability/due-diligence checklist; account history; ID/passport or incorporation documents; local-authority recommendation; premises verification; approval decision and agent master record.",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Agents Regs reg.5: suitability/due diligence before appointment, including specified account-history, identity/incorporation, local recommendation and secure-premises conditions. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "AGT-03",
+  "group": "Agents",
+  "requirement": "Use a written agency agreement and control the services performed",
+  "applies": "Licensee using agents",
+  "type": "Continuous contractual control",
+  "decision": "KEEP",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 reg. 6",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "meaning": "Each agent must operate under a written agreement covering the parties\u2019 responsibilities, permitted scope and prohibited activities, record transfer/retention, confidentiality, data protection, BoU access, subcontracting, termination/amendment and dispute resolution. The agent should not be activated until the executed agreement satisfies these requirements.",
+  "what_do": "Use an agreement checklist before activation. The agent cannot be marked active until the executed agreement contains the mandatory terms and the approved service scope has been recorded.",
+  "when": "Trigger: Appointment or agreement change. Timing: Before service starts",
+  "evidence": "Executed agency agreement; compliance checklist against mandatory terms; version history; activation approval; any amendments and termination records.",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Agents Regs reg.6: mandatory agreement terms include scope, prohibited activities, record retention/transfer, confidentiality, data protection, BoU access, subcontracting and termination. Substance is suitable for the compliance model. Preserve the source logic, but implement it through the user-centred workflow rather than the legal taxonomy."
+ },
+ {
+  "id": "AGT-04",
+  "group": "Agents",
+  "requirement": "Train, monitor and supervise agents",
+  "applies": "Licensee using agents",
+  "type": "Continuous control",
+  "decision": "REFRAME",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 regs. 7 and 10",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "meaning": "The licensee remains responsible for its agent network. It must provide adequate secure technology and contingency arrangements, conduct mandatory onboarding and continuous training, require consumer-protection compliance, monitor agents, and train them on AML/CFT requirements.",
+  "what_do": "Track mandatory onboarding training, continuous training, monitoring visits/controls, consumer-protection compliance and AML/CFT training. Agent failures should open remediation against the agent without removing the licensee\u2019s accountability.",
+  "when": "Trigger: Agent activity, complaint, incident or risk signal. Timing: At all times",
+  "evidence": "Training, monitoring results, visits, exceptions and remediation",
+  "next": "Beacon keeps the obligation active. Missing evidence, a failed test or a breached threshold opens an exception and remediation item.",
+  "cta": "Review control",
+  "completion": "Current evidence/review/test is recorded and no unresolved exception remains; obligation stays active.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Agents Regs regs.7 and 10: technology/contingency, training, consumer protection, monitoring and AML/CFT training responsibilities. Keep training/monitoring, but explicitly include mandatory onboarding and continuous training, consumer-protection compliance, agent monitoring and AML/CFT training."
+ },
+ {
+  "id": "AGT-05",
+  "group": "Agents",
+  "requirement": "Include agent-network data in monthly regulatory reporting",
+  "applies": "Licensee using agents",
+  "type": "Regulatory return",
+  "decision": "REFRAME",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 reg. 9 and Schedules 3\u20134",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "meaning": "Agent reporting is a separate monthly obligation under the Agents Regulations. Schedule 3 requires the monthly agent-operations report by the 10th day of the following calendar month. Schedule 4 covers new, exited/terminated and changed agents. Beacon should not merge this silently into the general NPS monthly return.",
+  "what_do": "Generate two monthly reporting tasks from the Agents Regulations: the agent-operations return and the agent-addition/exit/change return. Reconcile both to the current agent master before submission.",
+  "when": "Monthly. Schedule 3: by the 10th day of the following calendar month. Schedule 4: monthly agent-change reporting; do not invent a separate date unless the applicable form/instruction specifies one.",
+  "evidence": "Schedule 3 monthly agent-operations report; Schedule 4 agent additions/exits/changes report; source reconciliation to the agent master; internal approval; submission evidence and receipt.",
+  "next": "Once the filing/payment is evidenced, Beacon closes that occurrence and generates the next one from the rule.",
+  "cta": "Prepare return",
+  "completion": "Final approved return/report + submission evidence/receipt retained.",
+  "ui_placement": "Standalone applicable obligation/control",
+  "audit_note": "Agents Regs reg.9 + Schedules 3-4: monthly agent operations and agent-change reporting; Schedule 3 states submission by the 10th day of the following calendar month. This is a distinct Agents Regulations monthly reporting obligation, not merely content inside the general NPS return. Schedule 3 is due by the 10th day of the following month; Schedule 4 covers new/exited/changed agents."
+ },
+ {
+  "id": "X-03",
+  "group": "Cross-cutting external overlays",
+  "requirement": "Apply the 2024 BoU cyber and technology framework if the licensee is also an FI or MDI",
+  "applies": "Only if the NPS licensee is also an FI/MDI within the 2024 cyber-guidance scope",
+  "type": "Conditional overlay",
+  "decision": "REFRAME",
+  "source": "Bank of Uganda Cyber and Technology Risk Management Guidelines, 2024 \u2014 scope/authorization provisions",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1wQ-gr9N7PFgx1JGZcjcGx7YejV_XVOLJ/view"
+   ]
+  ],
+  "meaning": "This is not an NPS-only obligation. The 2024 BoU Cyber and Technology Risk Management Guidelines apply to supervised financial institutions under the Financial Institutions Act and MDIs under the MDI Act. If the licensee also falls within that scope, Beacon should activate the separate cyber/technology controls and reporting requirements; otherwise this overlay remains off.",
+  "what_do": "Treat this as a profile switch, not a task that can be \u201ccompleted\u201d. If FI/MDI status is confirmed, activate the separately mapped cyber/technology governance, testing, incident, outsourcing/cloud and reporting controls from the 2024 Guidelines.",
+  "when": "Only when the organisation is also within the 2024 Guidelines\u2019 FI/MDI scope; individual activated controls retain the timing specified in that guidance.",
+  "evidence": "Cyber framework, tests, incident reports, board papers and third-party register",
+  "next": "No standalone completion state. The overlay is either active or inactive based on profile scope.",
+  "cta": "Review scope",
+  "completion": "Applicability is recorded; underlying activated obligations are managed separately.",
+  "ui_placement": "Conditional overlay",
+  "audit_note": "BoU Cyber and Technology Risk Management Guidelines 2024, scope/authorization: applies to supervised FIs under the FIA and MDIs under the MDI Act, not automatically to NPS-only licensees. Keep only as a conditional FI/MDI overlay. It is not an NPS-only requirement; switch it on only for entities supervised under the Financial Institutions Act or MDI Act."
+ },
+ {
+  "id": "NEW-01",
+  "group": "General / cross-cutting",
+  "requirement": "Apply to modify the licence before offering services in a different licence category",
+  "applies": "Any licensee proposing services in a different licence category",
+  "type": "Prior approval",
+  "meaning": "A licensee that wants to offer services in a different licence category may apply to BoU for modification of the licence. The new-category service should not be treated as covered by the existing licence merely because the entity is already licensed.",
+  "what_do": "When a proposed product/service falls outside the categories already held, open a licence-modification workflow. Record the target category, prepare the modification request and supporting information, submit it to BoU, and block launch until the regulatory outcome is recorded.",
+  "when": "Before the service in the different licence category is offered.",
+  "evidence": "Current operating licence; new-service/category assessment; licence-modification application; supporting documents; BoU decision/modified licence.",
+  "next": "The proposed service remains blocked until the modified licence or other clear BoU outcome is attached. Update the compliance profile when the modification takes effect.",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 10; National Payment Systems Regulations, 2021 \u2014 reg. 10",
+  "links": [
+   [
+    "NPS Act",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ],
+   [
+    "NPS Regulations",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Start licence modification",
+  "completion": "Written BoU outcome/modified licence recorded; compliance profile updated."
+ },
+ {
+  "id": "NEW-02",
+  "group": "General / cross-cutting",
+  "requirement": "Obtain BoU approval before operating or offering cross-border payment services",
+  "applies": "Payment service provider proposing cross-border payment systems/services",
+  "type": "Prior approval",
+  "meaning": "A payment service provider must not operate a cross-border payment system or offer cross-border payment services without written BoU approval. The application must address the authorised counterparty, legal basis for the arrangement and consumer-protection/redress mechanism.",
+  "what_do": "Before launch, capture the proposed cross-border arrangement, counterparty and country, attach proof of the counterparty\u2019s authorisation, the legal basis/agreement and consumer-redress material, submit the approval request to BoU, and retain the written outcome.",
+  "when": "Before the cross-border payment system or service starts.",
+  "evidence": "Counterparty authorisation; legal agreement/basis; consumer-protection and complaints-redress material; approval application; written BoU approval.",
+  "next": "Launch remains blocked until written approval is recorded. Subsequent material changes should be reassessed for further approval.",
+  "source": "National Payment Systems Regulations, 2021 \u2014 reg. 29",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Start approval request",
+  "completion": "Written BoU approval attached before launch."
+ },
+ {
+  "id": "NEW-03",
+  "group": "Agents",
+  "requirement": "Obtain approval before changing the approved agent-programme documents",
+  "applies": "Licensee with an approved agent programme",
+  "type": "Prior approval",
+  "meaning": "After agent-programme approval, the licensee may not change the documents submitted under regulation 3(3) without Central Bank approval. This includes the approved due-diligence policy, agency agreement, technology, risk, AML/CFT, operational and pricing materials.",
+  "what_do": "When any approved agent-programme document is proposed for change, identify the document and version, prepare the revised material and rationale, submit the change for approval, and prevent the revised programme document from becoming effective until approval is recorded.",
+  "when": "Before the change to a document submitted under regulation 3(3) is implemented.",
+  "evidence": "Current approved version; proposed revised version; change rationale; approval request; written BoU approval; version-control record.",
+  "next": "Replace the live approved version only after approval. Preserve both old and approved new versions in the evidence history.",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 reg. 4(3)",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Request change approval",
+  "completion": "Written approval attached and approved document version activated."
+ },
+ {
+  "id": "NEW-04",
+  "group": "Agents",
+  "requirement": "Keep agent arrangements non-exclusive and assess multi-licensee agent capacity",
+  "applies": "Licensee using agents",
+  "type": "Onboarding / continuous control",
+  "meaning": "A licensee must not sign an exclusive agency agreement. Where an agent serves more than one approved licensee, the licensee must assess whether the agent has adequate premises/operating space, technology and funds/float to manage the different licensees and must not discriminate against the agent because of the multi-licensee arrangement.",
+  "what_do": "Add non-exclusivity to the agent-agreement check. During onboarding and whenever the agent begins serving another licensee, perform and record the required capacity assessment and remediate any capacity weakness before relying on the agent for the affected services.",
+  "when": "At appointment and whenever the agent provides services for multiple licensees; continuous non-exclusivity requirement.",
+  "evidence": "Agency agreement; non-exclusivity check; premises/space assessment; technology assessment; funds/float assessment; decision and remediation record.",
+  "next": "A failed capacity assessment should create an exception and prevent/limit activation until resolved.",
+  "source": "National Payment Systems (Agents) Regulations, 2021 \u2014 reg. 8",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1Cru4pVqhS15VOo9zNjj-DBsSuJcXCwJY/view?usp=drivesdk"
+   ],
+   [
+    "Searchable cross-check (ULII)",
+    "https://ulii.org/en/akn/ug/act/si/2021/19/eng%402021-03-05"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Assess agent capacity",
+  "completion": "Non-exclusive agreement confirmed and current capacity assessment passed/evidenced."
+ },
+ {
+  "id": "NEW-05",
+  "group": "Electronic money issuer",
+  "requirement": "Enforce statutory EMI prohibited-activity controls",
+  "applies": "Electronic money issuer; some restrictions specifically affect a non-bank/non-MDI EMI",
+  "type": "Transaction / product control",
+  "meaning": "The Act prohibits specified EMI activities. A non-bank/non-MDI EMI must not take deposits within the meaning of the banking laws, and over-the-counter transactions require full identification of the depositor to be obtained, recorded and transmitted to the receiver. An EMI must not count or issue airtime as electronic money or use airtime for the permitted electronic-money transactions.",
+  "what_do": "Translate the statutory prohibitions into product and transaction controls. Block prohibited deposit-taking, require the specified OTC identification capture/transmission, and prevent airtime from being configured or treated as e-money. Test the controls after relevant product or system changes.",
+  "when": "Continuously; before and during affected transactions and product changes.",
+  "evidence": "Product catalogue; transaction rules/configuration; OTC identification records and transmission evidence; control-test results; exceptions/remediation.",
+  "next": "A control failure creates an immediate compliance exception and product/transaction remediation item.",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 55",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Review prohibited-activity controls",
+  "completion": "Current configuration/test evidence shows the statutory prohibitions are enforced; any failures remediated."
+ },
+ {
+  "id": "NEW-06",
+  "group": "Electronic money issuer",
+  "requirement": "Maintain compliant EMI registration and account-activation controls",
+  "applies": "Electronic money issuer",
+  "type": "Onboarding / transaction control",
+  "meaning": "The EMI must operate a customer-registration system capable of giving a registered customer proof of successful registration. Each account holder must receive a unique identifier that is not a phone number, and the system must require PIN/password/other authentication and secure activation before transaction processing begins.",
+  "what_do": "Build the registration and activation requirements into the onboarding flow. Capture proof of registration, generate the required unique identifier, require authentication, use secure messaging for activation, and prevent transaction processing before successful activation.",
+  "when": "At customer registration and before the first transaction; continuously for the activation control.",
+  "evidence": "Registration record/proof; unique-identifier record; activation/authentication logs; secure-messaging evidence; control-test results.",
+  "next": "An account cannot move to active transaction status until the activation controls have passed.",
+  "source": "National Payment Systems Regulations, 2021 \u2014 regs. 18(2) and 19",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1zWo5-Js9kYXuZmQCTYZCQrJNQI__YpJh/view?usp=drivesdk"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Review onboarding controls",
+  "completion": "Current system evidence/test confirms compliant registration and activation; exceptions remediated."
+ },
+ {
+  "id": "NEW-07",
+  "group": "Payment-system / participant",
+  "requirement": "Protect settlement-account balances from attachment, assignment or transfer for debt claims",
+  "applies": "Payment-system participant / settlement-account environment",
+  "type": "Continuous legal/settlement control",
+  "meaning": "Balances on settlement accounts with a payment system are protected from attachment, assignment or transfer for the purpose of satisfying a debt or claim.",
+  "what_do": "Reflect the statutory protection in account documentation, legal/operational procedures and incident handling. Any attachment, assignment or transfer request against protected settlement balances should be escalated before action is taken.",
+  "when": "Continuously while settlement accounts are maintained.",
+  "evidence": "Settlement-account terms; legal/control procedure; staff guidance; incident/escalation records; evidence of any legal or regulatory response.",
+  "next": "Any attempted prohibited attachment/assignment creates an immediate legal/compliance exception until resolved.",
+  "source": "National Payment Systems Act, Cap. 59 \u2014 s. 27",
+  "links": [
+   [
+    "View source",
+    "https://drive.google.com/file/d/1TssAB7TOnkqpUjWWHs8dzWxteSlsU7AM/view?usp=drivesdk"
+   ]
+  ],
+  "decision": "ADD",
+  "cta": "Review settlement protection",
+  "completion": "Current legal/operational controls evidenced; no unresolved prohibited encumbrance/attachment."
+ }
+]
