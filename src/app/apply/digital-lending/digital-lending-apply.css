@@ -146,8 +146,7 @@
 .dl-apply ::placeholder{color:#757575;opacity:1}
 .dl-apply button:disabled{cursor:not-allowed}
 .dl-apply .btn{display:inline-block;gap:0;transition:none}
-.dl-apply .btn:disabled,.dl-apply .save-btn:disabled,.dl-apply .subtle-btn:disabled,.dl-apply .rail-btn:disabled{opacity:.5}
-.dl-apply .save-btn:disabled{background:#111}
+.dl-apply .btn:disabled{opacity:1}
 .dl-apply .rail-btn:hover{background:#f7f7f7}
 .dl-apply .rail-btn.primary:hover{background:#2b2b2b}
 .dl-apply .save-btn:hover{background:#2b2b2b}
@@ -169,3 +168,6 @@
 .dl-apply .upload-meta.err{color:var(--danger)}
 .dl-apply .form-hint{font-size:9.5px;color:var(--danger);margin:8px 0 0}
 .dl-apply label.upload-title{display:block}
+/* Tailwind preflight strips the native file-input button; restore the browser default the prototype shows. */
+.dl-apply input[type=file]::file-selector-button{font:inherit;color:#000;background-color:buttonface;border:1px solid #767676;border-radius:3px;padding:2px 7px;margin-inline-end:4px;cursor:pointer}
+.dl-apply input[type=file]:disabled::file-selector-button{cursor:not-allowed;opacity:.6}

@@ -1,4 +1,4 @@
-import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import { createClient } from "@/lib/supabase/server";
 import DigitalLendingWizardClient from "./digital-lending-wizard-client";
 import type { LicenceApplicationTemplate, LicenceApplicationWizardClass } from "@/lib/types";
@@ -10,13 +10,20 @@ export const metadata = {
 };
 
 // Montserrat is the Beacon design system's typeface; it was previously only
-// named in CSS and never actually loaded. Scoped to this module via the
-// --dl-montserrat variable on the .dl-apply wrapper (see digital-lending-apply.css).
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+// named in CSS and never actually loaded. Self-hosted (latin subset, SIL OFL --
+// see fonts/OFL-LICENSE.txt) so neither the build nor the browser depends on
+// Google Fonts. Scoped to this module via the --dl-montserrat variable, which
+// digital-lending-apply.css puts first in the .dl-apply font stack.
+const montserrat = localFont({
+  src: [
+    { path: "./fonts/montserrat-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/montserrat-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/montserrat-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/montserrat-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--dl-montserrat",
   display: "swap",
+  fallback: ["Arial", "sans-serif"],
 });
 
 const APPLICATION_KEY = "digital_lending";

@@ -171,8 +171,9 @@ export default function DigitalLendingWizardClient({
   const feeReady = feeTemplate ? statusOf(feeTemplate) === "ready" : false;
 
   const submitted = application?.status === "submitted";
-  const submissionDate = application?.submission_date ?? application?.submitted_at?.slice(0, 10) ?? "";
-  const submissionRef = application?.submission_reference ?? "";
+  const factsSub = (application?.facts?.submission ?? {}) as { date?: string; reference?: string | null };
+  const submissionDate = application?.submission_date ?? factsSub.date ?? application?.submitted_at?.slice(0, 10) ?? "";
+  const submissionRef = application?.submission_reference ?? factsSub.reference ?? "";
 
   // ------------------------------------------------------------------ boot / resume
   useEffect(() => {
@@ -437,13 +438,21 @@ export default function DigitalLendingWizardClient({
       submission_date: date || today(),
       submission_reference: reference || null,
     };
-    const { error } = await sb().from("member_licence_applications").update(patch).eq("id", app.id);
+    let next: MemberLicenceApplication = { ...app, ...patch };
+    let { error } = await sb().from("member_licence_applications").update(patch).eq("id", app.id);
+    if (error && /submission_/i.test(`${error.message} ${error.code}`)) {
+      // submission_date / submission_reference not migrated yet (0107): keep them in facts instead
+      const facts = { ...app.facts, submission: { date: patch.submission_date, reference: patch.submission_reference } };
+      const fallback = { status: patch.status, submitted_at: patch.submitted_at, facts };
+      ({ error } = await sb().from("member_licence_applications").update(fallback).eq("id", app.id));
+      next = { ...app, ...fallback };
+    }
     if (error) {
       console.error("Failed to record submission", error);
       setErrorMsg("We couldn’t record the submission. Please try again.");
       return false;
     }
-    setApplication({ ...app, ...patch });
+    setApplication(next);
     setDrawerState(null);
     setActiveTab("post");
     return true;
