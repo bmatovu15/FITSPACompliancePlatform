@@ -1,0 +1,44 @@
+/* Beacon — Digital Lending Compliance: production additions to the scoped design CSS.
+   Everything here compensates for the site's Tailwind preflight (which the
+   standalone design never had) or covers production-only states; it must not
+   change the design's look. */
+
+/* DC-25: preflight resets headings to font-weight/size inherit and the body
+   line-height to 1.5; the design relies on UA bold headings and normal line-height. */
+.dcl-root{line-height:normal;text-align:left}
+.dcl-root h1,.dcl-root h2,.dcl-root h3,.dcl-root h4{font-weight:700}
+.dcl-root strong,.dcl-root b{font-weight:700}
+.dcl-root button,.dcl-root input,.dcl-root select,.dcl-root textarea{letter-spacing:normal;color:#000}
+.dcl-root .btn.primary,.dcl-root .ghost.primary,.dcl-root .save,.dcl-root .rail-btn.primary,.dcl-root .choice.selected,.dcl-root .filter.active{color:#fff}
+.dcl-root a.link{display:inline-block}
+.dcl-root button:disabled{cursor:not-allowed}
+
+.dcl-root input,.dcl-root select,.dcl-root textarea{background-color:#fff}
+.dcl-root input:disabled{color:rgb(84,84,84)}
+.dcl-root select{appearance:auto}
+/* preflight flattens the native file button; restore the browser default look the design shows */
+.dcl-root input[type=file]{border:0;padding:0;background:transparent}
+.dcl-root input[type=file]::file-selector-button{font:inherit;color:#000;background:#efefef;border:1px solid #767676;border-radius:3px;padding:2px 6px;margin-right:4px;cursor:pointer}
+
+/* Stored evidence file name that opens through the storage adapter. */
+.dcl-root .file-link{border:0;background:transparent;padding:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px;text-align:left}
+
+/* Replacement for window.alert / save errors (reuses the design's .note.warn look). */
+.dcl-root .note[data-inline-message]{margin:14px 0 0}
+.dcl-root .dcl-toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:120;max-width:min(560px,92vw);box-shadow:0 8px 28px rgba(0,0,0,.14);display:flex;gap:14px;align-items:center;justify-content:space-between}
+
+/* DC-27: the prototype hid "Log an event" and "Expert Support" on phones (and the
+   rail is hidden below 1050px), leaving no way to reach them. Keep them visible. */
+@media(max-width:760px){
+  .dcl-root .workspace-head{height:auto;min-height:75px;flex-wrap:wrap;gap:8px 12px;padding:10px 16px}
+  .dcl-root .workspace-actions .ghost:not(.primary){display:inline-block;padding:8px 10px;font-size:10.5px}
+  .dcl-root .workspace-tabs{position:static}
+  .dcl-root .workspace-title{font-size:13px}
+}
+
+/* The site's globals.css defines generic .btn / .badge classes (not scoped); neutralise
+   the properties the design does not set so the design's own rules decide the look. */
+.dcl-root .btn,.dcl-root .ghost{display:inline-block;gap:0;align-items:normal;justify-content:normal;transition:none}
+.dcl-root .badge{text-transform:none;letter-spacing:normal;align-items:normal}
+.dcl-root .btn:disabled{opacity:1}
+.dcl-root input[type=file]{color:var(--ink)}

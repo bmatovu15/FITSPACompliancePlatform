@@ -1,0 +1,1802 @@
+[
+ {
+  "ID": "LIC-01",
+  "Obligation": "Operate only under a valid Money Lender or NDT MFI licence",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Act Parts IV and V; Guidelines 3 to 5",
+  "Recipient": "Internal; UMRA where clarification is needed",
+  "guide": {
+   "what": "Digital lending is a way of delivering credit, not a separate licence. Keep the lending business inside the activities allowed by the licence and do not present the app or platform as independently licensed.",
+   "do": "Block an activity that is outside the licence until UMRA confirms the correct route.",
+   "when": "At all times",
+   "keep": "Current licence, product inventory and perimeter review"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-02",
+  "Obligation": "Do not collect deposits",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Act s.69(3); Guidelines 3(2)",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Do not accept customer money as a deposit or savings product. Loan repayments and permitted fees should not be presented or held as deposits.",
+   "do": "Product and funds-flow review before launch and after material changes.",
+   "when": "At all times",
+   "keep": "Funds-flow diagram, product approval and customer terms"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-03",
+  "Obligation": "Track licence conditions, directives and inspection findings",
+  "Applies to": "Both",
+  "Behaviour": "Regulator-set obligation",
+  "Legal clock": "Date stated by UMRA",
+  "Source / provision": "Entity-specific",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Create a separate task for every condition on the licence and every later UMRA letter, direction or inspection finding. Use the date and wording in that document instead of guessing a deadline.",
+   "do": "Create a dated task on receipt, assign an owner, and keep the response and closure evidence.",
+   "when": "Date stated by UMRA",
+   "keep": "Incoming document, action plan, response and closure confirmation"
+  },
+  "domain": "LIC",
+  "sourceUrl": "",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-04",
+  "Obligation": "Display the licence and licensed identity",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Money Lenders reg.10; NDTMFI reg.12; Digital Lending Guidelines 11 and 19",
+  "Recipient": "Customers; UMRA on request",
+  "guide": {
+   "what": "Keep the licence/regulated identity visible as required. For NDTMFIs, also keep the prescribed product/service and fee information displayed at the business premises; digital channels must show the licensed identity and business address.",
+   "do": "Include licence display and identity checks in branch and channel reviews.",
+   "when": "At all times",
+   "keep": "Dated display photos, app screenshots and website archive"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-05",
+  "Obligation": "Maintain at least one registered physical office",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Guidelines 11",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Keep a real, registered office where the licensed lender can be contacted. State that address clearly in the app, website and other digital channels.",
+   "do": "Verify the office and published address quarterly and before renewal.",
+   "when": "At all times",
+   "keep": "Lease or ownership record, registered address and screenshots"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-06",
+  "Obligation": "Keep directors, chief executive and significant shareholders fit and proper",
+  "Applies to": "Both",
+  "Behaviour": "Governance control",
+  "Legal clock": "Before appointment; then continuous",
+  "Source / provision": "Guidelines 6",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Screen new and existing controllers and senior leaders for integrity, competence and financial soundness. Escalate any event that could affect their suitability.",
+   "do": "Do not appoint or retain a person where the required UMRA clearance has not been obtained.",
+   "when": "Before appointment; then continuous",
+   "keep": "Declarations, checks, fit-and-proper forms and UMRA decision"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-07",
+  "Obligation": "Obtain written approval before changing management",
+  "Applies to": "Both",
+  "Behaviour": "Prior approval",
+  "Legal clock": "Before the change takes effect",
+  "Source / provision": "Money Lenders regs.7 to 8; NDT MFI reg.22",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Do not change directors or management until UMRA has completed its review and issued written authorisation or a notice of no objection.",
+   "do": "Block the appointment and Companies Registry filing until the approval is attached.",
+   "when": "Before the change takes effect",
+   "keep": "Board papers, fit-and-proper pack and UMRA approval"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-08",
+  "Obligation": "Obtain approval before amalgamation or transfer of assets and liabilities",
+  "Applies to": "Both",
+  "Behaviour": "Prior approval",
+  "Legal clock": "Before signing or implementing the arrangement",
+  "Source / provision": "Act s.76; Guidelines 7",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Do not merge or transfer all or part of the lending business, assets or liabilities to another entity until UMRA has approved the arrangement in writing.",
+   "do": "Make regulatory approval a transaction condition and keep the approval with the closing file.",
+   "when": "Before signing or implementing the arrangement",
+   "keep": "Transaction papers, customer-impact plan and UMRA approval"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-09",
+  "Obligation": "Notify UMRA and pay the required fee before a Money Lender uses an additional place",
+  "Applies to": "Money Lender",
+  "Behaviour": "Prior notice and payment",
+  "Legal clock": "Before business starts at the place",
+  "Source / provision": "Money Lenders reg.17(2) and Schedule 1",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "A Money Lender that wants another physical place of business must notify UMRA and pay the inspection and registration fee before operating there.",
+   "do": "Block opening until notification, payment and registration evidence are complete.",
+   "when": "Before business starts at the place",
+   "keep": "Notice, payment receipt, inspection record and updated licence information"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-10",
+  "Obligation": "Obtain prior written approval before an NDT MFI opens a branch or outlet",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Prior approval",
+  "Legal clock": "Before opening",
+  "Source / provision": "NDT MFI regs.27 to 28",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "An NDT MFI must not open a branch or operating outlet until UMRA has approved it in writing.",
+   "do": "Block premises launch and customer activity until written approval is retained.",
+   "when": "Before opening",
+   "keep": "Business case, application and written approval"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-11",
+  "Obligation": "Renew the annual licence before expiry",
+  "Applies to": "Both",
+  "Behaviour": "Annual filing",
+  "Legal clock": "Money Lender: at least 3 months before 31 December; NDTMFI: at least 90 days before 31 December",
+  "Source / provision": "Money Lenders reg.11; NDT MFI reg.8",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "The licence runs to 31 December each year. Submit a complete renewal pack and the prescribed fee early enough for continuity. Money Lender applications are due at least three months before expiry; NDTMFI applications are due at least ninety days before expiry.",
+   "do": "Beacon derives 31 December and calculates the legal renewal date by route; it does not ask the user to enter a licence-expiry date.",
+   "when": "Money Lender — at least 3 months before 31 December. NDTMFI — at least 90 days before 31 December.",
+   "keep": "Renewal form, supporting documents, fee receipt, submission proof and renewed licence"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-12",
+  "Obligation": "Pay the annual licence fee with the renewal",
+  "Applies to": "Both",
+  "Behaviour": "Annual payment",
+  "Legal clock": "With the renewal application",
+  "Source / provision": "Act ss.63 and 81; 2018 Regulations fee schedules",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Pay the prescribed annual fee when applying for renewal. Failure to pay can lead to cancellation of the licence.",
+   "do": "Create one controlled renewal workflow for the form, supporting pack and fee receipt.",
+   "when": "With the renewal application",
+   "keep": "Payment instruction, receipt and renewal submission"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/13sPGUzJlFbrownbauXQ9uxd89vTi7Lzz/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-13",
+  "Obligation": "Commence and continue the licensed business",
+  "Applies to": "Both",
+  "Behaviour": "Licence continuity",
+  "Legal clock": "NDT: within 6 months; Money Lender: within 12 months",
+  "Source / provision": "Act ss.66 and 83",
+  "Recipient": "Internal; UMRA where delay arises",
+  "guide": {
+   "what": "An NDT MFI risks revocation if it does not start or stops business within six months of licence issue. A Money Lender risks revocation if it does not start within twelve months or ceases the licensed business.",
+   "do": "Monitor go-live and inactivity, and seek written direction before the limit is reached.",
+   "when": "NDT: within 6 months; Money Lender: within 12 months",
+   "keep": "Go-live evidence, activity reports and UMRA correspondence"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/13sPGUzJlFbrownbauXQ9uxd89vTi7Lzz/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "LIC-14",
+  "Obligation": "Provide books, records and information requested by UMRA",
+  "Applies to": "Both",
+  "Behaviour": "Regulator-set obligation",
+  "Legal clock": "Date and format stated by UMRA",
+  "Source / provision": "Act ss.31 to 32 and 77; Guidelines 26",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Keep the records in a form that can be produced promptly. Treat each inspection or information request as a controlled submission with a named owner and a complete copy of what was shared.",
+   "do": "Create the task from the request and retain the submitted version and receipt.",
+   "when": "Date and format stated by UMRA",
+   "keep": "Request log, approved response, documents supplied and receipt"
+  },
+  "domain": "LIC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Licence administration"
+ },
+ {
+  "ID": "ML-01",
+  "Obligation": "Notify MRD-MoFPED of material changes to information supplied for the licence",
+  "Applies to": "Money Lender",
+  "Behaviour": "Event-driven notification",
+  "Legal clock": "On occurrence/alteration; specific changes may have a more precise clock",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.7(1)(b)",
+  "Recipient": "MRD-MoFPED",
+  "guide": {
+   "what": "When an event or alteration materially affects information supplied or required during the licence application, the Money Lender must give written notice.",
+   "do": "Open a material-change workflow when the change is approved internally; apply the specific legal clock where one exists.",
+   "when": "On occurrence/alteration; specific changes may have a more precise clock",
+   "keep": "Change approval, notice, delivery proof and updated regulator record"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-02",
+  "Obligation": "Notify a Money Lender address change within seven days",
+  "Applies to": "Money Lender",
+  "Behaviour": "Event-driven notification",
+  "Legal clock": "Within 7 days after the change",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.17(1)(d)",
+  "Recipient": "MRD-MoFPED",
+  "guide": {
+   "what": "A Money Lender must maintain a physical address and notify the regulator when the address changes.",
+   "do": "Start the seven-day clock from the effective address change and retain delivery/update evidence.",
+   "when": "Within 7 days after the change",
+   "keep": "Internal address-change approval, notice, delivery proof and updated regulator particulars"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-03",
+  "Obligation": "Reconcile a borrower account when the borrower deposits repayment with the regulator",
+  "Applies to": "Money Lender",
+  "Behaviour": "Regulator-triggered workflow",
+  "Legal clock": "As required by the regulator notice",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.19",
+  "Recipient": "MRD-MoFPED / borrower record",
+  "guide": {
+   "what": "If a borrower deposits repayment with the regulator because payment to the lender was refused or impracticable, the lender must respond to the regulator notice, receive the money and reconcile the borrower account.",
+   "do": "Create the occurrence from the incoming notice; record receipt of funds and account reconciliation.",
+   "when": "As required by the regulator notice",
+   "keep": "Regulator notice, receipt of funds, account reconciliation and customer record"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-04",
+  "Obligation": "Safeguard collateral in custody and compensate for loss, damage or destruction as required",
+  "Applies to": "Money Lender - if collateral is held in custody",
+  "Behaviour": "Continuous and event-triggered control",
+  "Legal clock": "Prudent care at all times; compensation within a reasonable time after loss/damage event",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.20",
+  "Recipient": "Borrower",
+  "guide": {
+   "what": "A Money Lender holding collateral must exercise prudent care. If collateral is lost, damaged or destroyed, the lender has a compensation obligation under the regulation.",
+   "do": "Maintain custody controls. A loss/damage event opens an assessment and compensation workflow; do not invent a fixed statutory day.",
+   "when": "Prudent care at all times; compensation within a reasonable time after loss/damage event",
+   "keep": "Custody register, condition records, incident assessment, valuation and compensation evidence"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-05",
+  "Obligation": "Provide Money Lender transaction information requested by a borrower",
+  "Applies to": "Money Lender",
+  "Behaviour": "Event-driven customer request",
+  "Legal clock": "No fixed period stated in reg.25",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.25",
+  "Recipient": "Borrower",
+  "guide": {
+   "what": "A borrower may request information about the money-lending transaction, including principal outstanding, interest payable and payments received.",
+   "do": "Open a customer-request workflow on receipt and use a prompt internal service target without presenting it as a statutory deadline.",
+   "when": "No fixed period stated in reg.25",
+   "keep": "Request, account extract, approved response and delivery proof"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-06",
+  "Obligation": "Notify the borrower of a Money Lender debt assignment within five days",
+  "Applies to": "Money Lender",
+  "Behaviour": "Event-driven notification",
+  "Legal clock": "Within 5 days from the date of assignment",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.27",
+  "Recipient": "Borrower",
+  "guide": {
+   "what": "When a Money Lender assigns a debt, the borrower must receive the prescribed notice identifying the assignee.",
+   "do": "Start the five-day clock from the assignment date and use the prescribed Form 8 notice.",
+   "when": "Within 5 days from the date of assignment",
+   "keep": "Assignment record, Form 8 notice and delivery proof"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-07",
+  "Obligation": "Compute Money Lender interest on the monthly outstanding principal balance and disclose the method",
+  "Applies to": "Money Lender",
+  "Behaviour": "Transaction control",
+  "Legal clock": "At calculation and before/through customer disclosure",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.21",
+  "Recipient": "Customer; MRD-MoFPED on request",
+  "guide": {
+   "what": "Money Lender interest is computed on the monthly outstanding principal balance after principal repayments, and the method must be disclosed to the borrower.",
+   "do": "Validate the calculation method in the product and contract; sample-test calculations and disclosures.",
+   "when": "At calculation and before/through customer disclosure",
+   "keep": "Pricing formula, contract disclosure, test cases and reconciliation"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "ML-08",
+  "Obligation": "Respond to a Money Lender notice of intended revocation within fourteen days",
+  "Applies to": "Money Lender",
+  "Behaviour": "Regulator-triggered deadline",
+  "Legal clock": "Within 14 days after receipt",
+  "Source / provision": "Money Lenders Regulations, 2018 reg.12(2)",
+  "Recipient": "MRD-MoFPED",
+  "guide": {
+   "what": "If the regulator serves a notice of intention to revoke the Money Lender licence, the lender has fourteen days to show cause in writing.",
+   "do": "Create a critical regulator-response occurrence immediately on receipt and preserve the received timestamp.",
+   "when": "Within 14 days after receipt",
+   "keep": "Received notice, response, supporting evidence and delivery receipt"
+  },
+  "domain": "ML",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Money Lender operations"
+ },
+ {
+  "ID": "NDT-01",
+  "Obligation": "Classify the NDTMFI loan portfolio using the prescribed performance categories",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Continuous prudential control",
+  "Legal clock": "Ongoing; reflected in quarterly return",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.15",
+  "Recipient": "Internal; MRD-MoFPED through return",
+  "guide": {
+   "what": "NDTMFI loans must be classified into the prescribed performing, watch, substandard, doubtful and loss categories using the regulatory delinquency criteria.",
+   "do": "Run the classification logic continuously and reconcile it at each quarter end before the regulatory return.",
+   "when": "Ongoing; reflected in quarterly return",
+   "keep": "Loan ageing, classification report, exception log and quarter-end reconciliation"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-02",
+  "Obligation": "Suspend accrued interest on prescribed NDTMFI non-performing classifications and observe the accrued-interest limit",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Continuous prudential control",
+  "Legal clock": "From classification",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.16",
+  "Recipient": "Internal; MRD-MoFPED on inspection/return",
+  "guide": {
+   "what": "For substandard, doubtful and loss loans, the NDTMFI must apply the regulatory treatment for accrued interest and observe the prescribed cap.",
+   "do": "System rules should automatically change interest recognition when the loan enters the relevant classification and flag breaches of the portfolio-level limit.",
+   "when": "From classification",
+   "keep": "Interest suspense ledger, classification report, portfolio calculation and exceptions"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-03",
+  "Obligation": "Maintain NDTMFI loan-loss allowances at the prescribed classification percentages",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Continuous prudential threshold",
+  "Legal clock": "At all times and reflected at reporting dates",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.17 (1%, 5%, 25%, 50%, 100% by classification)",
+  "Recipient": "Internal; MRD-MoFPED on return/inspection",
+  "guide": {
+   "what": "The NDTMFI must provide at least the prescribed loan-loss allowance for each regulatory loan classification.",
+   "do": "Calculate regulatory provisioning from the classified portfolio and reconcile it to finance records before each return and financial close.",
+   "when": "At all times and reflected at reporting dates",
+   "keep": "Provision calculation, GL reconciliation, approvals and exceptions"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-04",
+  "Obligation": "Maintain NDTMFI collateral charges, insurance and an updated collateral register",
+  "Applies to": "NDTMFI - if collateral is used",
+  "Behaviour": "Continuous collateral control",
+  "Legal clock": "Before reliance on the security and while held",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.18",
+  "Recipient": "Internal; MRD-MoFPED on inspection",
+  "guide": {
+   "what": "Where an NDTMFI takes collateral, it must ensure the security is properly charged, adequately insured where required, and recorded in an updated collateral register.",
+   "do": "Block secured-loan completion where required charge/insurance evidence is missing; monitor expiries and register updates.",
+   "when": "Before reliance on the security and while held",
+   "keep": "Security registration/charge, insurance, collateral register and review evidence"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-05",
+  "Obligation": "Write off NDTMFI loans when the regulatory write-off criteria are met",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Event-driven prudential control",
+  "Legal clock": "When regulatory write-off criteria are met",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.19",
+  "Recipient": "Internal; MRD-MoFPED via records/returns",
+  "guide": {
+   "what": "The NDTMFI must apply the regulatory write-off treatment where legal rights are lost, the debt is uncollectible, there is no realistic recovery, or the loan remains non-performing beyond the prescribed period.",
+   "do": "Create a write-off case from the portfolio classification; require approval and accounting treatment, and separately track recoveries after write-off.",
+   "when": "When regulatory write-off criteria are met",
+   "keep": "Write-off assessment, approval, accounting entry and recovery record"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-06",
+  "Obligation": "Submit an NDTMFI corrective-action report after an inspection",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Regulator-triggered deadline",
+  "Legal clock": "Within 30 days after receipt of the inspection report",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.23(7)",
+  "Recipient": "MRD-MoFPED",
+  "guide": {
+   "what": "After receiving the regulator inspection report, the NDTMFI must submit a corrective-action report addressing the findings.",
+   "do": "Open a corrective-action occurrence on receipt, map each finding to owner/action/evidence, and submit the approved report within 30 days.",
+   "when": "Within 30 days after receipt of the inspection report",
+   "keep": "Inspection report, corrective-action plan/report, evidence pack and submission receipt"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-07",
+  "Obligation": "Monitor NDTMFI prudential warning conditions that may trigger regulatory management action",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Continuous prudential early-warning control",
+  "Legal clock": "Continuous monitoring",
+  "Source / provision": "Tier 4 Act management/takeover provisions; NDTMFI Regulations, 2018 reg.25",
+  "Recipient": "Internal; MRD-MoFPED where directed",
+  "guide": {
+   "what": "The NDTMFI should monitor the regulatory indicators of unsound financial condition, including the capital-to-assets condition specified in the takeover provisions. This is not an initial minimum-capital rule.",
+   "do": "Monitor the statutory warning indicators and escalate deteriorating positions before a supervisory trigger is reached.",
+   "when": "Continuous monitoring",
+   "keep": "Capital/asset calculations, liquidity/creditor monitoring, board packs and remediation plans"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-08",
+  "Obligation": "Obtain prior written approval before relocating an NDTMFI place of business",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Prior approval",
+  "Legal clock": "Before relocation",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.29",
+  "Recipient": "MRD-MoFPED",
+  "guide": {
+   "what": "An NDTMFI must obtain regulator approval before relocating a place of business and provide the information required for the relocation application.",
+   "do": "Block move/go-live until written approval is attached; keep customer-transfer/liability and new-location information with the case.",
+   "when": "Before relocation",
+   "keep": "Relocation application, supporting plan and written approval"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "NDT-09",
+  "Obligation": "Obtain approval and complete the prescribed notice/reporting steps before closing an NDTMFI place of business",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Prior approval and event-driven deadlines",
+  "Legal clock": "Approval before closure; public notice at least 90 days before closure; report closure within 14 days after closure",
+  "Source / provision": "NDTMFI Regulations, 2018 reg.30",
+  "Recipient": "MRD-MoFPED / public",
+  "guide": {
+   "what": "Closing an NDTMFI place of business is a regulated workflow requiring prior approval, public notice and a post-closure regulator report.",
+   "do": "Create one closure case with three gates: approval, 90-day customer/public notice, and 14-day post-closure report.",
+   "when": "Approval before closure; public notice at least 90 days before closure; report closure within 14 days after closure",
+   "keep": "Approval, public notice, closure evidence and post-closure report receipt"
+  },
+  "domain": "NDT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "NDTMFI prudential"
+ },
+ {
+  "ID": "RPT-01",
+  "Obligation": "Submit NDT MFI quarterly risk-classification return",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Regulatory return",
+  "Legal clock": "Before the 15th day of the following month",
+  "Source / provision": "NDT MFI reg.20 and Schedule 3",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "At each quarter end, classify the loan portfolio and calculate provisions using the prescribed categories, then submit the return before the fifteenth day of the next month.",
+   "do": "Quarter end to the next month's 15th. Use an earlier internal review date.",
+   "when": "Before the 15th day of the following month",
+   "keep": "Approved return, portfolio reconciliation, submission proof and receipt"
+  },
+  "domain": "RPT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "Reporting & returns"
+ },
+ {
+  "ID": "RPT-02",
+  "Obligation": "Submit NDT MFI annual report and audited financial statements",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Regulatory return",
+  "Legal clock": "Annually; in any case not later than 31 March of the following year",
+  "Source / provision": "Act s.74; NDT MFI reg.23",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Submit the NDTMFI annual report and audited financial statements annually, with the management structure and any other information required by the regulator.",
+   "do": "Plan audit and approvals early, but keep the statutory outer filing date distinct from internal preparation dates.",
+   "when": "In any case not later than 31 March of the following year.",
+   "keep": "Signed audited statements, annual report, management structure, submission proof and receipt"
+  },
+  "domain": "RPT",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "Reporting & returns"
+ },
+ {
+  "ID": "RPT-03",
+  "Obligation": "Submit other UMRA returns and reports as specified",
+  "Applies to": "Both",
+  "Behaviour": "Regulator-set return",
+  "Legal clock": "Date stated by UMRA",
+  "Source / provision": "Act s.32; Guidelines 26",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "The reporting templates show the data UMRA may collect, including financial, loan-performance and market-conduct information. The source set does not state one universal filing day for every template, so use the date in the portal, licence, notice or current reporting instruction.",
+   "do": "Do not turn a template into an invented monthly or quarterly deadline. Configure the task from the current instruction.",
+   "when": "Date stated by UMRA",
+   "keep": "Completed return, source reconciliation, submission proof and receipt"
+  },
+  "domain": "RPT",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Reporting & returns"
+ },
+ {
+  "ID": "RPT-04",
+  "Obligation": "Submit the annual complaints report",
+  "Applies to": "Both",
+  "Behaviour": "Regulatory return",
+  "Legal clock": "From FCP effective date: by end of one month after the fiscal-year reporting period",
+  "Source / provision": "FCP Guidelines 2019 commencement + annual complaints report provision",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Report complaints received, resolved, outstanding and referred to the regulator for the fiscal year, excluding complaints resolved by the end of the next business day as the guideline directs.",
+   "do": "Apply this workflow only once the FCP Guidelines are effective, calculated from the date first licensed by MRD-MoFPED; set the due date one month after the fiscal-year period ends.",
+   "when": "From FCP effective date — by end of one month after the fiscal-year reporting period.",
+   "keep": "Approved Appendix A report, complaints reconciliation, submission proof and receipt"
+  },
+  "domain": "RPT",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Reporting & returns"
+ },
+ {
+  "ID": "REC-01",
+  "Obligation": "Retain Money Lender records for ten years",
+  "Applies to": "Money Lender",
+  "Behaviour": "Retention control",
+  "Legal clock": "At least 10 years",
+  "Source / provision": "Money Lenders reg.17(1)(c) to (f)",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Keep loan agreements, ledgers, cash records, security registers, debtor records and related evidence for at least ten years, with reliable retrieval and protection against alteration.",
+   "do": "Calculate retention record by record and pause destruction where there is a complaint, investigation or litigation hold.",
+   "when": "At least 10 years",
+   "keep": "Retention schedule, archive logs and retrieval tests"
+  },
+  "domain": "REC",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Records & retention"
+ },
+ {
+  "ID": "REC-02",
+  "Obligation": "Retain NDT MFI loan records for ten years and accounting books for at least seven years",
+  "Applies to": "NDTMFI",
+  "Behaviour": "Retention control",
+  "Legal clock": "Loan records: 10 years; accounting books: at least 7 years",
+  "Source / provision": "Act s.75; NDT MFI reg.21",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Use the longer ten-year period for loan-transaction files. Keep proper accounting books for at least seven years and make them available for inspection.",
+   "do": "Map every record class to the correct period and keep legal holds separate from ordinary retention.",
+   "when": "Loan records: 10 years; accounting books: at least 7 years",
+   "keep": "Retention schedule, archive logs, accounting records and retrieval tests"
+  },
+  "domain": "REC",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2018/10/eng%402018-03-29",
+  "domainLabel": "Records & retention"
+ },
+ {
+  "ID": "PRC-01",
+  "Obligation": "Keep total annual interest, fees and charges within the 100 percent ceiling",
+  "Applies to": "Both",
+  "Behaviour": "Continuous threshold",
+  "Legal clock": "Before offer and throughout the loan",
+  "Source / provision": "Lending Conditions reg.4",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Across a year, the customer's total interest, fees, charges and commissions must not exceed the principal advanced. Build the ceiling into the pricing engine and test the full customer cost, not only the headline interest rate.",
+   "do": "Reject pricing or collections that would push total annual cost above the principal.",
+   "when": "Before offer and throughout the loan",
+   "keep": "Pricing model, test cases, approvals and exception report"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-02",
+  "Obligation": "Apply the 2.8 percent monthly interest cap to Money Lender loans",
+  "Applies to": "Money Lender",
+  "Behaviour": "Continuous threshold",
+  "Legal clock": "Before offer and throughout the loan",
+  "Source / provision": "Legal Notice 21 of 2024 under Act s.89",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "A licensed Money Lender must not charge more than 2.8 percent interest per month. This cap is specific to Money Lenders and should not be applied to an NDT MFI without a separate legal basis.",
+   "do": "Validate the monthly rate separately from the broader total-cost ceiling.",
+   "when": "Before offer and throughout the loan",
+   "keep": "Pricing configuration, test cases and approved product sheet"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://drive.google.com/file/d/13sPGUzJlFbrownbauXQ9uxd89vTi7Lzz/view?usp=drivesdk",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-03",
+  "Obligation": "Limit default interest and charge it only on outstanding principal",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "At each default calculation",
+  "Source / provision": "Lending Conditions reg.4(5)",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "A default penalty rate must not exceed half of the monthly interest rate and must be charged only on the remaining principal, not on interest or fees.",
+   "do": "Test delinquency formulas and block interest-on-interest.",
+   "when": "At each default calculation",
+   "keep": "System rule, sample recalculation and exception report"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-04",
+  "Obligation": "Do not compound interest",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "At every calculation",
+  "Source / provision": "Act s.86; Lending Conditions reg.10",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Calculate interest on the monthly outstanding principal after principal repayments. Do not charge interest on accrued interest, fees or penalties.",
+   "do": "Reconcile system calculations to an independent sample each month.",
+   "when": "At every calculation",
+   "keep": "Product formula, sample calculation and reconciliation"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-05",
+  "Obligation": "Apply the non-performing-loan recovery cap",
+  "Applies to": "Both",
+  "Behaviour": "Continuous threshold",
+  "Legal clock": "From NPL classification onward",
+  "Source / provision": "Lending Conditions reg.7; Digital Guidelines 14",
+  "Recipient": "Internal; court where recovery proceeds",
+  "guide": {
+   "what": "Once a loan is non-performing, cap the recoverable amount at the outstanding principal plus contractual interest, fees and charges that do not exceed that principal, plus permitted recovery expenses.",
+   "do": "Freeze the NPL balance components and prevent later charges from exceeding the cap.",
+   "when": "From NPL classification onward",
+   "keep": "NPL calculation, system rule and exception report"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-06",
+  "Obligation": "Give a price schedule before advancing the loan",
+  "Applies to": "Both",
+  "Behaviour": "Pre-contract control",
+  "Legal clock": "Before disbursement",
+  "Source / provision": "Lending Conditions regs.4 and 15",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Before disbursement, show the interest, fees, charges and commissions that the customer may pay. Explain any non-standard, additional or third-party charge before it is incurred.",
+   "do": "The customer must be able to review the full price before accepting the loan.",
+   "when": "Before disbursement",
+   "keep": "Offer screen, price schedule, acceptance log and version archive"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-07",
+  "Obligation": "Display standard interest rates, fees and charges on every channel",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Lending Conditions reg.4(4)",
+  "Recipient": "Customers",
+  "guide": {
+   "what": "Keep current pricing visible at branches, websites, apps and other digital channels. Update all channels together when an approved price changes.",
+   "do": "Use a controlled price source and archive each published version.",
+   "when": "At all times",
+   "keep": "Screenshots, branch display photos, approved price list and change log"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "PRC-08",
+  "Obligation": "Obtain customer consent before changing terms and UMRA approval before increasing interest",
+  "Applies to": "Both",
+  "Behaviour": "Prior approval and consent",
+  "Legal clock": "Before the change takes effect",
+  "Source / provision": "Lending Conditions reg.6; Digital Guidelines 22",
+  "Recipient": "UMRA and affected customers",
+  "guide": {
+   "what": "Do not vary a loan agreement or increase charges without the customer's written consent. Do not increase the interest rate until UMRA has approved the change in writing.",
+   "do": "Block configuration and customer notice until the required approvals and consents are recorded.",
+   "when": "Before the change takes effect",
+   "keep": "Change paper, customer consent, UMRA approval and release record"
+  },
+  "domain": "PRC",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Pricing & interest"
+ },
+ {
+  "ID": "LON-01",
+  "Obligation": "Assess the customer's ability to repay before lending",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "Before approval and disbursement",
+  "Source / provision": "Money Lenders reg.17(3); Digital Guidelines 13",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Use reliable income, obligations, repayment history and affordability information to decide whether the customer can repay without unreasonable hardship. A score alone is not evidence unless the inputs and decision rule are understood and tested.",
+   "do": "No loan may proceed without a recorded affordability decision and any approved override.",
+   "when": "Before approval and disbursement",
+   "keep": "Application data, affordability result, score, decision and override approval"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-02",
+  "Obligation": "Use a complete written or electronic lending contract",
+  "Applies to": "Both",
+  "Behaviour": "Pre-contract control",
+  "Legal clock": "Before disbursement",
+  "Source / provision": "Act ss.70 and 85; Lending Conditions reg.5",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "The contract should clearly state the parties, principal, disbursement date, repayment schedule, interest method and annual rate, total cost, all fees, cooling-off right, collateral, recovery terms, guarantor terms, early repayment right and consequences of default or termination.",
+   "do": "Use a controlled template and prevent disbursement when mandatory fields are missing.",
+   "when": "Before disbursement",
+   "keep": "Approved template, completed contract, acceptance record and witness evidence"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-03",
+  "Obligation": "Give the customer a copy of the complete agreement",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "At or immediately after contracting",
+  "Source / provision": "Money Lenders reg.17(1)(a); Lending Conditions reg.5",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Provide the signed or accepted agreement and every annexure in a form the customer can retain and retrieve.",
+   "do": "Record successful delivery and provide a resend route.",
+   "when": "At or immediately after contracting",
+   "keep": "Delivered contract, delivery log and resend history"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-04",
+  "Obligation": "Submit the loan-agreement template at licence application and renewal",
+  "Applies to": "Both",
+  "Behaviour": "Annual filing component",
+  "Legal clock": "With the application or renewal pack",
+  "Source / provision": "Lending Conditions Regulations, 2024 reg.5(4)",
+  "Recipient": "UMRA",
+  "guide": {
+   "what": "Include the current lending-contract template in the licensing or renewal pack. If the product has changed, submit the version actually used in production.",
+   "do": "Reconcile the submitted template to the live app and product catalogue before filing.",
+   "when": "With the application or renewal pack",
+   "keep": "Version-controlled template, channel copy and submission proof"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-05",
+  "Obligation": "Give the statutory cooling-off period and apply only the permitted administration charge",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "5 working days for cooling off; no early-settlement charge",
+  "Source / provision": "Lending Conditions Regulations, 2024 reg.11",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Give the borrower the cooling-off period required by the Lending Conditions Regulations and ensure any administration charge for exercising the right stays within the prescribed limit.",
+   "do": "Build the cooling-off expiry into the agreement and workflow; do not confuse this with early settlement.",
+   "when": "5 working days for cooling off; no early-settlement charge",
+   "keep": "Approved agreement, cooling-off calculation, disclosure and any administration-charge evidence"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-06",
+  "Obligation": "Explain the guarantor's potential liability and obtain consent",
+  "Applies to": "Both",
+  "Behaviour": "Pre-contract control",
+  "Legal clock": "Before disbursement",
+  "Source / provision": "Lending Conditions reg.11; Digital Guidelines 20(3)",
+  "Recipient": "Guarantor",
+  "guide": {
+   "what": "Before relying on a guarantor, explain in writing what the guarantor may have to pay and obtain written or authenticated electronic consent.",
+   "do": "Do not treat a contact number as consent. Keep the notice and the guarantor's acceptance.",
+   "when": "Before disbursement",
+   "keep": "Guarantor notice, consent, identity check and delivery evidence"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-07",
+  "Obligation": "Issue a receipt for every transaction",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "Immediately",
+  "Source / provision": "Lending Conditions reg.16; Digital Guidelines 16",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Send a hard-copy receipt, electronic receipt or instant message whenever the customer pays, receives funds or completes another loan transaction. It should identify the amount, date and transaction.",
+   "do": "Monitor failed receipt delivery and allow the customer to retrieve the receipt later.",
+   "when": "Immediately",
+   "keep": "Receipt record, delivery log and exception report"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "LON-08",
+  "Obligation": "Allow early settlement without an extra early-settlement charge",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "At settlement",
+  "Source / provision": "Lending Conditions Regulations, 2024 reg.12",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "A borrower who settles the loan before the due date should not be charged an additional amount solely for paying early.",
+   "do": "Calculate the settlement amount without an extra early-settlement charge and retain the calculation.",
+   "when": "At settlement",
+   "keep": "Settlement quote, calculation, payment record and closure statement"
+  },
+  "domain": "LON",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Lending & customer contract"
+ },
+ {
+  "ID": "COL-01",
+  "Obligation": "Never take prohibited identity or account-access items as collateral",
+  "Applies to": "Both - if collateral is used",
+  "Behaviour": "Transaction control",
+  "Legal clock": "Before acceptance",
+  "Source / provision": "Money Lenders reg.18; Lending Conditions reg.8",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Do not take national IDs, passports, warrant cards, ATM cards, PINs, deposit books, blank cheques or pre-signed transfer instruments as security for a loan.",
+   "do": "Use a collateral-type allowlist and reject prohibited items.",
+   "when": "Before acceptance",
+   "keep": "Collateral register, photographs, valuation and exception report"
+  },
+  "domain": "COL",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Collateral"
+ },
+ {
+  "ID": "COL-02",
+  "Obligation": "Give at least sixty days' written demand before selling collateral",
+  "Applies to": "Both - if collateral is used",
+  "Behaviour": "Event-driven deadline",
+  "Legal clock": "At least 60 days after written demand",
+  "Source / provision": "Money Lenders reg.18(3); Lending Conditions reg.9",
+  "Recipient": "Borrower",
+  "guide": {
+   "what": "A lender may not sell collateral until sixty days have passed after a written demand requiring payment of the outstanding loan.",
+   "do": "Record the demand-delivery date and block sale before day sixty.",
+   "when": "At least 60 days after written demand",
+   "keep": "Demand notice, delivery evidence and sale-authorisation calculation"
+  },
+  "domain": "COL",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Collateral"
+ },
+ {
+  "ID": "COL-03",
+  "Obligation": "Value collateral, apply sale proceeds correctly and preserve redemption",
+  "Applies to": "Both - if collateral is used",
+  "Behaviour": "Transaction control",
+  "Legal clock": "Before and at sale",
+  "Source / provision": "Money Lenders reg.18(4) to (8); Lending Conditions reg.9",
+  "Recipient": "Borrower",
+  "guide": {
+   "what": "Before sale, obtain the required valuation and forced-sale value. Apply proceeds to the loan and proper sale expenses, return any balance, and allow the borrower to redeem before sale.",
+   "do": "Use a sale checklist with valuation, approval, proceeds waterfall and borrower balance payment.",
+   "when": "Before and at sale",
+   "keep": "Valuation, auction or treaty record, proceeds statement and borrower payment"
+  },
+  "domain": "COL",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Collateral"
+ },
+ {
+  "ID": "DBT-01",
+  "Obligation": "Do not threaten, shame, harass or contact the customer's phone list",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Lending Conditions reg.13; Digital Guidelines 15; UMRA Circular 31 May 2024",
+  "Recipient": "Customers and third parties",
+  "guide": {
+   "what": "Collections staff and agents must not use violence, threats, abusive language, social-media shaming, unsolicited contact-list calls or messages, or other oppressive tactics.",
+   "do": "Monitor communications, investigate complaints and suspend agents who breach the rule.",
+   "when": "At all times",
+   "keep": "Approved scripts, call logs, message samples, monitoring results and complaints"
+  },
+  "domain": "DBT",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Collections & recovery"
+ },
+ {
+  "ID": "DBT-02",
+  "Obligation": "Tell the borrower who the recovery agent is before contact",
+  "Applies to": "Both - if third-party recovery agent/service provider is used",
+  "Behaviour": "Event-driven control",
+  "Legal clock": "Before the agent contacts the borrower",
+  "Source / provision": "Digital Guidelines 15(f) to (g)",
+  "Recipient": "Borrower",
+  "guide": {
+   "what": "Give the borrower the assigned recovery agent's name and contact details by email or SMS before that agent contacts the borrower. At sanction, identify the approved agents who may be used if the loan defaults.",
+   "do": "Agent access and dialing remain blocked until customer notification is delivered.",
+   "when": "Before the agent contacts the borrower",
+   "keep": "Agent roster, assignment, customer notice and delivery log"
+  },
+  "domain": "DBT",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Collections & recovery"
+ },
+ {
+  "ID": "DBT-03",
+  "Obligation": "Remain accountable for recovery agents and service providers",
+  "Applies to": "Both - if third-party recovery agent/service provider is used",
+  "Behaviour": "Third-party control",
+  "Legal clock": "Before activation; then continuous",
+  "Source / provision": "Digital Guidelines 15; FITSPA Code 1.2 and 8",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Use due diligence, clear contracts, training and monitoring so third parties follow the same privacy, disclosure and fair-treatment rules as the licensed lender.",
+   "do": "Suspend access where due diligence, training or monitoring evidence is missing.",
+   "when": "Before activation; then continuous",
+   "keep": "Due diligence, contract, training, monitoring and remediation"
+  },
+  "domain": "DBT",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Collections & recovery"
+ },
+ {
+  "ID": "CRD-01",
+  "Obligation": "Obtain consent before sharing credit information",
+  "Applies to": "Both",
+  "Behaviour": "Transaction control",
+  "Legal clock": "Before first disclosure",
+  "Source / provision": "Lending Conditions reg.14; Digital Guidelines 10.2",
+  "Recipient": "Prescribed credit-reference mechanism",
+  "guide": {
+   "what": "Put a clear consent clause in the loan agreement and capture authentic oral, written or electronic consent before sending a customer's information to the prescribed credit-reference mechanism.",
+   "do": "No credit-reporting record may be sent without linked consent evidence.",
+   "when": "Before first disclosure",
+   "keep": "Consent clause, consent log and reporting record"
+  },
+  "domain": "CRD",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Credit information"
+ },
+ {
+  "ID": "CRD-02",
+  "Obligation": "Send complete and accurate positive and negative credit information",
+  "Applies to": "Both",
+  "Behaviour": "Continuous data control",
+  "Legal clock": "Per current credit-reference mechanism / regulator reporting arrangement",
+  "Source / provision": "Lending Conditions reg.14; Digital Guidelines 10",
+  "Recipient": "Prescribed credit-reference mechanism",
+  "guide": {
+   "what": "Validate identity, balance, status and dates before reporting. Correct errors promptly and keep the source-to-submission reconciliation.",
+   "do": "Do not hard-code a 30-day legal deadline unless the current regulator/credit-reference instruction expressly sets it. Create the reporting occurrence from the active reporting arrangement.",
+   "when": "Per current credit-reference mechanism / regulator reporting arrangement",
+   "keep": "Submitted file, validation results, reconciliation and correction log"
+  },
+  "domain": "CRD",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Credit information"
+ },
+ {
+  "ID": "CNS-01",
+  "Obligation": "Operate a free and accessible complaints mechanism",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "FCP Guidelines section 6; Digital Guidelines 17",
+  "Recipient": "Customer; UMRA if escalated",
+  "guide": {
+   "what": "Give customers clear channels for complaints, publish the process and escalation route, and keep a complete record of the issue, investigation, decision and remedy.",
+   "do": "Open a case for every expression of dissatisfaction that may involve loss, inconvenience or distress.",
+   "when": "At all times",
+   "keep": "Complaints procedure, channel screenshots, case file and outcome"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-02",
+  "Obligation": "Resolve complaints within the applicable regulatory clock",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven deadline",
+  "Legal clock": "Before FCP effective date: within 30 days. From FCP effective date: final response by end of 2 weeks, subject to permitted pause.",
+  "Source / provision": "Digital Lending Guidelines 2024 guideline 17(2); FCP Guidelines 2019 commencement + complaints handling time-limit provision",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Digital Lending Guidelines require a complaint to be addressed within 30 days. Once the 2019 Financial Consumer Protection Guidelines apply to the institution, they require the final response by the end of two weeks, subject to the stated information-request pause.",
+   "do": "Calculate FCP effective date as one year after licence issue. Use the Digital Lending 30-day clock before that date; once FCP applies, use the FCP two-week final-response clock and preserve the permitted pause when the complainant delays requested information.",
+   "when": "Before FCP effective date: within 30 days. From FCP effective date: final response by end of 2 weeks, subject to permitted pause.",
+   "keep": "Receipt timestamp, investigation, final response and customer acceptance"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-03",
+  "Obligation": "Acknowledge complaints promptly and track recurring causes",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven and continuous",
+  "Legal clock": "From FCP effective date: prompt acknowledgement unless resolved within 3 business days",
+  "Source / provision": "FCP Guidelines 2019 commencement + complaints handling acknowledgement/systemic-problem provisions",
+  "Recipient": "Customer; internal governance",
+  "guide": {
+   "what": "Send a written or electronic acknowledgment unless the complaint is resolved within three business days. Analyse repeat complaints and fix the underlying product, process or agent problem.",
+   "do": "Activate the acknowledgement rule one year after licence issue. Track acknowledgement, root cause, remedy and accepted closure separately.",
+   "when": "From FCP effective date: prompt acknowledgement unless resolved within 3 business days",
+   "keep": "Acknowledgment, complaints log, root-cause report and remediation"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-04",
+  "Obligation": "Provide a plain-language key facts summary before the customer commits",
+  "Applies to": "Both",
+  "Behaviour": "Pre-contract control",
+  "Legal clock": "Before acceptance",
+  "Source / provision": "FCP Guidelines 8(2); Digital Guidelines 19 to 20",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Summarise the loan amount, total cost, rate basis, all fees, due dates, cooling-off right, default consequences, complaint route and important risks in a short form the customer can understand and retain.",
+   "do": "Do not hide key costs in linked terms. Record the version shown and accepted.",
+   "when": "Before acceptance",
+   "keep": "Approved key facts statement, screen archive and acceptance log"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-05",
+  "Obligation": "Keep advertising accurate, complete and responsible",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "Before publication and while live",
+  "Source / provision": "FCP Guidelines 8(6); Digital Guidelines 21; UMRA Circular",
+  "Recipient": "Public and customers",
+  "guide": {
+   "what": "Do not claim approvals, benefits, status or prices that are not true. If an advert mentions a rate or cost, show the total cost of credit clearly and state whether the rate is monthly or annual.",
+   "do": "Require compliance approval, archive the published version and remove misleading content immediately.",
+   "when": "Before publication and while live",
+   "keep": "Approval, final advert, channel archive and withdrawal record"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-06",
+  "Obligation": "Use clear language and disclose regulated status",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Lending Conditions reg.15; Digital Guidelines 19",
+  "Recipient": "Customers",
+  "guide": {
+   "what": "Keep information current, easy to find and written clearly. Use English or an appropriate official language, explain orally where needed, and show the licensed identity and UMRA-regulated status on websites, apps, adverts and documents.",
+   "do": "Review customer journeys and live channel content against the approved source each quarter.",
+   "when": "At all times",
+   "keep": "Content standard, translations, screenshots, oral-explanation record and reviews"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://umra.go.ug/wp-content/uploads/2025/01/Lending-Conditions.pdf",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-07",
+  "Obligation": "Provide loan-account statements at the frequency and through the mode agreed with the customer",
+  "Applies to": "Both",
+  "Behaviour": "Recurring customer communication",
+  "Legal clock": "Frequency agreed with the customer",
+  "Source / provision": "FCP Guidelines 2019, Statements of Deposit and Loan Accounts provision",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Once the Financial Consumer Protection Guidelines apply, customers with a loan account should receive statements showing balance changes, payments, disbursements and costs, at an agreed frequency and communication mode.",
+   "do": "Store the agreed frequency/mode in the product or account record and generate the customer statement occurrence from that agreement.",
+   "when": "Frequency agreed with the customer",
+   "keep": "Statement preference, generated statement and delivery evidence"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-08",
+  "Obligation": "Give the required customer notice before changes to terms, fees, charges, services or premises",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven customer notice",
+  "Legal clock": "At least 30 days before implementing the specified change; preserve separate immediate/interest-rate notice rule in FCP and prior-approval/consent rules",
+  "Source / provision": "FCP Guidelines 2019, Notice of Changes provision; Digital Lending Guidelines 22; Lending Conditions Regulations reg.6",
+  "Recipient": "Customer; MRD-MoFPED where approval required",
+  "guide": {
+   "what": "Once the FCP Guidelines apply, customers must receive advance notice of specified changes. Interest-rate changes are also subject to the separate customer-consent and regulator-approval controls under the Digital Lending Guidelines/Lending Conditions Regulations.",
+   "do": "Route the change through regulatory approval/consent first where required, then schedule the FCP customer notice. Do not let the customer-notice rule replace a prior-approval rule.",
+   "when": "At least 30 days before implementing the specified change; preserve separate immediate/interest-rate notice rule in FCP and prior-approval/consent rules",
+   "keep": "Change approval, regulator approval where required, customer notice and delivery evidence"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-09",
+  "Obligation": "Give fourteen days notice before closing a customer account unless a stated exception applies",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven customer notice",
+  "Legal clock": "14 days notice, unless the stated exception applies",
+  "Source / provision": "FCP Guidelines 2019, Closing of Accounts provision",
+  "Recipient": "Customer",
+  "guide": {
+   "what": "Once the FCP Guidelines apply, a provider should not close a consumer account without fourteen days notice except for the stated criminal-activity or threatening/intimidating/violent-behaviour exceptions.",
+   "do": "Create the closure occurrence, check whether a regulatory exception is documented, otherwise calculate 14 days from receipt of notice.",
+   "when": "14 days notice, unless the stated exception applies",
+   "keep": "Closure reason, exception assessment where relevant, notice and delivery proof"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-10",
+  "Obligation": "Maintain fair-treatment controls across products, staff and agents",
+  "Applies to": "Both",
+  "Behaviour": "Continuous market-conduct control",
+  "Legal clock": "At all times while applicable",
+  "Source / provision": "FCP Guidelines 2019 Fairness Principle; Digital Lending consumer-protection provisions",
+  "Recipient": "Internal; MRD-MoFPED on request",
+  "guide": {
+   "what": "The FCP framework requires fair and reasonable treatment and prohibits practices such as unfair/deceptive/aggressive conduct, bribery, discrimination, undue influence and concealment of material information.",
+   "do": "Use policy, training, monitoring, complaints and QA evidence; open exceptions for identified conduct failures.",
+   "when": "At all times while applicable",
+   "keep": "Conduct policy, training, QA samples, complaints trend and remediation"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "CNS-11",
+  "Obligation": "Apply suitability controls where the lender gives personal advice or recommendations",
+  "Applies to": "Both - if personal advice/recommendations are given",
+  "Behaviour": "Conditional transaction control",
+  "Legal clock": "Before recommendation / transaction",
+  "Source / provision": "FCP Guidelines 2019, Suitability of Advice provision",
+  "Recipient": "Customer; MRD-MoFPED on request",
+  "guide": {
+   "what": "Where the provider gives advice or a personal recommendation, the FCP Guidelines require the advice to be suitable for the consumer and supported by sufficient customer information and records.",
+   "do": "Only trigger where the customer journey contains advice. Capture suitability information, recommendation rationale and conflict disclosures.",
+   "when": "Before recommendation / transaction",
+   "keep": "Customer information, suitability assessment, recommendation record and conflict disclosure"
+  },
+  "domain": "CNS",
+  "sourceUrl": "https://drive.google.com/file/d/1xzH6A6LSk4jr6-Rx-1CdjEAeMmcf1COn/view?usp=drivesdk",
+  "domainLabel": "Consumer protection"
+ },
+ {
+  "ID": "TEC-01",
+  "Obligation": "Use secure, authorised lending applications",
+  "Applies to": "Both",
+  "Behaviour": "Continuous technology control",
+  "Legal clock": "Before release and while live",
+  "Source / provision": "Digital Guidelines 12 and 18",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Use systems that protect customer information and transaction integrity. Use only applications authorised by UMRA, keep the trading name tied to the licensed company and do not run duplicate apps offering the same product.",
+   "do": "Release remains blocked until security, identity and regulatory checks pass.",
+   "when": "Before release and while live",
+   "keep": "Architecture, security tests, release approval, app-store listing and incident log"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-02",
+  "Obligation": "Do not access customer contacts, frequent calls or messages for KYC or collections",
+  "Applies to": "Both",
+  "Behaviour": "Continuous technology control",
+  "Legal clock": "At all times",
+  "Source / provision": "Digital Guidelines 9(3)",
+  "Recipient": "Internal; UMRA on request",
+  "guide": {
+   "what": "Design the app so it cannot read or use the customer's contact list, frequently dialed contacts or phone messages to verify identity or collect a debt.",
+   "do": "Automated mobile-permission checks must fail a release that requests prohibited access.",
+   "when": "At all times",
+   "keep": "Permission inventory, source-code review, app-store declaration and test results"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-03",
+  "Obligation": "Keep customer information confidential and use it only for lawful purposes",
+  "Applies to": "Both",
+  "Behaviour": "Continuous control",
+  "Legal clock": "At all times",
+  "Source / provision": "Money Lenders reg.24; Digital Guidelines 9; DPPA principles",
+  "Recipient": "Internal; authority on request",
+  "guide": {
+   "what": "Limit access and sharing to the purpose explained to the customer, a lawful requirement or valid consent. Apply the rule to directors, staff, agents and technology providers during and after their engagement.",
+   "do": "Use role-based access, confidentiality terms, monitoring and privacy review for every new use.",
+   "when": "At all times",
+   "keep": "Data inventory, access logs, consent, contracts and privacy assessment"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://drive.google.com/file/d/1-dIPB4lJHj1otG8Uc1UxwV3DhFrXnWS-/view?usp=drivesdk",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-04",
+  "Obligation": "Maintain a current PDPO registration",
+  "Applies to": "Both",
+  "Behaviour": "Annual registration",
+  "Legal clock": "Keep registration current",
+  "Source / provision": "DPPR regs.15 and 20",
+  "Recipient": "PDPO",
+  "guide": {
+   "what": "A lender that controls, collects or processes personal data must be registered with the Personal Data Protection Office unless a valid exemption applies. The certificate is valid for twelve months.",
+   "do": "Store the certificate expiry in the dashboard and begin renewal before the statutory lead date.",
+   "when": "Keep registration current",
+   "keep": "Application, certificate, payment receipt and register extract"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2021/21/eng%402021-03-12",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-05",
+  "Obligation": "Apply to renew PDPO registration at least three months before expiry",
+  "Applies to": "Both",
+  "Behaviour": "Annual filing",
+  "Legal clock": "At least 3 months before expiry",
+  "Source / provision": "DPPR reg.23",
+  "Recipient": "PDPO",
+  "guide": {
+   "what": "Submit the renewal application and fee early enough to keep the registration continuous.",
+   "do": "Certificate expiry minus three calendar months. Enter the actual expiry date on Dashboard.",
+   "when": "At least 3 months before expiry",
+   "keep": "Renewal form, fee receipt, submission proof and renewed certificate"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2021/21/eng%402021-03-12",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-06",
+  "Obligation": "Notify PDPO of registered-detail changes within fourteen days",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven notification",
+  "Legal clock": "Within 14 days of the change",
+  "Source / provision": "DPPR reg.27",
+  "Recipient": "PDPO",
+  "guide": {
+   "what": "Tell PDPO in writing when a registered name, address, data category, processing purpose, security measure, data-protection officer or other registered particular changes.",
+   "do": "Change approval opens a fourteen-day notification task and evidence check.",
+   "when": "Within 14 days of the change",
+   "keep": "Change record, notice, delivery proof and updated register evidence"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2021/21/eng%402021-03-12",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-07",
+  "Obligation": "Notify PDPO immediately of unauthorised access or acquisition of personal data",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven notification",
+  "Legal clock": "Immediately",
+  "Source / provision": "DPPA s.23",
+  "Recipient": "PDPO; UMRA where applicable",
+  "guide": {
+   "what": "When personal data has been accessed or acquired by an unauthorised person, notify the data-protection authority immediately and state the remedial action. Also assess whether UMRA and affected customers must be notified.",
+   "do": "Escalate at detection, preserve the exact occurrence and discovery times, and do not wait for the full investigation before the initial notice.",
+   "when": "Immediately",
+   "keep": "Incident record, assessment, notices, updates and closure report"
+  },
+  "domain": "TEC",
+  "sourceUrl": "",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-08",
+  "Obligation": "Answer access requests within thirty days",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven deadline",
+  "Legal clock": "Promptly and within 30 days",
+  "Source / provision": "DPPA s.24(9)",
+  "Recipient": "Data subject",
+  "guide": {
+   "what": "After verifying identity, give the customer the personal data and required information that can lawfully be disclosed, or explain the lawful reason for refusal.",
+   "do": "Start the clock on receipt, verify identity without unnecessary delay and record redactions.",
+   "when": "Promptly and within 30 days",
+   "keep": "Request, identity check, search log, response and delivery proof"
+  },
+  "domain": "TEC",
+  "sourceUrl": "",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-09",
+  "Obligation": "Respond to an objection to harmful processing within fourteen days",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven deadline",
+  "Legal clock": "Within 14 days",
+  "Source / provision": "DPPA s.25(2)",
+  "Recipient": "Data subject",
+  "guide": {
+   "what": "When a customer asks the lender to stop processing that causes or is likely to cause unwarranted substantial damage or distress, respond in writing within fourteen days with compliance or the reasons for not complying.",
+   "do": "Route the notice immediately to the DPO and prevent silent expiry.",
+   "when": "Within 14 days",
+   "keep": "Notice, assessment, decision, response and system action"
+  },
+  "domain": "TEC",
+  "sourceUrl": "",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-10",
+  "Obligation": "Delete, destroy or de-identify data when lawful retention ends",
+  "Applies to": "Both",
+  "Behaviour": "Retention control",
+  "Legal clock": "At expiry, after holds and legal duties are checked",
+  "Source / provision": "DPPA s.18",
+  "Recipient": "Internal",
+  "guide": {
+   "what": "Do not keep personal data longer than needed unless law, contract, consent or another lawful ground permits it. At the end of retention, make the record irrecoverable or de-identify it.",
+   "do": "A retention expiry creates a review and approved disposal task, not automatic deletion.",
+   "when": "At expiry, after holds and legal duties are checked",
+   "keep": "Retention schedule, hold check, approval and destruction certificate"
+  },
+  "domain": "TEC",
+  "sourceUrl": "",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "TEC-11",
+  "Obligation": "Protect personal data processed or stored outside Uganda",
+  "Applies to": "Both - if cross-border processing/transfer occurs",
+  "Behaviour": "Prior review and continuous control",
+  "Legal clock": "Before data leaves Uganda",
+  "Source / provision": "DPPA s.19; DPPR application undertaking",
+  "Recipient": "PDPO or UMRA on request",
+  "guide": {
+   "what": "Before using an overseas cloud or service provider, confirm equivalent protection or valid customer consent, document the transfer and bind the provider to the required security and confidentiality controls.",
+   "do": "Block vendor activation until the transfer basis and contract are approved.",
+   "when": "Before data leaves Uganda",
+   "keep": "Transfer assessment, country review, consent where used and contract"
+  },
+  "domain": "TEC",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2021/21/eng%402021-03-12",
+  "domainLabel": "Technology & privacy"
+ },
+ {
+  "ID": "AML-01",
+  "Obligation": "Maintain FIA registration as an accountable person",
+  "Applies to": "Both",
+  "Behaviour": "Registration control",
+  "Legal clock": "As required by AML Act/Regulations and FIA registration process",
+  "Source / provision": "AML Act Cap.118 s.21(pb)-(pc); AML Regulations regs.3-4; FIA Online Registration Guidelines 2024, section 11.4",
+  "Recipient": "FIA",
+  "guide": {
+   "what": "Money Lenders and microfinance institutions licensed in the Tier 4 sector fall within FIA accountable-person registration requirements.",
+   "do": "Store FIA registration status/number in Profile & registrations; create an action if registration is missing or current details change.",
+   "when": "As required by AML Act/Regulations and FIA registration process",
+   "keep": "FIA registration confirmation/number, registration forms and supporting licence/incorporation documents"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-02",
+  "Obligation": "Appoint an MLCO and maintain an authorised goAML reporting account",
+  "Applies to": "Both",
+  "Behaviour": "Continuous governance / registration control",
+  "Legal clock": "Before reports need to be filed; update as required",
+  "Source / provision": "AML Regulations MLCO provisions; FIA goAML guidance",
+  "Recipient": "FIA",
+  "guide": {
+   "what": "An accountable person should have a designated AML compliance function/MLCO and must be able to submit regulatory reports through FIA’s reporting system.",
+   "do": "Store MLCO and goAML status in Profile & registrations. A change of MLCO creates an update workflow.",
+   "when": "Before reports need to be filed; update as required",
+   "keep": "Appointment, FIA/goAML authorisation and current user/account record"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://www.fia.go.ug/goaml/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-03",
+  "Obligation": "Maintain an approved AML/CFT compliance programme and submit the AML policy to FIA",
+  "Applies to": "Both",
+  "Behaviour": "Continuous governance control",
+  "Legal clock": "Maintain continuously; FIA guidance requires policy submission",
+  "Source / provision": "FIA Guidance Notes - AML Program and AML Policy",
+  "Recipient": "FIA / internal governance",
+  "guide": {
+   "what": "The accountable person needs an AML/CFT programme with internal policies, procedures and controls, a compliance function, training and independent audit.",
+   "do": "Keep board/management approval, current policy version and FIA submission/feedback together; changes trigger a controlled update.",
+   "when": "Maintain continuously; FIA guidance requires policy submission",
+   "keep": "AML policy/programme, approval, FIA submission, feedback and implementation evidence"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://fia.go.ug/guidance-notes/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-04",
+  "Obligation": "Conduct and document the institutional ML/TF risk assessment and submit the results to FIA",
+  "Applies to": "Both",
+  "Behaviour": "Recurring / event-driven regulatory report",
+  "Legal clock": "Copy of results to FIA within 48 hours after conducting the risk assessment",
+  "Source / provision": "AML Regulations, 2015 reg.8",
+  "Recipient": "FIA",
+  "guide": {
+   "what": "The accountable person must regularly identify, assess, monitor, manage and mitigate its money-laundering and terrorism-financing risks.",
+   "do": "Create an occurrence when the assessment is approved/completed and start the 48-hour submission clock from completion.",
+   "when": "Copy of results to FIA within 48 hours after conducting the risk assessment",
+   "keep": "Risk assessment, approval, FIA submission and receipt"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-05",
+  "Obligation": "Assess ML/TF risk before launching a new product, delivery mechanism or technology",
+  "Applies to": "Both",
+  "Behaviour": "Prior assessment and event-driven regulatory report",
+  "Legal clock": "Assessment before launch; copy of results to FIA within 48 hours after conducting the assessment",
+  "Source / provision": "AML Act s.6A; AML Regulations reg.9",
+  "Recipient": "FIA / internal product governance",
+  "guide": {
+   "what": "A new product, business practice, delivery mechanism or technology must be assessed for ML/TF risk before launch.",
+   "do": "Make AML risk assessment a release gate; once assessment is completed, generate the 48-hour FIA submission task.",
+   "when": "Assessment before launch; copy of results to FIA within 48 hours after conducting the assessment",
+   "keep": "Product risk assessment, approval, FIA submission and release evidence"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-06",
+  "Obligation": "Perform risk-based CDD/KYC and identify beneficial owners before or during the relationship as permitted by law",
+  "Applies to": "Both",
+  "Behaviour": "Customer onboarding control",
+  "Legal clock": "Before/while establishing the relationship or transaction as permitted by the AML framework",
+  "Source / provision": "AML Act s.6; AML Regulations regs.13-19 and beneficial-owner provisions",
+  "Recipient": "Internal; FIA on request",
+  "guide": {
+   "what": "CDD must identify and verify the customer, authorised representatives and beneficial owners, understand ownership/control and the purpose/nature of the relationship, and be risk-based.",
+   "do": "No disbursement/relationship activation until required CDD is complete or a legally permitted deferred-verification case is documented.",
+   "when": "Before/while establishing the relationship or transaction as permitted by the AML framework",
+   "keep": "Identity/verification, beneficial-owner evidence, purpose/nature, risk rating and approval"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-07",
+  "Obligation": "Apply enhanced due diligence to PEPs and other high-risk customers/transactions",
+  "Applies to": "Both",
+  "Behaviour": "Conditional enhanced-control workflow",
+  "Legal clock": "Before establishing/continuing the relationship as required; then ongoing",
+  "Source / provision": "AML Act s.6; AML Regulations regs.15 and 29",
+  "Recipient": "Internal; FIA on request",
+  "guide": {
+   "what": "High-risk cases require enhanced measures. PEP relationships require appropriate risk systems, senior-management approval, source-of-wealth/source-of-funds measures and enhanced ongoing monitoring.",
+   "do": "High-risk classification creates an EDD workflow and approval gate; retain source checks and ongoing monitoring plan.",
+   "when": "Before establishing/continuing the relationship as required; then ongoing",
+   "keep": "Risk assessment, EDD pack, PEP screening, source-of-wealth/funds evidence and approval"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-08",
+  "Obligation": "Conduct ongoing customer due diligence, transaction monitoring and risk-based customer refresh",
+  "Applies to": "Both",
+  "Behaviour": "Continuous monitoring control",
+  "Legal clock": "Continuous",
+  "Source / provision": "AML Act s.6; AML Regulations regs.15 and 17",
+  "Recipient": "Internal; FIA on request",
+  "guide": {
+   "what": "CDD does not end at onboarding. The lender should monitor transactions/relationships and keep identification and risk information current according to risk.",
+   "do": "Use monitoring alerts and risk-based review dates; each alert/refresh is an occurrence with evidence and disposition.",
+   "when": "Continuous",
+   "keep": "Monitoring alerts, customer refresh, risk-rating changes and dispositions"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-09",
+  "Obligation": "Report suspicious transactions and attempted transactions to FIA within two working days of forming suspicion",
+  "Applies to": "Both",
+  "Behaviour": "Event-driven regulatory report",
+  "Legal clock": "Without delay and not later than 2 working days from the date suspicion was formed",
+  "Source / provision": "AML Act s.9",
+  "Recipient": "FIA",
+  "guide": {
+   "what": "Where the lender suspects or has reasonable grounds to suspect money laundering or terrorism financing, it must file an STR regardless of transaction value and must not tip off the customer.",
+   "do": "Record the suspicion-formed timestamp, escalate to MLCO immediately, file via goAML within two working days and restrict access to the case.",
+   "when": "Without delay and not later than 2 working days from the date suspicion was formed",
+   "keep": "Internal alert/case, STR submission and receipt; access/tipping-off controls"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/2013/12/eng%402020-11-27",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-10",
+  "Obligation": "Report large cash/monetary transactions at or above the statutory threshold through the current FIA reporting cycle",
+  "Applies to": "Both",
+  "Behaviour": "Threshold-triggered regulatory report",
+  "Legal clock": "Use the current FIA LCTR submission instruction/reporting cycle; do not invent a fixed day in Beacon",
+  "Source / provision": "AML Act s.8; FIA reporting/goAML guidance",
+  "Recipient": "FIA",
+  "guide": {
+   "what": "Accountable persons must report cash/monetary transactions meeting the statutory large-cash threshold. FIA guidance identifies one thousand currency points as UGX 20,000,000.",
+   "do": "Transaction matching threshold creates an LCTR occurrence and routes it into the currently configured FIA reporting cycle.",
+   "when": "Use the current FIA LCTR submission instruction/reporting cycle; do not invent a fixed day in Beacon",
+   "keep": "Transaction record, threshold logic, LCTR submission and receipt"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://www.fia.go.ug/goaml/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-11",
+  "Obligation": "Keep AML/CFT customer, transaction, report and enquiry records for the required retention period and make them retrievable",
+  "Applies to": "Both",
+  "Behaviour": "Retention control",
+  "Legal clock": "At least 10 years under the AML framework/FIA guidance",
+  "Source / provision": "AML Act s.7; AML Regulations reg.28; FIA Guidance Notes",
+  "Recipient": "Internal; FIA/competent authority on request",
+  "guide": {
+   "what": "AML records must allow transactions and decisions to be reconstructed and be available to competent authorities. FIA guidance states a ten-year record-keeping period.",
+   "do": "Map AML record classes to the retention schedule and suspend destruction where a legal/regulatory hold applies.",
+   "when": "At least 10 years under the AML framework/FIA guidance",
+   "keep": "Retention schedule, archive logs, reconstruction tests and legal holds"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://fia.go.ug/guidance-notes/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-12",
+  "Obligation": "Screen relevant staff, maintain regular AML training and keep evidence of competence",
+  "Applies to": "Both",
+  "Behaviour": "Continuous governance control",
+  "Legal clock": "Ongoing programme obligation",
+  "Source / provision": "FIA Guidance Notes - AML Program / regular AML training",
+  "Recipient": "Internal; FIA on request",
+  "guide": {
+   "what": "The AML programme should include fit/integrity controls for relevant staff and ongoing training for employees and senior management.",
+   "do": "Maintain staff screening and training records; use a management-approved training calendar rather than calling it a statutory annual deadline unless FIA directs otherwise.",
+   "when": "Ongoing programme obligation",
+   "keep": "Screening checks, training materials, attendance and assessment records"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://fia.go.ug/guidance-notes/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-13",
+  "Obligation": "Maintain an independent AML audit function and track remediation",
+  "Applies to": "Both",
+  "Behaviour": "Periodic control / regulator-set report",
+  "Legal clock": "No single fixed statutory annual day identified in the validated sources; use approved audit plan or FIA instruction",
+  "Source / provision": "FIA Guidance Notes - independent audit function / AML audit reports",
+  "Recipient": "Internal governance; FIA where required",
+  "guide": {
+   "what": "The AML compliance programme should be independently tested for effectiveness and weaknesses should be remediated.",
+   "do": "Schedule from the approved AML audit plan; create regulator submission task only where FIA/current instruction requires it.",
+   "when": "No single fixed statutory annual day identified in the validated sources; use approved audit plan or FIA instruction",
+   "keep": "Audit report, management response, action tracker and submission evidence where required"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://fia.go.ug/guidance-notes/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-14",
+  "Obligation": "Screen for targeted financial sanctions and implement freezing/reporting measures when required",
+  "Applies to": "Both",
+  "Behaviour": "Continuous sanctions control / event-driven escalation",
+  "Legal clock": "Immediately/as required by the applicable sanctions direction/guideline",
+  "Source / provision": "FIA Targeted Financial Sanctions Guidelines; AML/CFT statutes",
+  "Recipient": "FIA / competent authority as required",
+  "guide": {
+   "what": "Accountable persons must have measures to identify designated persons/entities and implement applicable freezing and reporting obligations under Uganda’s targeted-financial-sanctions framework.",
+   "do": "Run screening at onboarding and ongoing. Potential matches create restricted-access review; confirmed matches trigger the prescribed freeze/report steps.",
+   "when": "Immediately/as required by the applicable sanctions direction/guideline",
+   "keep": "Screening logs, match analysis, freeze/action record and notices/reports"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://fia.go.ug/service/statutes-regulations/",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-15",
+  "Obligation": "Apply the current FIA high-risk-jurisdiction controls on a risk-sensitive basis",
+  "Applies to": "Both",
+  "Behaviour": "Dynamic continuous risk control",
+  "Legal clock": "As current FIA circular requires",
+  "Source / provision": "AML Regulations reg.44; current FIA high-risk-jurisdiction circular",
+  "Recipient": "Internal; FIA on request",
+  "guide": {
+   "what": "FIA periodically circulates FATF high-risk/increased-monitoring updates. The product must use the current circular rather than a static country list.",
+   "do": "Maintain the active FIA circular/version and apply proportionate controls; do not hard-code a permanent jurisdiction list.",
+   "when": "As current FIA circular requires",
+   "keep": "Current circular, jurisdiction screening, risk assessment and additional measures"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://ulii.org/en/akn/ug/act/si/2015/75/eng%402022-02-11",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-16",
+  "Obligation": "Report international wire transfers where the lender itself carries out a reportable international wire transfer",
+  "Applies to": "Both - if international wire transfers are conducted",
+  "Behaviour": "Conditional transaction report",
+  "Legal clock": "Use the current FIA international-wire reporting instruction/cycle",
+  "Source / provision": "FIA International Wire Transfer Reporting Guidelines",
+  "Recipient": "FIA",
+  "guide": {
+   "what": "FIA International Wire Transfer Reporting guidance treats transfers with a source or destination outside Uganda as reportable irrespective of amount.",
+   "do": "Do not ask this at initial setup unless relevant. Detect/log the transaction and create the report occurrence if the lender conducts such transfers.",
+   "when": "Use the current FIA international-wire reporting instruction/cycle",
+   "keep": "Transfer details, IWTR submission and receipt"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "AML/CFT"
+ },
+ {
+  "ID": "AML-17",
+  "Obligation": "Document and evidence the lender's own sources of funds",
+  "Applies to": "Both",
+  "Behaviour": "Continuous / regulator-request control",
+  "Legal clock": "Before reliance/use as internally approved; regulator deadline where requested",
+  "Source / provision": "Digital Lending Guidelines 2024 guideline 23.1",
+  "Recipient": "MRD-MoFPED",
+  "guide": {
+   "what": "A digital credit provider must provide the regulator with evidence and sources of funds invested or proposed to be invested in the digital credit provider.",
+   "do": "Link each material funding source to approval and supporting evidence; create regulator submission occurrence when requested.",
+   "when": "Before reliance/use as internally approved; regulator deadline where requested",
+   "keep": "Funding agreements, bank evidence, source/beneficial-owner checks and regulator submission"
+  },
+  "domain": "AML",
+  "sourceUrl": "https://drive.google.com/file/d/1adqn8bfIrzlNdpXixnR1Bi1cZth-Wr5M/view?usp=drivesdk",
+  "domainLabel": "AML/CFT"
+ }
+]
