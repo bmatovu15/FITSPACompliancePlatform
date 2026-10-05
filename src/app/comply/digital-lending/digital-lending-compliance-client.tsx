@@ -140,6 +140,7 @@ export function DigitalLendingApp({ adapter, initialState, prefill = null }: Dig
   // rendered after mount (avoids server/client hydration differences).
   useEffect(() => {
     const c = makeClock();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only gate: the clock exists only after mount
     setClock(c);
     if (stateRef.current.profile) commit(generateScheduled(stateRef.current, c));
     const onVis = () => {
@@ -152,6 +153,7 @@ export function DigitalLendingApp({ adapter, initialState, prefill = null }: Dig
   // ---- debounced persistence ----------------------------------------------
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pending = useRef<DLState | null>(null);
+  const flushRef = useRef<() => Promise<void>>(async () => {});
   const flush = useCallback(async () => {
     if (timer.current) {
       clearTimeout(timer.current);
@@ -164,11 +166,14 @@ export function DigitalLendingApp({ adapter, initialState, prefill = null }: Dig
     if (!r.ok) {
       if (!pending.current) pending.current = s;
       setToast(`Your latest changes could not be saved${r.error ? ` (${r.error})` : ""}. Retrying…`);
-      timer.current = setTimeout(flush, 5000);
+      timer.current = setTimeout(() => void flushRef.current(), 5000);
     } else {
       setToast((t) => (t.startsWith("Your latest changes") ? "" : t));
     }
   }, [adapter]);
+  useEffect(() => {
+    flushRef.current = flush;
+  }, [flush]);
   useEffect(() => {
     if (!dirty.current) return;
     pending.current = state;
@@ -242,6 +247,7 @@ export function DigitalLendingApp({ adapter, initialState, prefill = null }: Dig
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link rel="stylesheet" href={FONT_HREF} precedence="default" />
+      {/* eslint-disable-next-line react-hooks/refs -- api only wraps stable callbacks that read refs at call time */}
       {api ? (
         <AppContext.Provider value={api}>
           {screen === "landing" ? (

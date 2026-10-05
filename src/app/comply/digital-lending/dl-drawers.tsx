@@ -23,7 +23,6 @@ import {
   feeLabel,
   fmt,
   getOb,
-  iso,
   isPriorApproval,
   legalDueText,
   knownCosts,
@@ -33,7 +32,6 @@ import {
   saveControlReview,
   saveOccurrence,
   saveSettings,
-  fileName,
   type Answer,
   type Fee,
   type FileRef,
@@ -42,7 +40,6 @@ import {
 } from "@/lib/comply/digital-engine";
 import {
   InlineMessage,
-  Info,
   SavedFileList,
   SavedFileName,
   filePlaceholder,
@@ -1067,6 +1064,3 @@ export function ExpertBody({ ctx }: { ctx: import("@/lib/comply/digital-engine")
     </>
   );
 }
-
-// re-exports used by the shell
-export { iso, fileName };

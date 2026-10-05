@@ -16,7 +16,6 @@ import {
   monthKey,
   obligations,
   occurrenceState,
-  operatingUnresolved,
   parseDate,
   priorityOccurrences,
   profileWarningText,
@@ -508,5 +507,3 @@ export function RightRail() {
     </>
   );
 }
-
-export { operatingUnresolved };
