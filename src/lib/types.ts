@@ -622,6 +622,30 @@ export type LicenceApplicationTemplate = {
   guide_do: string | null;
   guide_evidence: string | null;
   applicability: Record<string, unknown>;
+  // Payments (payments_nps) v7 content layer -- all optional because the
+  // other application keys never populate them (migrations 0201-0204).
+  card_title?: string | null;
+  card_note?: string | null;
+  short_cta?: string | null;
+  guidance_long?: string | null;
+  deliverable?: string | null;
+  sources?: { text: string; url: string }[] | null;
+  official_form?: { label: string; url: string } | null;
+  product_type?: string | null;
+  product_config?: {
+    slots?: [string, string][];
+    accept?: string;
+    form?: string;
+    person_filter?: string;
+  } | null;
+  workspace_hidden?: boolean | null;
+  applies_to?: {
+    routes_any?: string[];
+    emi?: boolean;
+    facts?: Record<string, boolean>;
+    min_capital_gt?: number;
+    application_fee_gt?: number;
+  } | null;
   created_at: string;
   updated_at: string;
 };
@@ -688,4 +712,6 @@ export type MemberLicenceApplicationFile = {
   storage_path: string;
   version: number;
   uploaded_at: string;
+  // Optional human label for the slot (migration 0205).
+  label?: string | null;
 };
