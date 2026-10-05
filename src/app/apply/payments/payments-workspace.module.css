@@ -739,11 +739,11 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 :where(.pwRoot) h5{font-size:.83em;font-weight:700;margin:1.67em 0}
 :where(.pwRoot) p{margin:1em 0}
 :where(.pwRoot) strong{font-weight:700}
-:where(.pwRoot) button{font-size:13.3333px;font-weight:400;text-align:center;border:2px outset ButtonBorder;background:ButtonFace;color:ButtonText;padding:1px 6px}
-:where(.pwRoot) input,:where(.pwRoot) select,:where(.pwRoot) textarea{font-size:13.3333px;color:fieldtext}
-:where(.pwRoot) input[type="search"],:where(.pwRoot) input[type="text"],:where(.pwRoot) input[type="email"],:where(.pwRoot) input[type="tel"],:where(.pwRoot) input[type="date"],:where(.pwRoot) input[type="number"],:where(.pwRoot) select,:where(.pwRoot) textarea{border:2px inset ButtonBorder;background:field;padding:1px 2px}
+:where(.pwRoot) button{line-height:normal;font-size:13.3333px;font-weight:400;text-align:center;border:2px outset ButtonBorder;background:ButtonFace;color:ButtonText;padding:1px 6px}
+:where(.pwRoot) input,:where(.pwRoot) select,:where(.pwRoot) textarea{line-height:normal;font-size:13.3333px;color:fieldtext}
+:where(.pwRoot input[type="search"],.pwRoot input[type="text"],.pwRoot input[type="email"],.pwRoot input[type="tel"],.pwRoot input[type="date"],.pwRoot input[type="number"],.pwRoot select,.pwRoot textarea){border:2px inset ButtonBorder;background:field;padding:1px 2px}
 :where(.pwRoot) summary{display:list-item}
-:where(.pwRoot) details>summary{cursor:pointer}
+:where(.pwRoot details>summary){cursor:pointer}
 .pwRoot table{border-spacing:0}
 
 .pw-error{margin:14px 28px 0;padding:10px 14px;border-radius:3px;background:var(--danger-bg);color:var(--danger);font-size:13px}
@@ -760,3 +760,7 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 .pwRoot .masthead-brand .logo-link{display:flex;align-items:center;gap:10px}
 .pwRoot .link-btn{font-family:inherit}
 .pwRoot{min-height:100vh}
+:where(.pwRoot input[type="checkbox"]){margin:3px 3px 3px 4px}
+:where(.pwRoot input[type="radio"]){margin:3px 3px 0 5px}
+:where(.pwRoot) ul,:where(.pwRoot) ol{list-style:revert;margin:1em 0;padding-left:40px}
+:where(.pwRoot) img,:where(.pwRoot) svg{display:inline;vertical-align:baseline}
