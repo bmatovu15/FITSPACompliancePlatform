@@ -12,7 +12,7 @@
 .dcl-root .btn.primary,.dcl-root .ghost.primary,.dcl-root .save,.dcl-root .rail-btn.primary,.dcl-root .choice.selected,.dcl-root .filter.active{color:#fff}
 .dcl-root a.link{display:inline-block}
 .dcl-root button:disabled{cursor:not-allowed}
-.dcl-root .btn:disabled{opacity:.45}
+
 .dcl-root input,.dcl-root select,.dcl-root textarea{background-color:#fff}
 .dcl-root input:disabled{background:#f5f5f5;color:#6f737a}
 .dcl-root select{appearance:auto}
@@ -33,3 +33,9 @@
   .dcl-root .workspace-tabs{position:static}
   .dcl-root .workspace-title{font-size:13px}
 }
+
+/* The site's globals.css defines generic .btn / .badge classes (not scoped); neutralise
+   the properties the design does not set so the design's own rules decide the look. */
+.dcl-root .btn,.dcl-root .ghost{display:inline-block;gap:0;align-items:normal;justify-content:normal;transition:none}
+.dcl-root .badge{text-transform:none;letter-spacing:normal;align-items:normal;line-height:normal}
+.dcl-root .btn:disabled{opacity:1}
