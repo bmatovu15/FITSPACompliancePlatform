@@ -2,6 +2,7 @@ import Link from "next/link";
 import styles from "./apply-hub.module.css";
 import ApplyExpertPanel from "./apply-expert-panel";
 import { BRAND } from "@/lib/brand";
+import { listProgrammes } from "@/lib/programmes/load";
 
 export const metadata = {
   title: `Apply | ${BRAND}`,
@@ -13,7 +14,9 @@ export const metadata = {
 // Lending application flows themselves are Phase 3/4 work -- until then
 // these two cards lead to a short "being built" page rather than a broken
 // link, per the accepted Phase 1 tradeoff in §7 of the plan.
-export default function ApplyHubPage() {
+export default async function ApplyHubPage() {
+  // Programmes FITSPA staff have added and published in the admin appear here automatically.
+  const extra = (await listProgrammes({ publishedOnly: true })).filter((p) => p.screens === "generic");
   return (
     <div className={styles.ahRoot}>
       <header className={styles["ah-nav"]}>
@@ -59,6 +62,14 @@ export default function ApplyHubPage() {
             <p>Prepare an IRA licence application as an Insurer, Reinsurer, Broker, Agent, or HMO.</p>
             <Link className={styles["ah-card-action"]} href="/apply/insurance">Start Insurance application →</Link>
           </article>
+          {extra.map((p) => (
+            <article key={p.id} className={styles["ah-card"]}>
+              <div className={styles["ah-card-kicker"]}>{p.regulator?.name ?? ""}</div>
+              <h2>{p.name}</h2>
+              <p>{p.blurb}</p>
+              <Link className={styles["ah-card-action"]} href={`/apply/${p.id}`}>Start application →</Link>
+            </article>
+          ))}
         </div>
 
         <ApplyExpertPanel

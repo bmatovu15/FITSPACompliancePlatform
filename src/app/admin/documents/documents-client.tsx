@@ -16,6 +16,7 @@ export default function DocumentsClient({ initial, regulators }: { initial: any[
   const [regulatorId, setRegulatorId] = useState("");
   const [docKind, setDocKind] = useState("Act");
   const [title, setTitle] = useState("");
+  const [audience, setAudience] = useState("public");
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
 
@@ -51,6 +52,7 @@ export default function DocumentsClient({ initial, regulators }: { initial: any[
           regulatorId,
           docKind,
           title,
+          audience,
         }),
       });
       const json = await res.json();
@@ -83,6 +85,11 @@ export default function DocumentsClient({ initial, regulators }: { initial: any[
         <select className="input" value={docKind} onChange={(e) => setDocKind(e.target.value)}>
           {DOC_KINDS.map((k) => <option key={k}>{k}</option>)}
         </select>
+        <select className="input sm:col-span-2" value={audience} onChange={(e) => setAudience(e.target.value)}>
+          <option value="public">Visible to everyone (visitors and members)</option>
+          <option value="members">Signed-in members only</option>
+          <option value="staff">FITSPA staff only</option>
+        </select>
         <input className="input sm:col-span-2" placeholder="Title (optional — defaults to file name)" value={title} onChange={(e) => setTitle(e.target.value)} />
         <input className="input sm:col-span-2" type="file" accept=".pdf,.xlsx,.xls,.doc,.docx" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         <button className="btn btn-primary sm:col-span-2" disabled={!file || !regulatorId || uploading} onClick={upload}>
@@ -93,7 +100,7 @@ export default function DocumentsClient({ initial, regulators }: { initial: any[
 
       <div className="mt-6 overflow-x-auto card">
         <table className="data">
-          <thead><tr><th>Title</th><th>Regulator</th><th>Kind</th><th>Status</th><th>Index</th></tr></thead>
+          <thead><tr><th>Title</th><th>Regulator</th><th>Kind</th><th>Status</th><th>Who can see it</th><th>Index</th></tr></thead>
           <tbody>
             {initial.map((d) => (
               <tr key={d.id}>
@@ -101,6 +108,13 @@ export default function DocumentsClient({ initial, regulators }: { initial: any[
                 <td>{d.regulators?.name ?? "—"}</td>
                 <td><span className={`badge ${KIND_BADGE[d.doc_kind] ?? "badge-gray"}`}>{d.doc_kind}</span></td>
                 <td>{d.status}</td>
+                <td>
+                  <select className="input" defaultValue={d.audience ?? "public"} onChange={async (e) => { await supabase.from("documents").update({ audience: e.target.value }).eq("id", d.id); router.refresh(); }}>
+                    <option value="public">Everyone</option>
+                    <option value="members">Members only</option>
+                    <option value="staff">Staff only</option>
+                  </select>
+                </td>
                 <td>{d.index_status}</td>
               </tr>
             ))}

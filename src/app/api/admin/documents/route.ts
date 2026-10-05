@@ -29,6 +29,9 @@ export async function POST(req: NextRequest) {
   const regulatorId = body?.regulatorId as string | undefined;
   const docKind = body?.docKind as string | undefined;
   const title = (body?.title as string) || fileName;
+  const audienceRaw = body?.audience as string | undefined;
+  const audience = audienceRaw && ["public", "members", "staff"].includes(audienceRaw) ? audienceRaw : "public";
+  const programmeId = (body?.programmeId as string | undefined) || null;
   if (!storagePath || !regulatorId || !docKind) {
     return NextResponse.json({ error: "storagePath, regulatorId and docKind are required" }, { status: 400 });
   }
@@ -53,6 +56,8 @@ export async function POST(req: NextRequest) {
       title,
       doc_kind: docKind,
       status: "Published",
+      audience,
+      programme_id: programmeId,
       storage_path: storagePath,
       file_name: fileName,
       ocr_status: hasText ? "done" : ext === "pdf" ? "pending" : "not_needed",

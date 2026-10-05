@@ -2,6 +2,7 @@ import Link from "next/link";
 import styles from "./comply-hub.module.css";
 import ComplyExpertPanel from "./comply-expert-panel";
 import { BRAND } from "@/lib/brand";
+import { listProgrammes } from "@/lib/programmes/load";
 
 export const metadata = {
   title: `Comply | ${BRAND}`,
@@ -15,7 +16,9 @@ export const metadata = {
 // backed, member-gated compliance engine as before, restyled to match the
 // uploaded template. The old /dashboard/compliance-pathway page these used
 // to point at has been retired.
-export default function ComplyHubPage() {
+export default async function ComplyHubPage() {
+  // Programmes FITSPA staff have added and published in the admin appear here automatically.
+  const extra = (await listProgrammes({ publishedOnly: true })).filter((p) => p.screens === "generic");
   return (
     <div className={styles.chRoot}>
       <header className={styles["ch-nav"]}>
@@ -69,6 +72,16 @@ export default function ComplyHubPage() {
               Manage Insurance compliance →
             </Link>
           </article>
+          {extra.map((p) => (
+            <article key={p.id} className={styles["ch-card"]}>
+              <div className={styles["ch-card-kicker"]}>{p.regulator?.name ?? ""}</div>
+              <h2>{p.name}</h2>
+              <p>{p.blurb}</p>
+              <Link className={styles["ch-card-action"]} href={`/comply/${p.id}`}>
+                Manage compliance →
+              </Link>
+            </article>
+          ))}
         </div>
         <ComplyExpertPanel
           contextKey="general"

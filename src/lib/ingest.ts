@@ -48,13 +48,13 @@ const REGULATORY_ACRONYMS: Record<string, string[]> = {
 // question, so an unrelated question isn't padded with noise. Safe against
 // quote-breaking: expansion phrases are our own fixed strings, never
 // user input.
-export function expandQueryForSearch(question: string): string {
+export function expandQueryForSearch(question: string, extraAcronyms: Record<string, string[]> = {}): string {
   const seen = new Set<string>();
   const extra: string[] = [];
   const words = question.toLowerCase().match(/[a-z0-9-]+/g) ?? [];
   for (const w of words) {
-    const expansions = REGULATORY_ACRONYMS[w];
-    if (!expansions) continue;
+    const expansions = [...(REGULATORY_ACRONYMS[w] ?? []), ...(extraAcronyms[w] ?? [])];
+    if (expansions.length === 0) continue;
     for (const phrase of expansions) {
       if (seen.has(phrase)) continue;
       seen.add(phrase);

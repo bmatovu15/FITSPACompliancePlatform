@@ -27,12 +27,14 @@ export default function RegulatorsClient({ initial }: { initial: any[] }) {
     <div className="mt-6">
       <div className="overflow-x-auto card">
         <table className="data">
-          <thead><tr><th>Name</th><th>Sector</th><th>Status</th></tr></thead>
+          <thead><tr><th>Name</th><th>Short name</th><th>Sector</th><th>Official website</th><th>Status</th></tr></thead>
           <tbody>
             {initial.map((r) => (
               <tr key={r.id}>
                 <td><input className="input" defaultValue={r.name} onBlur={(e) => update(r.id, "name", e.target.value)} /></td>
+                <td><input className="input" defaultValue={r.short_name ?? ""} onBlur={(e) => update(r.id, "short_name", e.target.value)} /></td>
                 <td><input className="input" defaultValue={r.sector ?? ""} onBlur={(e) => update(r.id, "sector", e.target.value)} /></td>
+                <td><input className="input" placeholder="e.g. bou.or.ug" defaultValue={r.website ?? ""} onBlur={(e) => update(r.id, "website", e.target.value)} /></td>
                 <td>
                   <select className="input" defaultValue={r.status} onChange={(e) => update(r.id, "status", e.target.value)}>
                     <option>Active</option><option>Pending Approval</option><option>Rejected</option>

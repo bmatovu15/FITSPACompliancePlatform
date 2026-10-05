@@ -12,6 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </p>
           <nav className="flex flex-col gap-1 text-sm">
             <Link className="btn btn-ghost justify-start" href="/admin">Overview</Link>
+            <Link className="btn btn-ghost justify-start" href="/admin/programmes">Programmes</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/regulators">Regulators</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/licences">Licences</Link>
             <Link className="btn btn-ghost justify-start" href="/admin/registrations">Registry (member IDs)</Link>

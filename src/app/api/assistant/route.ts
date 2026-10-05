@@ -9,6 +9,7 @@ import {
   GOOGLE_CSE_ID,
 } from "@/lib/server-config";
 import { searchRegulatorWeb, type WebResult } from "@/lib/web-search";
+import { loadAssistantConfig } from "@/lib/programmes/assistant-config-load";
 
 type SearchChunkRow = {
   content: string;
@@ -33,7 +34,9 @@ export async function POST(req: NextRequest) {
   // chunk. limit_n raised from 6 to 10 so the richer, better-targeted
   // candidate set still gives the LLM enough context once a genuinely
   // relevant chunk is a few ranks down rather than #1.
-  const searchQuery = expandQueryForSearch(question);
+  // Regulators added by staff in the admin contribute their own website domain and acronyms here.
+  const config = await loadAssistantConfig(supabase);
+  const searchQuery = expandQueryForSearch(question, config.acronyms);
 
   // Every question now searches FITSPA's indexed documents AND the scoped
   // regulator-website search IN PARALLEL (your explicit choice: let the AI
@@ -49,7 +52,7 @@ export async function POST(req: NextRequest) {
   // exactly as it did on documents alone.
   const [{ data: chunks, error }, webResults] = await Promise.all([
     supabase.rpc("search_document_chunks", { q: searchQuery, limit_n: 10 }),
-    searchRegulatorWeb({ apiKey: GOOGLE_CSE_API_KEY, searchEngineId: GOOGLE_CSE_ID, query: question }),
+    searchRegulatorWeb({ apiKey: GOOGLE_CSE_API_KEY, searchEngineId: GOOGLE_CSE_ID, query: question, extraAllowedHosts: config.domains }),
   ]);
 
   const allChunks = (chunks ?? []) as SearchChunkRow[];

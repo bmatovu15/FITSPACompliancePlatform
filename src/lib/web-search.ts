@@ -91,10 +91,10 @@ export function detectUncoveredRegulatorTrigger(question: string): string | null
 
 const ALL_ALLOWED_HOSTS = Array.from(new Set(Object.values(OFFICIAL_REGULATOR_DOMAINS).flat()));
 
-function hostAllowed(url: string): boolean {
+function hostAllowed(url: string, extraHosts: string[] = []): boolean {
   try {
     const host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
-    return ALL_ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
+    return [...ALL_ALLOWED_HOSTS, ...extraHosts].some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
   } catch {
     return false;
   }
@@ -114,8 +114,10 @@ export async function searchRegulatorWeb(opts: {
   apiKey: string;
   searchEngineId: string;
   query: string;
+  /** Domains staff added on regulator records in the admin (on top of the built-in list above). */
+  extraAllowedHosts?: string[];
 }): Promise<WebResult[] | null> {
-  const { apiKey, searchEngineId, query } = opts;
+  const { apiKey, searchEngineId, query, extraAllowedHosts = [] } = opts;
   if (!apiKey || !searchEngineId) return null;
   try {
     const url = new URL("https://www.googleapis.com/customsearch/v1");
@@ -145,7 +147,7 @@ export async function searchRegulatorWeb(opts: {
     return items
       .filter((it): it is { link: string; title?: string; snippet?: string } => {
         const link = (it as { link?: unknown })?.link;
-        return typeof link === "string" && hostAllowed(link);
+        return typeof link === "string" && hostAllowed(link, extraAllowedHosts);
       })
       .map((it) => ({
         title: String(it.title || it.link),
