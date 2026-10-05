@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   };
 
   // Optional application / requirement link (Digital Lending Apply). These
-  // columns come from db/migrations/0105_*.sql; if they are not there yet the
+  // columns come from db/migrations/0110_*.sql; if they are not there yet the
   // row is still stored without them so no expert request is ever lost.
   const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const link: Record<string, string> = {};

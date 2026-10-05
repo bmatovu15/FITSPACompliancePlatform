@@ -232,18 +232,23 @@ export default function DigitalLendingWizardClient({
           setApplication({ ...application, class_key: classKey });
         }
       } else {
-        const { data, error } = await sb()
-          .from("member_licence_applications")
-          .insert({ member_id: null, application_key: applicationKey, class_key: classKey, status: "draft" })
-          .select("*")
-          .single();
-        if (error || !data) throw error ?? new Error("no row");
-        const row = data as MemberLicenceApplication;
-        lsSet(STORAGE_KEY, row.id);
-        if (row.access_token) {
-          lsSet(TOKEN_KEY, row.access_token);
-          sbRef.current = createClient({ headers: { "x-application-token": row.access_token } });
+        // Capability token (see db/migrations/0199_da_rls_proposal.sql): generated here so it can be
+        // sent as a header with the INSERT itself. If the column does not exist (proposal not applied)
+        // the row is created without it and the plain client is used.
+        const token = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : null;
+        const base: Record<string, unknown> = { member_id: null, application_key: applicationKey, class_key: classKey, status: "draft" };
+        let client = token ? createClient({ headers: { "x-application-token": token } }) : sb();
+        let res = await client.from("member_licence_applications").insert(token ? { ...base, access_token: token } : base).select("*").single();
+        if (res.error && token && /access_token/i.test(`${res.error.message} ${res.error.code}`)) {
+          client = sb();
+          res = await client.from("member_licence_applications").insert(base).select("*").single();
+        } else if (token && !res.error) {
+          sbRef.current = client;
+          lsSet(TOKEN_KEY, token);
         }
+        if (res.error || !res.data) throw res.error ?? new Error("no row");
+        const row = res.data as MemberLicenceApplication;
+        lsSet(STORAGE_KEY, row.id);
         await loadApplicationData(row);
       }
       setActiveTab("application");
