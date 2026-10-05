@@ -66,3 +66,10 @@
   .ahRoot .ah-help{align-items:flex-start;flex-direction:column}
   .ahRoot .ah-support-fields{grid-template-columns:1fr}
 }
+
+/* Beacon design parity: the prototype uses <button>s (UA line-height:normal, bold UA headings, UA placeholder colour);
+   here some are links / preflight-reset elements, so restore those defaults. */
+.ahRoot .ah-nav-link,.ahRoot .ah-home,.ahRoot .ah-card .ah-card-action{line-height:normal}
+.ahRoot .ah-card h2,.ahRoot .ah-support-panel h3{font-weight:700}
+.ahRoot .ah-support-panel textarea::placeholder,.ahRoot .ah-support-panel input::placeholder{color:#757575;opacity:1}
+.ahRoot button,.ahRoot .ah-brand{line-height:normal}

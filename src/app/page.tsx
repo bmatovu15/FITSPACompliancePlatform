@@ -97,7 +97,7 @@ export default function Home() {
                 <h3>Compliance Assistant</h3>
                 <p>Track and manage your ongoing Payments or Digital Lending compliance obligations.</p>
               </div>
-              <Link className={styles["bp-card-action"]} href="/comply">Choose compliance →</Link>
+              <Link className={`${styles["bp-card-action"]} ${styles["bp-card-action-live"]}`} href="/comply">Choose compliance →</Link>
             </article>
           </div>
         </div>

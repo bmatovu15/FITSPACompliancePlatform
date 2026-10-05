@@ -41,3 +41,10 @@
 .chRoot .ch-support-error{font-size:12px;font-weight:600;color:#B3261E;margin-top:12px}
 @media(max-width:900px){.chRoot .ch-brand{font-size:16px}.chRoot .ch-nav-actions{gap:10px}.chRoot .ch-nav-search{display:none}.chRoot .ch-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.chRoot .ch-nav{padding:0 18px;grid-template-columns:auto 1fr auto}.chRoot .ch-nav-links{gap:16px;justify-content:center;font-size:12px}.chRoot .ch-main{padding:52px 20px 80px}.chRoot .ch-title{font-size:38px}.chRoot .ch-grid{grid-template-columns:1fr}.chRoot .ch-help{align-items:flex-start;flex-direction:column}.chRoot .ch-support-fields{grid-template-columns:1fr}}
+
+/* Beacon design parity: the prototype uses <button>s (UA line-height:normal, bold UA headings, UA placeholder colour);
+   here some are links / preflight-reset elements, so restore those defaults. */
+.chRoot .ch-nav-link,.chRoot .ch-home,.chRoot .ch-card .ch-card-action{line-height:normal}
+.chRoot .ch-card h2,.chRoot .ch-support-panel h3{font-weight:700}
+.chRoot .ch-support-panel textarea::placeholder,.chRoot .ch-support-panel input::placeholder{color:#757575;opacity:1}
+.chRoot button,.chRoot .ch-brand{line-height:normal}
