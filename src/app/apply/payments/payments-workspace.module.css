@@ -759,3 +759,4 @@ table.fee-table tr.highlighted td{background:var(--card);font-weight:600;color:v
 .pwRoot .application-details-alert .work-btn{border:1px solid var(--rule-strong);background:#fff;color:var(--slate);padding:7px 12px;border-radius:2px;font-size:12.5px;font-weight:600}
 .pwRoot .masthead-brand .logo-link{display:flex;align-items:center;gap:10px}
 .pwRoot .link-btn{font-family:inherit}
+.pwRoot{min-height:100vh}

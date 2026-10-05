@@ -14,7 +14,6 @@ export function cx(names: string): string {
     .map((n) => {
       const v = (styles as Record<string, string>)[n];
       if (!v && process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
         console.warn("[payments] unknown class", n);
       }
       return v ?? "";

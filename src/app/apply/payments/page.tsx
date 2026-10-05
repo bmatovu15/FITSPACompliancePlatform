@@ -1,5 +1,3 @@
-import Link from "next/link";
-import ahStyles from "../apply-hub.module.css";
 import { createClient } from "@/lib/supabase/server";
 import PaymentsWizardClient from "./payments-wizard-client";
 import type {
@@ -9,7 +7,7 @@ import type {
 } from "@/lib/types";
 
 export const metadata = {
-  title: "Payments application | FITSPA Compliance Platform",
+  title: "Beacon — Payments Licence Application",
   description:
     "Prepare a Bank of Uganda payments licence application (PSO, PSP/EMI or payment instrument issuer) — no login required. Classify your business, work through the requirements checklist, and track your progress in this browser.",
 };
@@ -54,25 +52,7 @@ export default async function ApplyPaymentsPage() {
   const feeTiers = (feeRows ?? []) as LicenceApplicationFeeTier[];
 
   return (
-    <div className={ahStyles.ahRoot} style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
-      <header className={ahStyles["ah-nav"]}>
-        <Link className={ahStyles["ah-brand"]} href="/" aria-label="FITSPA Compliance Platform home">
-          <span className={ahStyles["ah-brand-mark"]} aria-hidden="true"></span>FITSPA Compliance Platform
-        </Link>
-        <nav className={ahStyles["ah-nav-links"]} aria-label="Primary">
-          <button className={`${ahStyles["ah-nav-link"]} ${ahStyles.muted}`} type="button" disabled>
-            Explore
-          </button>
-          <Link className={`${ahStyles["ah-nav-link"]} ${ahStyles.active}`} href="/apply">Apply</Link>
-          <Link className={ahStyles["ah-nav-link"]} href="/comply">Comply</Link>
-          <Link className={ahStyles["ah-nav-link"]} href="/assistant">AI Assistant</Link>
-        </nav>
-        <div className={ahStyles["ah-nav-actions"]}>
-          <Link className={ahStyles["ah-nav-search"]} href="/lookup">Search a member</Link>
-          <Link className={ahStyles["ah-nav-register"]} href="/signup">Register</Link>
-          <Link className={ahStyles["ah-nav-back"]} href="/apply">← Applications</Link>
-        </div>
-      </header>
+    <div style={{ minHeight: "100vh", background: "#FFFFFF" }}>
       <PaymentsWizardClient
         applicationKey={APPLICATION_KEY}
         templates={templates}
