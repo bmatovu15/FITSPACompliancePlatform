@@ -99,10 +99,7 @@ export default function PaymentsComplianceClient(props: PaymentsComplianceClient
   // -- clock ----------------------------------------------------------------
   const [clock, setClock] = useState<Clock>(() => makeClock(now));
   useEffect(() => {
-    if (now) {
-      setClock(makeClock(now));
-      return;
-    }
+    if (now) return;
     const t = window.setInterval(() => {
       setClock((c) => {
         const n = makeClock();
@@ -119,6 +116,7 @@ export default function PaymentsComplianceClient(props: PaymentsComplianceClient
   const dirty = useRef(false);
   const timer = useRef<number | undefined>(undefined);
   const mounted = useRef(false);
+  const flushRef = useRef<() => Promise<void>>(async () => {});
 
   const flush = useCallback(async () => {
     window.clearTimeout(timer.current);
@@ -130,9 +128,13 @@ export default function PaymentsComplianceClient(props: PaymentsComplianceClient
     else {
       dirty.current = true;
       setSaveError(`Your latest changes could not be saved${res.error ? ` (${res.error})` : ""}. Retrying…`);
-      timer.current = window.setTimeout(flush, 5000);
+      timer.current = window.setTimeout(() => void flushRef.current(), 5000);
     }
   }, [adapter]);
+
+  useEffect(() => {
+    flushRef.current = flush;
+  }, [flush]);
 
   useEffect(() => {
     latest.current = state;
