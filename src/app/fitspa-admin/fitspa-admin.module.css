@@ -50,7 +50,7 @@
 .trDue{grid-template-columns:120px 1fr 140px 90px}
 .trMem{grid-template-columns:1.2fr 1.4fr 100px 70px 80px 110px 130px}
 .tr small{display:block;color:#777;font-size:12px;margin-top:2px}
-.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.mono{font-family:inherit;font-variant-numeric:tabular-nums;font-size:12px}
 .retired{opacity:.55}
 .flag{display:inline-block;margin-top:5px;font-style:normal;background:#111;color:#fff;border-radius:2px;padding:2px 7px;font-size:10.5px;font-weight:600;letter-spacing:.04em}
 .pill{font-style:normal;border-radius:10px;padding:2px 9px;font-size:11px;font-weight:600}
@@ -113,7 +113,7 @@
 .credBox strong{color:#111;font-size:13px}
 .credBox dl{margin:0;display:grid;grid-template-columns:80px 1fr;gap:4px 10px}
 .credBox dt{font-weight:600;color:#111}
-.credBox dd{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;color:#111}
+.credBox dd{margin:0;font-family:inherit;font-variant-numeric:tabular-nums;color:#111}
 .credBox p{margin:0;font-size:12px;color:#777}
 @media (max-width:640px){.loginWrap{padding:40px 16px 32px}}
 /* ---- Admin shell: a separate, dark console bar instead of the public menu ---- */

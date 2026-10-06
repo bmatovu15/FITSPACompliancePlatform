@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Montserrat, self-hosted (latin subset, SIL OFL -- see fonts/OFL-LICENSE.txt). Every page, module and
+   inline style that names "Montserrat" resolves to these files. */
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 400; font-display: swap; src: url("./fonts/montserrat-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 500; font-display: swap; src: url("./fonts/montserrat-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 600; font-display: swap; src: url("./fonts/montserrat-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-style: normal; font-weight: 700; font-display: swap; src: url("./fonts/montserrat-latin-700-normal.woff2") format("woff2"); }
+
+/* Montserrat for every Tailwind font utility too (font-sans, font-serif, font-mono). */
+@theme inline {
+  --font-sans: "Montserrat", Arial, sans-serif;
+  --font-serif: "Montserrat", Arial, sans-serif;
+  --font-mono: "Montserrat", Arial, sans-serif;
+}
+
 :root {
   --color-bg: #ffffff;
   --color-surface: #ffffff;
@@ -9,7 +23,8 @@
   --color-primary: #0d3b2e;
   --color-primary-dark: #082921;
   --color-accent: #b5772f;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-brand: "Montserrat", Arial, sans-serif;
+  --font-serif: var(--font-brand);
 }
 
 * { border-color: var(--color-border); }
@@ -17,10 +32,11 @@
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-brand);
 }
 
 a { color: inherit; }
+input, select, textarea, button { font-family: inherit; }
 
 .btn {
   display: inline-flex;

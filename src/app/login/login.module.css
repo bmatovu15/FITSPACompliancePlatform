@@ -189,7 +189,8 @@
 }
 .demoCred {
   margin-top: 4px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
   font-size: 11px;
   color: var(--lo-muted);
 }
