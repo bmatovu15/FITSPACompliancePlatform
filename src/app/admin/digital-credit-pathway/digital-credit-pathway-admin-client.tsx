@@ -120,14 +120,14 @@ export default function DigitalCreditPathwayAdminClient({
   const [tab, setTab] = useState<"requirements" | "fees">("requirements");
   return (
     <div className="mt-6">
-      <div className="flex gap-2 border-b" style={{ borderColor: "var(--color-border)" }}>
+      <div className="ab-tabs">
         <button
-          className={`btn btn-sm ${tab === "requirements" ? "btn-primary" : "btn-ghost"}`}
+          className={`ab-tab ${tab === "requirements" ? "ab-tab-on" : ""}`}
           onClick={() => setTab("requirements")}
         >
           Requirements ({requirements.length})
         </button>
-        <button className={`btn btn-sm ${tab === "fees" ? "btn-primary" : "btn-ghost"}`} onClick={() => setTab("fees")}>
+        <button className={`ab-tab ${tab === "fees" ? "ab-tab-on" : ""}`} onClick={() => setTab("fees")}>
           Fees ({fees.length})
         </button>
       </div>

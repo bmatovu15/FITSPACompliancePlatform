@@ -63,10 +63,10 @@ export default function GenericComplyClient({ memberId, data, initialState, draf
   const groups = Array.from(new Set(listed.map((o) => o.grp || "General")));
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      {draftPreview && <div className="card p-3 mb-4 text-sm" style={{ background: "#fbedd9", color: "#93590b" }}>Draft preview: this programme is not published yet. Only FITSPA staff can see it.</div>}
+    <main className="bk mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      {draftPreview && <div className="ab-note mb-4">Draft preview: this programme is not published yet. Only FITSPA staff can see it.</div>}
       <p className="text-xs uppercase tracking-wide" style={muted}>{data.regulator?.name ?? "Regulator"}</p>
-      <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>{data.programme.name}</h1>
+      <h1 className="text-4xl" style={{ fontFamily: "var(--font-serif)" }}>{data.programme.name}</h1>
       <p className="mt-1 text-sm" style={muted}>{data.programme.blurb}</p>
 
       {!profileComplete ? (
@@ -79,9 +79,9 @@ export default function GenericComplyClient({ memberId, data, initialState, draf
             <div className="card p-4"><div className="text-xs uppercase" style={muted}>Overdue</div><div className="text-2xl font-semibold">{mine.filter((o) => o.due_date && !ws.progress[o.ref]?.done && new Date(o.due_date) < new Date()).length}</div></div>
           </div>
 
-          <nav className="mt-6 flex flex-wrap gap-1" aria-label="Compliance sections">
+          <nav className="ab-tabs" aria-label="Compliance sections">
             {([["now", "What applies to me"], ["events", `Events (${events.length})`], ["controls", `Control areas (${data.controls.length})`], ["profile", "My profile"]] as [Tab, string][]).map(([k, l]) => (
-              <button key={k} className={`btn btn-sm ${tab === k ? "btn-primary" : "btn-ghost"}`} onClick={() => setTab(k)}>{l}</button>
+              <button key={k} className={`ab-tab ${tab === k ? "ab-tab-on" : ""}`} onClick={() => setTab(k)}>{l}</button>
             ))}
             <span className="ml-auto text-xs self-center" style={muted}>{saveMsg}</span>
           </nav>

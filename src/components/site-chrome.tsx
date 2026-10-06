@@ -16,9 +16,9 @@ import { usePathname } from "next/navigation";
 // they share BeaconNav instead of each carrying their own copy of the
 // masthead. /assistant joined in the same round too, so the AI Assistant
 // page no longer swaps to a separate legacy header when you navigate to it
-// from the Beacon nav. /dashboard and /admin are intentionally excluded:
-// they keep this legacy authenticated chrome (sign-out, admin links) rather
-// than the public Beacon shell.
+// from the Beacon nav. /admin draws its own dark console bar (see components/admin-bar.tsx), the same
+// one the /fitspa-admin demonstration uses. /dashboard is intentionally excluded:
+// it keeps this legacy authenticated chrome.
 function isBeaconShellRoute(pathname: string) {
   return (
     pathname === "/" ||
@@ -29,7 +29,8 @@ function isBeaconShellRoute(pathname: string) {
     pathname.startsWith("/login") ||
     pathname.startsWith("/search") ||
     pathname.startsWith("/assistant") ||
-    pathname.startsWith("/fitspa-admin")
+    pathname.startsWith("/fitspa-admin") ||
+    pathname.startsWith("/admin")
   );
 }
 

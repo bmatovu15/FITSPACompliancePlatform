@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember } from "@/lib/current-member";
 import { loadProgramme } from "@/lib/programmes/load";
+import "../../beacon-theme.css";
 import BeaconNav from "@/components/beacon-nav";
 import GenericComplyClient from "./generic-comply-client";
 

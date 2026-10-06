@@ -1,36 +1,16 @@
-import Link from "next/link";
+import "../beacon-theme.css";
+import "./admin-shell.css";
+import AdminBar from "@/components/admin-bar";
 import { requireStaff } from "@/lib/current-member";
 
+// The admin uses the same Beacon look as the rest of the platform and the /fitspa-admin
+// demonstration: Montserrat, black and white, a dark console bar and underline tabs.
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireStaff();
+  const user = await requireStaff();
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <aside className="sm:w-56 shrink-0">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-text-muted)" }}>
-            FITSPA Admin
-          </p>
-          <nav className="flex flex-col gap-1 text-sm">
-            <Link className="btn btn-ghost justify-start" href="/admin">Overview</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/programmes">Programmes</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/regulators">Regulators</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/licences">Licences</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/registrations">Registry (member IDs)</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/members">Members &amp; licences</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/verticals">Fintech verticals</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/documents">Documents</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/obligations">Obligations</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/requirements-pathway">Requirements Pathway</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/nps-pathway">NPS Pathway</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/digital-credit-pathway">Digital Credit Pathway</Link>
-            <Link className="btn btn-ghost justify-start" href="/admin/compliance-calendar">Compliance Calendar</Link>
-            <form action="/api/auth/signout" method="post">
-              <button className="btn btn-ghost justify-start w-full text-left" type="submit">Sign out</button>
-            </form>
-          </nav>
-        </aside>
-        <div className="flex-1 min-w-0">{children}</div>
-      </div>
+    <div className="admin-shell bk">
+      <AdminBar email={user.email ?? "admin"} />
+      <main className="admin-main">{children}</main>
     </div>
   );
 }

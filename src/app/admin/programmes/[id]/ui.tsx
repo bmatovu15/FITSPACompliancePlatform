@@ -35,7 +35,7 @@ export function Msg({ msg }: { msg: string | null }) {
   if (!msg) return null;
   const bad = msg.startsWith("Error");
   return (
-    <p className="mt-2 text-sm" role="status" style={{ color: bad ? "var(--color-danger, #a3372f)" : "var(--color-text-muted)" }}>
+    <p className="mt-2 text-sm" role="status" style={{ color: bad ? "var(--color-danger, #b3261e)" : "var(--color-text-muted)" }}>
       {msg}
     </p>
   );
@@ -43,7 +43,7 @@ export function Msg({ msg }: { msg: string | null }) {
 
 export function ReadOnlyBanner({ what }: { what: string }) {
   return (
-    <div className="card p-4 mb-4 text-sm" style={{ background: "#fbedd9", color: "#93590b" }}>
+    <div className="ab-note mb-4">
       This programme has dedicated, hand-built member screens. The {what} shown here is a read-only copy of what those
       screens use. To change it, change it in the platform content (it will then be reflected here). Programmes created
       here with generic screens are fully editable.

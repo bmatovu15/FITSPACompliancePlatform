@@ -19,8 +19,8 @@ export const metadata = { title: "Programme | FITSPA Admin" };
 const TABS = [
   ["overview", "Overview & publish"],
   ["regulator", "Regulator & AI"],
-  ["classes", "Licence classes & fees"],
-  ["requirements", "Application requirements"],
+  ["classes", "Classes & fees"],
+  ["requirements", "Requirements"],
   ["questions", "Profile questions"],
   ["rules", "Applicability rules"],
   ["obligations", "Obligations"],
@@ -52,20 +52,20 @@ export default async function ProgrammeAdminPage({ params, searchParams }: { par
 
   return (
     <div>
-      <p className="text-sm"><Link className="underline" href="/admin/programmes">← All programmes</Link></p>
-      <div className="mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>{programme.name}</h1>
+      <p className="text-sm mb-5"><Link className="underline" href="/admin/programmes">← All programmes</Link></p>
+      <h1 className="mt-3" style={{ fontFamily: "var(--font-serif)" }}>{programme.name}</h1>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <span className={`badge ${programme.status === "published" ? "badge-green" : "badge-amber"}`}>{programme.status === "published" ? "Published" : "Draft"}</span>
         <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>{data.regulator?.name} · {score.done}/{score.total} ready</span>
       </div>
 
-      <nav className="mt-4 flex flex-wrap gap-1" aria-label="Programme sections">
+      <nav className="ab-tabs" aria-label="Programme sections">
         {TABS.map(([k, label]) => (
-          <Link key={k} href={`/admin/programmes/${id}?tab=${k}`} className={`btn btn-sm ${tab === k ? "btn-primary" : "btn-ghost"}`}>{label}</Link>
+          <Link key={k} href={`/admin/programmes/${id}?tab=${k}`} className={`ab-tab ${tab === k ? "ab-tab-on" : ""}`} aria-current={tab === k ? "page" : undefined}>{label}</Link>
         ))}
       </nav>
 
-      <div className="mt-6">
+      <div className="mt-7">
         {tab === "overview" && <OverviewTab programme={programme} items={items} missingRequired={score.requiredMissing.length} />}
         {tab === "regulator" && <RegulatorTab regulator={data.regulator} />}
         {tab === "classes" && <ClassesTab applicationKey={key} classes={classes} />}

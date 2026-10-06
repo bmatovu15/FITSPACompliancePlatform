@@ -67,11 +67,11 @@ export default function ComplianceCalendarAdminClient({
 
   return (
     <div className="mt-6">
-      <div className="flex flex-wrap gap-2 border-b" style={{ borderColor: "var(--color-border)" }}>
+      <div className="ab-tabs">
         {tabs.map((t) => (
           <button
             key={t.key}
-            className={`btn btn-sm ${tab === t.key ? "btn-primary" : "btn-ghost"}`}
+            className={`ab-tab ${tab === t.key ? "ab-tab-on" : ""}`}
             onClick={() => setTab(t.key)}
           >
             {t.label} ({t.count})

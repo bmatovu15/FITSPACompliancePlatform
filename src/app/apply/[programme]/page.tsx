@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { loadApplyClasses, loadApplyTemplates, loadProgramme } from "@/lib/programmes/load";
+import "../../beacon-theme.css";
 import BeaconNav from "@/components/beacon-nav";
 import GenericApplyClient from "./generic-apply-client";
 

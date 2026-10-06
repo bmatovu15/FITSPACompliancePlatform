@@ -112,12 +112,12 @@ export default function GenericApplyClient({ applicationKey, programmeName, regu
   const phaseList = Array.from(new Set([...phases, ...templates.map((t) => t.phase)])).filter((p) => templates.some((t) => t.phase === p));
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      {draftPreview && <div className="card p-3 mb-4 text-sm" style={{ background: "#fbedd9", color: "#93590b" }}>Draft preview: this programme is not published yet. Only FITSPA staff can see it.</div>}
+    <main className="bk mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      {draftPreview && <div className="ab-note mb-4">Draft preview: this programme is not published yet. Only FITSPA staff can see it.</div>}
       <p className="text-xs uppercase tracking-wide" style={muted}>{regulatorName} · Licence application</p>
-      <h1 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-serif)" }}>{programmeName}</h1>
+      <h1 className="text-4xl" style={{ fontFamily: "var(--font-serif)" }}>{programmeName}</h1>
       <p className="mt-1 text-sm" style={muted}>{blurb}</p>
-      {err && <p className="mt-3 text-sm" role="alert" style={{ color: "#a3372f" }}>{err}</p>}
+      {err && <p className="mt-3 text-sm" role="alert" style={{ color: "var(--color-danger, #b3261e)" }}>{err}</p>}
 
       {loading ? <p className="mt-6 text-sm" style={muted}>Loading…</p> : !app ? (
         <section className="mt-6">
